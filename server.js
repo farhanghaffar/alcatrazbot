@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { statueTicketingBookTour } = require('./statueticketing-booking');
-const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -11,17 +11,17 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // SSL options with error handling
-let sslOptions;
-try {
-    sslOptions = {
-        key: fs.readFileSync(path.join(__dirname, 'certificates', 'key.pem')),
-        cert: fs.readFileSync(path.join(__dirname, 'certificates', 'cert.pem'))
-    };
-} catch (error) {
-    console.error('Error loading SSL certificates:', error);
-    console.log('Please run: node certificates/generate-certificates.js');
-    process.exit(1);
-}
+// let sslOptions;
+// try {
+//     sslOptions = {
+//         key: fs.readFileSync(path.join(__dirname, 'certificates', 'key.pem')),
+//         cert: fs.readFileSync(path.join(__dirname, 'certificates', 'cert.pem'))
+//     };
+// } catch (error) {
+//     console.error('Error loading SSL certificates:', error);
+//     console.log('Please run: node certificates/generate-certificates.js');
+//     process.exit(1);
+// }
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
@@ -291,12 +291,13 @@ app.get('/health', (req, res) => {
 
 // Create HTTPS server with error handling
 try {
-    const server = https.createServer(sslOptions, app);
+    // const server = https.createServer(sslOptions, app);
+    const server = http.createServer(app);
     
     server.listen(PORT, () => {
         console.log(`HTTPS Server is running on port ${PORT}`);
-        console.log(`Webhook endpoint: https://localhost:${PORT}/webhook`);
-        console.log(`Health check endpoint: https://localhost:${PORT}/health`);
+        console.log(`Webhook endpoint: http://localhost:${PORT}/webhook`);
+        console.log(`Health check endpoint: http://localhost:${PORT}/health`);
     });
 
     server.on('error', (error) => {
