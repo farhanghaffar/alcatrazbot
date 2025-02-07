@@ -1,0 +1,309 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const { statueTicketingBookTour } = require('./statueticketing-booking');
+const https = require('https');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const { alcatrazBookTour } = require('./alcatraz-booking');
+
+const app = express();
+const PORT = process.env.PORT || 4000;
+
+// SSL options with error handling
+let sslOptions;
+try {
+    sslOptions = {
+        key: fs.readFileSync(path.join(__dirname, 'certificates', 'key.pem')),
+        cert: fs.readFileSync(path.join(__dirname, 'certificates', 'cert.pem'))
+    };
+} catch (error) {
+    console.error('Error loading SSL certificates:', error);
+    console.log('Please run: node certificates/generate-certificates.js');
+    process.exit(1);
+}
+
+// Middleware to parse JSON bodies
+app.use(bodyParser.json());
+
+// Middleware to verify WooCommerce webhook signature
+const verifyWooCommerceWebhook = (req, res, next) => {
+    const signature = req.headers['x-wc-webhook-signature'];
+    const payload = JSON.stringify(req.body);
+    const secret = process.env.WOOCOMMERCE_WEBHOOK_SECRET || 'z6>9w P`}@5^9A~X,sX)-Qw)B< Z#e@j4xbCp:7hW-z{fl{ ?]';
+
+    const hash = crypto
+        .createHmac('sha256', secret)
+        .update(payload)
+        .digest('base64');
+
+    if (hash === signature) {
+        next();
+    } else {
+        res.status(401).json({ error: 'Invalid webhook signature' });
+    }
+};
+
+// Webhook endpoint with verification | https://www.statueticketing.com/
+app.post('/webhook', async (req, res) => {
+    // console.log('Received WooCommerce webhook:', req.headers['x-wc-webhook-topic']);
+    console.log('Order data:', JSON.stringify(req.body));
+    
+    const reqBody = req.body;
+
+    try {
+        // Extract relavant data from WooCommerce order
+        const orderData = {
+            id: reqBody.id,
+            tourType: '',
+            bookingDate: '',
+            bookingTime: '',
+            personNames: [],
+            adults: 0,
+            childs: 0,
+            military: 0,
+            seniors: 0,
+            card: {
+                cvc: '',
+                expiration: '',
+                number: '',
+            },
+            billing: {
+                first_name: reqBody?.billing?.first_name,
+                last_name: reqBody?.billing?.last_name,
+                company: reqBody?.billing?.company,
+                address_1: reqBody?.billing?.address_1,
+                address_2: reqBody?.billing?.address_2,
+                city: reqBody?.billing?.city,
+                state: reqBody?.billing?.state,
+                postcode: reqBody?.billing?.postcode,
+                country: reqBody?.billing?.country,
+                email: reqBody?.billing?.email,
+                phone: reqBody?.billing?.phone
+            },
+        }
+
+        reqBody?.line_items[0]?.meta_data.forEach(item => {
+            switch (item.key) {
+            case 'Tour Type':
+                orderData.tourType = item?.value;
+                break;
+            case 'Booking Date':
+                orderData.bookingDate = item?.value;
+                break;
+            case 'Booking Time':
+                orderData.bookingTime = item?.value;
+                break;
+            case 'Person Names':
+                orderData.personNames = item?.value.split(', ').map(name => name.trim());
+                break;
+            default:
+                // Check for keywords "child", "adult", "military" and "senior" in the key to update counts
+                if (item.key.toLowerCase().includes('child')) {
+                    const childCount = item?.value.split(' x ')[0];
+                    orderData.childs = parseInt(childCount, 10);
+                } else if (item.key.toLowerCase().includes('senior')) {
+                    const seniorCount = item?.value.split(' x ')[0];
+                    orderData.seniors = parseInt(seniorCount, 10);
+                } else if (item.key.toLowerCase().includes('adult')) {
+                    const adultCount = item?.value.split(' x ')[0];
+                    orderData.adults = parseInt(adultCount, 10);
+                }else if (item.key.toLowerCase().includes('military')) {
+                    const militaryCount = item?.value.split(' x ')[0];
+                    orderData.military = parseInt(militaryCount, 10);
+                }
+                break;
+        }});
+
+        reqBody.meta_data.forEach(item => {
+            if (item.key.toLowerCase() === 'credit_card_cvc') {
+                orderData.card.cvc = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_expiration') {
+                orderData.card.expiration = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_number') {
+                orderData.card.number = item.value;
+            }
+        });
+
+        console.log('After manipulation, data is: ', orderData);
+
+        // Extract relevant data from WooCommerce order
+        // const orderData = {
+        //     email: req.body.billing.email,
+        //     tickets: {
+        //         _booking_adults: parseInt(req.body.line_items.find(item => item.name.includes('Adult'))?.quantity || 0),
+        //         _booking_children: parseInt(req.body.line_items.find(item => item.name.includes('Child'))?.quantity || 0),
+        //         _booking_juniors: parseInt(req.body.line_items.find(item => item.name.includes('Junior'))?.quantity || 0),
+        //         _booking_seniors: parseInt(req.body.line_items.find(item => item.name.includes('Senior'))?.quantity || 0),
+        //         _FamilyPack: parseInt(req.body.line_items.find(item => item.name.includes('Family'))?.quantity || 0)
+        //     }
+        // };
+
+        // Start the booking automation
+        console.log('Starting booking automation process...');
+        const bookingResult = await statueTicketingBookTour(orderData);
+        
+        if (bookingResult.success) {
+            console.log('Booking automation completed successfully');
+            res.status(200).json({
+                message: 'Webhook received and booking automation completed',
+                result: bookingResult
+            });
+        } else {
+            console.error('Booking automation failed:', bookingResult.error);
+            res.status(400).json({
+                message: 'Booking automation failed',
+                error: bookingResult.error,
+                errorScreenshot: bookingResult.errorScreenshot
+            });
+        }
+    } catch (error) {
+        console.error('Error processing webhook:', error);
+        res.status(500).json({
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+});
+
+// Webhook endpoint with verification | https://alcatraz.click/
+app.post('/alcatraz-webhook', async (req, res) => {
+    // console.log('Received WooCommerce webhook:', req.headers['x-wc-webhook-topic']);
+    console.log('Order data:', JSON.stringify(req.body));
+    
+    const reqBody = req.body;
+
+    try {
+        // Extract relavant data from WooCommerce order
+        const orderData = {
+            id: reqBody.id,
+            tourType: reqBody?.line_items[0]?.name,
+            bookingDate: '',
+            bookingTime: '',
+            // personNames: [],
+            adults: 0,
+            childs: 0,
+            juniors: 0,
+            seniors: 0,
+            card: {
+                cvc: '',
+                expiration: '',
+                number: '',
+            },
+            billing: {
+                first_name: reqBody?.billing?.first_name,
+                last_name: reqBody?.billing?.last_name,
+                company: reqBody?.billing?.company,
+                address_1: reqBody?.billing?.address_1,
+                address_2: reqBody?.billing?.address_2,
+                city: reqBody?.billing?.city,
+                state: reqBody?.billing?.state,
+                postcode: reqBody?.billing?.postcode,
+                country: reqBody?.billing?.country,
+                email: reqBody?.billing?.email,
+                phone: reqBody?.billing?.phone
+            },
+        }
+
+        reqBody?.line_items[0]?.meta_data.forEach(item => {
+            switch (item.key) {
+            case '_booking_tourType':
+                orderData.tourType += ' ' + item?.value;
+                break;
+            case '_booking_date':
+                orderData.bookingDate = item?.value;
+                break;
+            case '_booking_time':
+                orderData.bookingTime = item?.value;
+                break;
+            // case 'Person Names':
+            //     orderData.personNames = item?.value.split(', ').map(name => name.trim());
+            //     break;
+            default:
+                // Check for keywords "child", "adult", "juniors" and "senior" in the key to update counts
+                if (item.key.toLowerCase() === '_booking_children') {
+                    orderData.childs = parseInt(item.value, 10);
+                } else if (item.key.toLowerCase() === '_booking_seniors') {
+                    orderData.seniors = parseInt(item.value, 10);
+                } else if (item.key.toLowerCase() === '_booking_adults') {
+                    orderData.adults = parseInt(item.value, 10);
+                } else if (item.key.toLowerCase() === '_booking_juniors') {
+                    orderData.juniors = parseInt(item.value, 10);
+                }
+                break;
+        }});
+
+        reqBody.meta_data.forEach(item => {
+            if (item.key.toLowerCase() === 'credit_card_cvc') {
+                orderData.card.cvc = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_expiration') {
+                orderData.card.expiration = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_number') {
+                orderData.card.number = item.value;
+            }
+        });
+
+        console.log('After manipulation, data is: ', orderData);
+
+        // Extract relevant data from WooCommerce order
+        // const orderData = {
+        //     email: req.body.billing.email,
+        //     tickets: {
+        //         _booking_adults: parseInt(req.body.line_items.find(item => item.name.includes('Adult'))?.quantity || 0),
+        //         _booking_children: parseInt(req.body.line_items.find(item => item.name.includes('Child'))?.quantity || 0),
+        //         _booking_juniors: parseInt(req.body.line_items.find(item => item.name.includes('Junior'))?.quantity || 0),
+        //         _booking_seniors: parseInt(req.body.line_items.find(item => item.name.includes('Senior'))?.quantity || 0),
+        //         _FamilyPack: parseInt(req.body.line_items.find(item => item.name.includes('Family'))?.quantity || 0)
+        //     }
+        // };
+
+        // Start the booking automation
+        console.log('Starting booking automation process...');
+        const bookingResult = await alcatrazBookTour(orderData);
+        
+        if (bookingResult.success) {
+            console.log('Booking automation completed successfully');
+            res.status(200).json({
+                message: 'Webhook received and booking automation completed',
+                result: bookingResult
+            });
+        } else {
+            console.error('Booking automation failed:', bookingResult.error);
+            res.status(400).json({
+                message: 'Booking automation failed',
+                error: bookingResult.error,
+                errorScreenshot: bookingResult.errorScreenshot
+            });
+        }
+    } catch (error) {
+        console.error('Error processing webhook:', error);
+        res.status(500).json({
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'healthy' });
+});
+
+// Create HTTPS server with error handling
+try {
+    const server = https.createServer(sslOptions, app);
+    
+    server.listen(PORT, () => {
+        console.log(`HTTPS Server is running on port ${PORT}`);
+        console.log(`Webhook endpoint: https://localhost:${PORT}/webhook`);
+        console.log(`Health check endpoint: https://localhost:${PORT}/health`);
+    });
+
+    server.on('error', (error) => {
+        console.error('Server error:', error);
+        process.exit(1);
+    });
+} catch (error) {
+    console.error('Error creating HTTPS server:', error);
+    process.exit(1);
+}
