@@ -154,7 +154,7 @@ async function statueTicketingBookTour(bookingData) {
         
         // const timeSlotToSelect = '9:20 AM';
         const timeSlotToSelect = bookingData.bookingTime;
-        const timeSlot = frameHandle.getByRole('button').filter({ hasText: timeSlotToSelect }).first();
+        const timeSlot = frameHandle.getByRole('button').filter({ hasText: new RegExp(`^${timeSlotToSelect}\\b`) }).first();
         
         await expect(timeSlot).toBeVisible({timeout: 30000});
         await timeSlot.click();
@@ -441,7 +441,7 @@ async function statueTicketingBookTour(bookingData) {
         }
         const screenshotFileName =  bookingData.id + 'error-screenshot.png';
         const screenshotPath = path.join(errorsDir, screenshotFileName);
-        await page.screenshot({ path: screenshotPath });
+        await page.screenshot({ path: screenshotPath, fullPage: true });
 
         try {
             await sendEmail(
