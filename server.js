@@ -151,7 +151,7 @@ app.post('/webhook', async (req, res) => {
             });
         } else {
             console.error('Booking automation failed:', bookingResult.error);
-            res.status(400).json({
+            res.status(200).json({
                 message: 'Booking automation failed',
                 error: bookingResult.error,
                 errorScreenshot: bookingResult.errorScreenshot
@@ -159,7 +159,7 @@ app.post('/webhook', async (req, res) => {
         }
     } catch (error) {
         console.error('Error processing webhook:', error);
-        res.status(500).json({
+        res.status(200).json({
             message: 'Internal server error',
             error: error.message
         });
