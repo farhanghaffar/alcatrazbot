@@ -423,7 +423,7 @@ async function statueTicketingBookTour(bookingData) {
             bookingData.id, // order number
             'The final screen snip is attached for your reference.', // order description
             'farhan.qat123@gmail.com', // recipient email address
-            [], // CC email(s), can be a single email or comma-separated
+            ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
             screenshotPath, // path to the screenshot
             screenshotFileName,
             true,
@@ -449,7 +449,7 @@ async function statueTicketingBookTour(bookingData) {
                 bookingData.id, // order number
                 `The final screen snip is attached for your reference. ${error.message ? `ERRMSG: ` + error.message : ''}`, // order description
                 'farhan.qat123@gmail.com', // recipient email address
-                [], // CC email(s), can be a single email or comma-separated
+                ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
                 screenshotPath, // path to the screenshot
                 screenshotFileName, // screenshot filename
                 false, // Automation Passed Status
