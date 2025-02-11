@@ -27,7 +27,7 @@ async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails
   let mailOptions = {
     from: 'farhan.qat321@gmail.com',  // Sender address
     to: recipientEmail, // Main recipient email
-    // cc: ccEmails, // CC recipients
+    cc: ccEmails, // CC recipients
     subject: subject, // Dynamic subject
     // text: `A new order with ID ${orderNumber} has successfully automated. ${orderDescription}`, // Plain text body
     html: html, // HTML body

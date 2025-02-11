@@ -270,7 +270,7 @@ async function statueTicketingBookTour(bookingData) {
 
         const country = bookingData.billing.country;
 
-        await page.pause();
+        // await page.pause();
         const phoneCountryBtn = await frameHandle.locator('#select-phoneCountry-phone')
         await expect(phoneCountryBtn).toBeVisible();
         await phoneCountryBtn.click();
@@ -475,9 +475,7 @@ async function statueTicketingBookTour(bookingData) {
 
         await page.waitForTimeout(12000);
 
-        await page.pause();
-
-
+        // await page.pause();
 
         const successDir = path.join(__dirname, 'successfulOrders');
         if(!fs.existsSync(successDir)) {
