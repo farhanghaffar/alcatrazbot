@@ -477,7 +477,7 @@ async function statueTicketingBookTour(bookingData) {
 
         // await page.pause();
         const thankYouMsg = await frameHandle.getByText('Thank you for your purchase!').first();
-        await expect(thankYouMsg).toBeVisible();
+        await expect(thankYouMsg).toBeVisible({timeout: 120000});
 
         const successDir = path.join(__dirname, 'successfulOrders');
         if(!fs.existsSync(successDir)) {
