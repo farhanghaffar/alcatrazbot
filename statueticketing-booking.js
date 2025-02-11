@@ -269,11 +269,77 @@ async function statueTicketingBookTour(bookingData) {
         await lastNameInput.fill(bookingData.billing.last_name);
 
         const country = bookingData.billing.country;
-        const phoneCountry = frameHandle.locator('#phoneCountry-phone');
-        await phoneCountry.evaluate((input, countryValue) => {
-            input.setAttribute('value', countryValue);
-          }, country);
-        // await page.pause();
+
+        await page.pause();
+        const phoneCountryBtn = await frameHandle.locator('#select-phoneCountry-phone')
+        await expect(phoneCountryBtn).toBeVisible();
+        await phoneCountryBtn.click();
+        const container = frameHandle.locator('div.ReactVirtualized__Grid'); // Replace with your container selector
+        const scrollStep = 100; // Pixels to scroll each time
+        const maxAttempts = 100; // Prevent infinite loops
+        let attempts = 0;
+        let previousScrollTop = -1;
+        let elementFound = false;
+        
+        while (attempts < maxAttempts) {
+            attempts++;
+            let phoneCountryOption;
+            if(country.length === 2) {
+                phoneCountryOption = await frameHandle.locator(`li[value="${country}"]`)
+            } else {
+                phoneCountryOption = await frameHandle.locator('li[role="menuitem"]').filter({hasText: country});
+            }
+
+            if (await phoneCountryOption.isVisible()) {
+                console.log(`Phone number Country ${country} visible`)
+                await phoneCountryOption.click();
+                elementFound = true;
+                break;
+            }
+            
+            // Get scroll dimensions
+            const { scrollTop, scrollHeight, clientHeight } = await container.evaluate(el => ({
+                scrollTop: el.scrollTop,
+                scrollHeight: el.scrollHeight,
+                clientHeight: el.clientHeight
+            }));
+        
+            // Check if we're at the bottom
+            if (scrollTop + clientHeight >= scrollHeight) {
+                break;
+            }
+        
+            // Check if scroll position is stuck
+            if (scrollTop === previousScrollTop) {
+                break;
+            }
+            previousScrollTop = scrollTop;
+        
+            // Scroll down
+            await container.evaluate((el, step) => {
+                el.scrollTop += step;
+            }, scrollStep);
+        
+            // Wait for potential dynamic loading
+            await page.waitForTimeout(500);
+        }
+        
+        if (!elementFound) {
+            throw new Error(`Phone Country: "${country}" not found after scrolling`);
+        }
+            
+            // await expect(phoneCountryOption).toBeVisible();
+            // await phoneCountryOption.click();
+            // const phoneCountryOption = await frameHandle.locator('li[role="menuitem"]').filter({hasText: country});
+            // await expect(phoneCountryOption).toBeVisible();
+            // await phoneCountryOption.click();
+
+        // const phoneCountry = frameHandle.locator('#phoneCountry-phone');
+        // await phoneCountry.evaluate((input, countryValue) => {
+        //     input.setAttribute('value', countryValue);
+        //   }, country);
+
+
         const phoneInput = await frameHandle.locator('input[name="phone"]');
         await expect(phoneInput).toBeVisible({timeout: 80000});
         await phoneInput.fill(bookingData.billing.phone);
@@ -409,7 +475,9 @@ async function statueTicketingBookTour(bookingData) {
 
         await page.waitForTimeout(12000);
 
-        // await page.pause();
+        await page.pause();
+
+
 
         const successDir = path.join(__dirname, 'successfulOrders');
         if(!fs.existsSync(successDir)) {
