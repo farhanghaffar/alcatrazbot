@@ -220,6 +220,7 @@ async function statueTicketingBookTour(bookingData) {
         const checkoutNowBtn = await frameHandle.locator('[data-bdd="checkout-now-button"]').filter({hasText: 'Checkout Now'});
         await page.waitForTimeout(5000);
         const checkoutNowBtnVisible = await checkoutNowBtn.isVisible();
+        await page.waitForTimeout(6000);
         if(addToCartBtnVisible) {
             await addToCartBtn.click();
             await page.waitForSelector('iframe.zoid-component-frame', { timeout: 120000 });
