@@ -14,7 +14,7 @@ const launchOptions = {
     //     username: 'scrapeops.country=us',
     //     password: SCRAPEOPS_API_KEY
     // },
-    headless: true,
+    headless: false,
     timeout: 55000,
     // ignoreHTTPSErrors: true,
 };

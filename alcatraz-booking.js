@@ -23,6 +23,7 @@ async function alcatrazBookTour(bookingData) {
     const browser = await chromium.launch(launchOptions);
     const context = await browser.newContext({
         viewport: { width: 1280, height: 720 },
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         // ignoreHTTPSErrors: true,
     });
     const page = await context.newPage();
@@ -132,7 +133,7 @@ async function alcatrazBookTour(bookingData) {
             console.log(`Successfully selected date ${targetDay}`);
         }
         const showMoreTimesButton = frameHandle.getByRole('button').filter({ hasText: 'Show more times' }).first();
-        
+        await page.waitForTimeout(3000);
         const isButtonVisible = await showMoreTimesButton.isVisible()
         if (isButtonVisible) {
             console.log('Found Show More Times button, clicking it...');
@@ -142,7 +143,7 @@ async function alcatrazBookTour(bookingData) {
         
         // const timeSlotToSelect = '9:20 AM';
         const timeSlotToSelect = bookingData.bookingTime;
-        const timeSlot = frameHandle.getByRole('button').filter({ hasText: timeSlotToSelect }).first();
+        const timeSlot = frameHandle.getByRole('button').filter({ hasText: new RegExp(`^${timeSlotToSelect}\\s*`) }).first();
         
         const adultTicketSelectionDiv = frameHandle.locator(`.ticket-qty-selector-item`).filter({hasText: 'Adult', has: frameHandle.locator('button[data-bdd="increment-button"]').first()});
         await expect(adultTicketSelectionDiv.first()).toBeVisible({timeout: 80000});
@@ -207,7 +208,9 @@ async function alcatrazBookTour(bookingData) {
         const addToCartBtn = await frameHandle.locator(`[data-bdd="add-to-cart-button"]`).getByText('Add to Cart'); 
         const addToCartBtnVisible = await addToCartBtn.isVisible({timeout: 120000});
         const checkoutNowBtn = await frameHandle.locator('[data-bdd="checkout-now-button"]').filter({hasText: 'Checkout Now'});
+        await page.waitForTimeout(5000);
         const checkoutNowBtnVisible = await checkoutNowBtn.isVisible();
+        await page.waitForTimeout(6000);
         if(addToCartBtnVisible) {
             await addToCartBtn.click();
             await page.waitForSelector('iframe.zoid-component-frame', { timeout: 120000 });
@@ -224,7 +227,7 @@ async function alcatrazBookTour(bookingData) {
         await expect(page).toHaveURL(/checkout/, { timeout: 120000});   
         console.log('Successfully reached checkout page');
         const emailInput = await frameHandle.locator('input[name="email"]');
-        await expect(emailInput).toBeVisible({timeout: 80000});
+        await expect(emailInput).toBeVisible({timeout: 120000});
         await emailInput.fill(bookingData.billing.email);
         console.log('Email filled');
         const continueButton2 = await frameHandle.locator('button').filter({ hasText: 'Continue' }).first();
@@ -257,20 +260,78 @@ async function alcatrazBookTour(bookingData) {
         await lastNameInput.fill(bookingData.billing.last_name);
         
         const country = bookingData.billing.country;
-        const phoneCountry = frameHandle.locator('#phoneCountry-phone');
-        await phoneCountry.evaluate((input, countryValue) => {
-            input.setAttribute('value', countryValue);
-          }, country);
-        await page.pause();
+        // await page.pause();
+        const phoneCountryBtn = await frameHandle.locator('#select-phoneCountry-phone')
+        await expect(phoneCountryBtn).toBeVisible();
+        await phoneCountryBtn.click();
+        const container = frameHandle.locator('div.ReactVirtualized__Grid'); // Replace with your container selector
+        const scrollStep = 100; // Pixels to scroll each time
+        const maxAttempts = 100; // Prevent infinite loops
+        let attempts = 0;
+        let previousScrollTop = -1;
+        let elementFound = false;
+
+        while (attempts < maxAttempts) {
+            attempts++;
+            let phoneCountryOption;
+            if (country.length === 2) {
+                phoneCountryOption = await frameHandle.locator(`li[value="${country}"]`)
+            } else {
+                phoneCountryOption = await frameHandle.locator('li[role="menuitem"]').filter({ hasText: country });
+            }
+
+            if (await phoneCountryOption.isVisible()) {
+                console.log(`Phone number Country ${country} visible`)
+                await phoneCountryOption.click();
+                elementFound = true;
+                break;
+            }
+
+            // Get scroll dimensions
+            const { scrollTop, scrollHeight, clientHeight } = await container.evaluate(el => ({
+                scrollTop: el.scrollTop,
+                scrollHeight: el.scrollHeight,
+                clientHeight: el.clientHeight
+            }));
+
+            // Check if we're at the bottom
+            if (scrollTop + clientHeight >= scrollHeight) {
+                break;
+            }
+
+            // Check if scroll position is stuck
+            if (scrollTop === previousScrollTop) {
+                break;
+            }
+            previousScrollTop = scrollTop;
+
+            // Scroll down
+            await container.evaluate((el, step) => {
+                el.scrollTop += step;
+            }, scrollStep);
+
+            // Wait for potential dynamic loading
+            await page.waitForTimeout(500);
+        }
+
+        if (!elementFound) {
+            throw new Error(`Phone Country: "${country}" not found after scrolling`);
+        }
+        
         const phoneInput = await frameHandle.locator('input[name="phone"]');
         await expect(phoneInput).toBeVisible({timeout: 80000});
         await phoneInput.fill(bookingData.billing.phone);
 
         const countrySelectElement = await frameHandle.locator('select[name="country"]');
         await expect(countrySelectElement).toBeVisible({timeout: 80000});
-        await countrySelectElement.selectOption(bookingData.billing.country.toUpperCase());
-        const countrySelectElementValue = await countrySelectElement.inputValue();
-        await expect(countrySelectElementValue).toBe(bookingData.billing.country.toUpperCase());
+        if(bookingData.billing.country.length === 2) {
+            await countrySelectElement.selectOption(bookingData.billing.country.toUpperCase());
+            const countrySelectElementValue = await countrySelectElement.inputValue();
+            await expect(countrySelectElementValue).toBe(bookingData.billing.country.toUpperCase());
+        } else {
+            const countryValue = toTitleCase(bookingData.billing.country);
+            await countrySelectElement.selectOption(countryValue);
+        }
 
         await page.pause();
         const addressInput = await frameHandle.locator('input[name="address"]');
@@ -285,9 +346,14 @@ async function alcatrazBookTour(bookingData) {
         const stateSelectElement = await frameHandle.locator('select[name="state"]');
         const stateVisible = await stateSelectElement.isVisible();
         if(stateVisible) {
-            await stateSelectElement.selectOption(state);
-            const stateSelectElementValue = await stateSelectElement.inputValue();
-            await expect(stateSelectElementValue).toBe(state);
+            if(state.length === 2) {
+                await stateSelectElement.selectOption(state);
+                const stateSelectElementValue = await stateSelectElement.inputValue();
+                await expect(stateSelectElementValue).toBe(state);
+            } else {
+                const stateValue = toTitleCase(state);
+                await stateSelectElement.selectOption(stateValue);
+            }
         }
         
         await page.pause();
@@ -296,7 +362,6 @@ async function alcatrazBookTour(bookingData) {
         await postalCodeInput.fill(bookingData.billing.postcode);
 
         await page.pause();
-
 
         const TNCRadioElement = frameHandle.locator('#checkoutTermsAndConditions');
         const TNCExist = await TNCRadioElement.isVisible();
@@ -332,6 +397,9 @@ async function alcatrazBookTour(bookingData) {
 
         const cardNameInput = nestedIframe.locator('.creNameField');
         await expect(cardNameInput).toBeVisible({timeout: 30000});
+        await page.waitForTimeout(2500);
+        await cardNameInput.clear()
+        await page.waitForTimeout(1000);
         await typeWithDelay(cardNameInput, cardInfo.cardName);
     
         // Card Zip
@@ -389,6 +457,7 @@ async function alcatrazBookTour(bookingData) {
         const completeBtn = await nestedIframe.getByRole('button').filter({hasText: 'Complete'});
         await expect(completeBtn).toBeVisible();
         await completeBtn.click(); 
+        console.log('Clicked Complete Button');
 
         await page.waitForTimeout(12000);
         const errorMsg = await frameHandle.getByText('Oops... something went wrong.');
@@ -400,6 +469,8 @@ async function alcatrazBookTour(bookingData) {
         await page.waitForTimeout(12000);
 
         await page.pause();
+        const thankYouMsg = await frameHandle.getByText('Thank you for your purchase!').first();
+        await expect(thankYouMsg).toBeVisible({timeout: 120000});
 
         const successDir = path.join(__dirname, 'successfulOrders');
         if(!fs.existsSync(successDir)) {
@@ -413,7 +484,7 @@ async function alcatrazBookTour(bookingData) {
             bookingData.id, // order number
             'The final screen snip is attached for your reference.', // order description
             'farhan.qat123@gmail.com', // recipient email address
-            [], // CC email(s), can be a single email or comma-separated
+            [], // CC email(s), can be a single email or comma-separated multiple mails
             screenshotPath, // path to the screenshot
             screenshotFileName,
             true,
@@ -432,7 +503,7 @@ async function alcatrazBookTour(bookingData) {
         }
         const screenshotFileName =  bookingData.id + 'error-screenshot.png';
         const screenshotPath = path.join(errorsDir, screenshotFileName);
-        await page.screenshot({ path: screenshotPath });
+        await page.screenshot({ path: screenshotPath, fullPage: true  });
 
         try {
             await sendEmail(

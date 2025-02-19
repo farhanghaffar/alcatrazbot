@@ -180,7 +180,7 @@ app.post('/alcatraz-webhook', async (req, res) => {
             tourType: reqBody?.line_items[0]?.name,
             bookingDate: '',
             bookingTime: '',
-            // personNames: [],
+            personNames: [],
             adults: 0,
             childs: 0,
             juniors: 0,
