@@ -333,7 +333,7 @@ async function alcatrazBookTour(bookingData) {
             await countrySelectElement.selectOption(countryValue);
         }
 
-        await page.pause();
+        // await page.pause();
         const addressInput = await frameHandle.locator('input[name="address"]');
         await expect(addressInput).toBeVisible({timeout: 80000});
         await addressInput.fill(bookingData.billing.address_2 + bookingData.billing.address_1);
@@ -356,12 +356,12 @@ async function alcatrazBookTour(bookingData) {
             }
         }
         
-        await page.pause();
+        // await page.pause();
         const postalCodeInput = await frameHandle.locator('input[name="postalCode"]');
         await expect(postalCodeInput).toBeVisible({timeout: 80000});
         await postalCodeInput.fill(bookingData.billing.postcode);
 
-        await page.pause();
+        // await page.pause();
 
         const TNCRadioElement = frameHandle.locator('#checkoutTermsAndConditions');
         const TNCExist = await TNCRadioElement.isVisible();
@@ -451,7 +451,7 @@ async function alcatrazBookTour(bookingData) {
         await expect(captchaVerifiedMsg).toBeVisible({timeout: 60000});
         console.log('Captcha Verified');
 
-        await page.pause();
+        // await page.pause();
         await page.waitForTimeout(5000);
 
         const completeBtn = await nestedIframe.getByRole('button').filter({hasText: 'Complete'});
@@ -468,7 +468,7 @@ async function alcatrazBookTour(bookingData) {
 
         await page.waitForTimeout(12000);
 
-        await page.pause();
+        // await page.pause();
         const thankYouMsg = await frameHandle.getByText('Thank you for your purchase!').first();
         await expect(thankYouMsg).toBeVisible({timeout: 120000});
 
@@ -484,13 +484,13 @@ async function alcatrazBookTour(bookingData) {
             bookingData.id, // order number
             'The final screen snip is attached for your reference.', // order description
             'farhan.qat123@gmail.com', // recipient email address
-            [], // CC email(s), can be a single email or comma-separated multiple mails
+            ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
             screenshotPath, // path to the screenshot
             screenshotFileName,
             true,
           );
 
-        await page.pause();
+        // await page.pause();
 
         return {
             success: true
@@ -510,7 +510,7 @@ async function alcatrazBookTour(bookingData) {
                 bookingData.id, // order number
                 `The final screen snip is attached for your reference. ${error.message ? `ERRMSG: ` + error.message : ''}`, // order description
                 'farhan.qat123@gmail.com', // recipient email address
-                [], // CC email(s), can be a single email or comma-separated
+                ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
                 screenshotPath, // path to the screenshot
                 screenshotFileName, // screenshot filename
                 false, // Automation Passed Status
