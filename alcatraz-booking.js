@@ -103,31 +103,44 @@ async function alcatrazBookTour(bookingData) {
             console.log('Different month or year, calculating months to navigate');
             const monthsDiff = (targetYear - currentYear) * 12 + (dateObject.getMonth() - new Date().getMonth());
             console.log(`Need to move forward ${monthsDiff} months`);
-            
+
             for (let i = 0; i < monthsDiff; i++) {
                 const nextMonthButton = frameHandle.getByRole('button', { 
                     name: 'Move forward to switch to the next month.' 
                 }).locator('svg');
+                
                 await nextMonthButton.click();
                 await page.waitForTimeout(1000);
                 console.log(`Moved forward month ${i + 1} of ${monthsDiff}`);
+
+                // Check if the target month is now visible
+                const isTargetMonthVisible = await frameHandle.locator('.CalendarMonth_caption strong')
+                    .filter({ hasText: `${targetMonth} ${targetYear}` })
+                    .isVisible();
+
+                if (isTargetMonthVisible) {
+                    console.log(`Target month ${targetMonth} ${targetYear} is visible, stopping navigation`);
+                    break; // Exit the loop early as the correct month is found
+                }
             }
             console.log('Loop Exited');
 
+            // Verify final month selection
             await expect(frameHandle.locator('.CalendarMonth_caption strong')
                 .filter({ hasText: `${targetMonth} ${targetYear}` }))
                 .toBeVisible();
             console.log(`Verified calendar shows ${targetMonth} ${targetYear}`);
 
             console.log(targetDay, `day to select`);
-            const dateCell = frameHandle.getByRole('presentation').locator(`.CalendarDay`).filter({hasText: `${targetDay}`}).first();
-            await expect(dateCell).toBeVisible()
-            const dataCellAttributes = await dateCell.getAttribute('class')
-            if(dataCellAttributes.includes('CalendarDay__blocked_calendar')) {
+            const dateCell = frameHandle.getByRole('presentation').locator(`.CalendarDay`).filter({ hasText: `${targetDay}` }).first();
+            await expect(dateCell).toBeVisible();
+
+            const dataCellAttributes = await dateCell.getAttribute('class');
+            if (dataCellAttributes.includes('CalendarDay__blocked_calendar')) {
                 throw new Error('Date not available');
             }
             await dateCell.click();
-            
+
             await expect(frameHandle.getByRole('presentation').locator(`td.CalendarDay__selected:has(span:text("${targetDay}"))`))
                 .toBeVisible();
             console.log(`Successfully selected date ${targetDay}`);
