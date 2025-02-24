@@ -127,21 +127,15 @@ app.post('/webhook', async (req, res) => {
 
         console.log('After manipulation, data is: ', orderData);
 
-        // Extract relevant data from WooCommerce order
-        // const orderData = {
-        //     email: req.body.billing.email,
-        //     tickets: {
-        //         _booking_adults: parseInt(req.body.line_items.find(item => item.name.includes('Adult'))?.quantity || 0),
-        //         _booking_children: parseInt(req.body.line_items.find(item => item.name.includes('Child'))?.quantity || 0),
-        //         _booking_juniors: parseInt(req.body.line_items.find(item => item.name.includes('Junior'))?.quantity || 0),
-        //         _booking_seniors: parseInt(req.body.line_items.find(item => item.name.includes('Senior'))?.quantity || 0),
-        //         _FamilyPack: parseInt(req.body.line_items.find(item => item.name.includes('Family'))?.quantity || 0)
-        //     }
-        // };
-
-        // Start the booking automation
         console.log('Starting booking automation process...');
-        const bookingResult = await statueTicketingBookTour(orderData);
+        let tries = 0;
+        let bookingResult = await statueTicketingBookTour(orderData, tries);
+
+        // Retry booking if there is an error other than "Payment not completed" only once
+        if(tries == 0 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')){
+            tries++;
+            bookingResult = await statueTicketingBookTour(orderData, tries);
+        }
         
         if (bookingResult.success) {
             console.log('Booking automation completed successfully');
@@ -166,7 +160,7 @@ app.post('/webhook', async (req, res) => {
     }
 });
 
-// Webhook endpoint with verification | https://alcatraz.click/
+// Webhook endpoint with verification | https://www.alcatrazticketing.com/
 app.post('/alcatraz-webhook', async (req, res) => {
     // console.log('Received WooCommerce webhook:', req.headers['x-wc-webhook-topic']);
     console.log('Order data:', JSON.stringify(req.body));
@@ -245,22 +239,15 @@ app.post('/alcatraz-webhook', async (req, res) => {
 
         console.log('After manipulation, data is: ', orderData);
 
-        // Extract relevant data from WooCommerce order
-        // const orderData = {
-        //     email: req.body.billing.email,
-        //     tickets: {
-        //         _booking_adults: parseInt(req.body.line_items.find(item => item.name.includes('Adult'))?.quantity || 0),
-        //         _booking_children: parseInt(req.body.line_items.find(item => item.name.includes('Child'))?.quantity || 0),
-        //         _booking_juniors: parseInt(req.body.line_items.find(item => item.name.includes('Junior'))?.quantity || 0),
-        //         _booking_seniors: parseInt(req.body.line_items.find(item => item.name.includes('Senior'))?.quantity || 0),
-        //         _FamilyPack: parseInt(req.body.line_items.find(item => item.name.includes('Family'))?.quantity || 0)
-        //     }
-        // };
-
-        // Start the booking automation
         console.log('Starting booking automation process...');
-        const bookingResult = await alcatrazBookTour(orderData);
+        let tries = 0;
+        const bookingResult = await alcatrazBookTour(orderData, tries);
         
+        if(tries == 0 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')){
+            tries++;
+            bookingResult = await statueTicketingBookTour(orderData, tries);
+        }
+
         if (bookingResult.success) {
             console.log('Booking automation completed successfully');
             res.status(200).json({

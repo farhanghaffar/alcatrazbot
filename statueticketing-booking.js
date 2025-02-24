@@ -19,7 +19,7 @@ const launchOptions = {
     // ignoreHTTPSErrors: true,
 };
 
-async function statueTicketingBookTour(bookingData) {
+async function statueTicketingBookTour(bookingData, tries) {
 
     const browser = await chromium.launch(launchOptions);
 
@@ -469,8 +469,12 @@ async function statueTicketingBookTour(bookingData) {
         
         await page.waitForTimeout(12000);
         const errorMsg = await frameHandle.getByText('Oops... something went wrong.');
-        const errorMsgVisible = await errorMsg.isVisible()
-        if(errorMsgVisible) {
+        const errorMsgVisible = await errorMsg.isVisible();
+
+        const paymentError = await frameHandle.getByText('An error occured while processing your payment.');
+        const paymentErrorVisible = await paymentError.isVisible();
+        
+        if(errorMsgVisible || paymentErrorVisible) {
             throw new Error('Payment not completed');
         }
 
@@ -490,9 +494,10 @@ async function statueTicketingBookTour(bookingData) {
 
         await sendEmail(
             bookingData.id, // order number
-            'The final screen snip is attached for your reference.', // order description
+            `Try ${tries + 1}. The final screen snip is attached for your reference.`, // order description
             'farhan.qat123@gmail.com', // recipient email address
             ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
+            // [], // CC email(s), can be a single email or comma-separated
             screenshotPath, // path to the screenshot
             screenshotFileName,
             true,
@@ -516,9 +521,10 @@ async function statueTicketingBookTour(bookingData) {
         try {
             await sendEmail(
                 bookingData.id, // order number
-                `The final screen snip is attached for your reference. ${error.message ? `ERRMSG: ` + error.message : ''}`, // order description
+                `Try ${tries + 1}.The final screen snip is attached for your reference. ${error.message ? `ERRMSG: ` + error.message : ''}`, // order description
                 'farhan.qat123@gmail.com', // recipient email address
                 ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
+                // [], // CC email(s), can be a single email or comma-separated
                 screenshotPath, // path to the screenshot
                 screenshotFileName, // screenshot filename
                 false, // Automation Passed Status
