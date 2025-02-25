@@ -129,7 +129,7 @@ app.post('/webhook', async (req, res) => {
 
         console.log('Starting booking automation process...');
         let tries = 0;
-        let maxRetries = 2;
+        let maxRetries = 3;
         let bookingResult = await statueTicketingBookTour(orderData, tries);
 
         // Retry logic
@@ -243,7 +243,7 @@ app.post('/alcatraz-webhook', async (req, res) => {
 
         console.log('Starting booking automation process...');
         let tries = 0;
-        let maxRetries = 2;
+        let maxRetries = 3;
         const bookingResult = await alcatrazBookTour(orderData, tries);
         
         // Retry logic
