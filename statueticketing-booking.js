@@ -62,13 +62,13 @@ async function statueTicketingBookTour(bookingData, tries) {
         }
         
         await page.goto(tourURL, {
-            timeout: 180000,
+            timeout: 300000,
             waitUntil: 'domcontentloaded'
         });
         
         console.log('Page loaded, looking for Check Availability button...');
         const checkAvailabilityButton = await page.locator('a.ce-book-now-action:has-text("Check Availability")').first();
-        await expect(checkAvailabilityButton).toBeVisible({timeout: 250000});
+        await expect(checkAvailabilityButton).toBeVisible({timeout: 300000});
         const checkAvailabilityButtonVisible = await checkAvailabilityButton.isVisible();
         if (!checkAvailabilityButtonVisible) {
             throw new Error('Check Availability button not found');
