@@ -341,18 +341,6 @@ async function statueTicketingBookTour(bookingData, tries) {
         if (!elementFound) {
             throw new Error(`Phone Country: "${country}" not found after scrolling`);
         }
-            
-            // await expect(phoneCountryOption).toBeVisible();
-            // await phoneCountryOption.click();
-            // const phoneCountryOption = await frameHandle.locator('li[role="menuitem"]').filter({hasText: country});
-            // await expect(phoneCountryOption).toBeVisible();
-            // await phoneCountryOption.click();
-
-        // const phoneCountry = frameHandle.locator('#phoneCountry-phone');
-        // await phoneCountry.evaluate((input, countryValue) => {
-        //     input.setAttribute('value', countryValue);
-        //   }, country);
-
 
         const phoneInput = await frameHandle.locator('input[name="phone"]');
         await expect(phoneInput).toBeVisible({timeout: 80000});
@@ -454,20 +442,48 @@ async function statueTicketingBookTour(bookingData, tries) {
         await page.waitForTimeout(5000);
         const captchaFrame = nestedIframe.frameLocator('#mtcaptcha-iframe-1');
         const captchaImg = captchaFrame.locator('img[aria-label="captcha image."]');
-        const imgSrc = await captchaImg.getAttribute('src');
+        let imgSrc = await captchaImg.getAttribute('src');
 
         const captchaInput = await captchaFrame.locator('input[placeholder="Enter text from image"]');
 
-        const captchaResult = await solver.imageCaptcha({
+        let captchaResult = await solver.imageCaptcha({
             body: imgSrc,
         })
 
         console.log(captchaResult);
         await typeWithDelay(captchaInput, captchaResult.data);
-        // await captchaInput.fill(captchaResult.data);
         await cardNameInput.click();
 
         const captchaVerifiedMsg = captchaFrame.getByRole('paragraph').filter({hasText: 'Verified Successfully'});
+        await page.waitForTimeout(3000);
+        let captchaVerified = await captchaVerifiedMsg.isVisible();
+        if(!captchaVerified) {
+            console.log('Captcha try #2');
+            await captchaInput.clear();
+            imgSrc = await captchaImg.getAttribute('src');
+            captchaResult = await solver.imageCaptcha({
+                body: imgSrc,
+            })
+
+            console.log(captchaResult);
+            await typeWithDelay(captchaInput, captchaResult.data);
+            await cardNameInput.click();
+            await page.waitForTimeout(3000);
+            captchaVerified = await captchaVerifiedMsg.isVisible();
+            if(!captchaVerified) {
+                console.log('Captcha try #3');
+                await captchaInput.clear();
+                imgSrc = await captchaImg.getAttribute('src');
+                captchaResult = await solver.imageCaptcha({
+                    body: imgSrc,
+                })
+    
+                console.log(captchaResult);
+                await typeWithDelay(captchaInput, captchaResult.data);
+                await cardNameInput.click();
+            }
+        }
+
         await expect(captchaVerifiedMsg).toBeVisible({timeout: 60000});
         console.log('Captcha Verified')
 

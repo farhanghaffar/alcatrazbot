@@ -98,7 +98,7 @@ function formatCardDate(inputDate) {
   return { cardMonth: month, cardYear: fullYear };
 }
 
-async function typeWithDelay(locator, text, maxDelay = 5000) {
+async function typeWithDelay(locator, text, maxDelay = 3000) {
   for (let i = 0; i < text.length; i++) {
       await locator.type(text[i], {
           delay: Math.random() * maxDelay, // Random delay up to `maxDelay`

@@ -129,11 +129,13 @@ app.post('/webhook', async (req, res) => {
 
         console.log('Starting booking automation process...');
         let tries = 0;
+        let maxRetries = 2;
         let bookingResult = await statueTicketingBookTour(orderData, tries);
 
-        // Retry booking if there is an error other than "Payment not completed" only once
-        if(tries == 0 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')){
+        // Retry logic
+        while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')) {
             tries++;
+            console.log(`Retry attempt #${tries}...`);
             bookingResult = await statueTicketingBookTour(orderData, tries);
         }
         
@@ -241,11 +243,14 @@ app.post('/alcatraz-webhook', async (req, res) => {
 
         console.log('Starting booking automation process...');
         let tries = 0;
+        let maxRetries = 2;
         const bookingResult = await alcatrazBookTour(orderData, tries);
         
-        if(tries == 0 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')){
+        // Retry logic
+        while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')) {
             tries++;
-            bookingResult = await statueTicketingBookTour(orderData, tries);
+            console.log(`Retry attempt #${tries}...`);
+            bookingResult = await alcatrazBookTour(orderData, tries);
         }
 
         if (bookingResult.success) {
