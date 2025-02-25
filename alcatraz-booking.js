@@ -19,7 +19,7 @@ const launchOptions = {
     // ignoreHTTPSErrors: true,
 };
 
-async function alcatrazBookTour(bookingData) {
+async function alcatrazBookTour(bookingData, tries) {
     const browser = await chromium.launch(launchOptions);
     const context = await browser.newContext({
         viewport: { width: 1280, height: 720 },
