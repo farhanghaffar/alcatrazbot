@@ -244,7 +244,7 @@ app.post('/alcatraz-webhook', async (req, res) => {
         console.log('Starting booking automation process...');
         let tries = 0;
         let maxRetries = 3;
-        const bookingResult = await alcatrazBookTour(orderData, tries);
+        let bookingResult = await alcatrazBookTour(orderData, tries);
         
         // Retry logic
         while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')) {
