@@ -283,6 +283,7 @@ async function statueTicketingBookTour(bookingData, tries) {
         await lastNameInput.fill(bookingData.billing.last_name);
 
         const country = bookingData.billing.country;
+        const phoneNumberCountry = 'United States';
 
         // await page.pause();
         const phoneCountryBtn = await frameHandle.locator('#select-phoneCountry-phone')
@@ -299,13 +300,13 @@ async function statueTicketingBookTour(bookingData, tries) {
             attempts++;
             let phoneCountryOption;
             if(country.length === 2) {
-                phoneCountryOption = await frameHandle.locator(`li[value="${country}"]`)
+                phoneCountryOption = await frameHandle.locator(`li[value="${phoneNumberCountry}"]`)
             } else {
-                phoneCountryOption = await frameHandle.locator('li[role="menuitem"]').filter({hasText: country});
+                phoneCountryOption = await frameHandle.locator('li[role="menuitem"]').filter({hasText: phoneNumberCountry});
             }
 
             if (await phoneCountryOption.isVisible()) {
-                console.log(`Phone number Country ${country} visible`)
+                console.log(`Phone number Country ${phoneNumberCountry} visible`)
                 await phoneCountryOption.click();
                 elementFound = true;
                 break;
@@ -339,12 +340,15 @@ async function statueTicketingBookTour(bookingData, tries) {
         }
         
         if (!elementFound) {
-            throw new Error(`Phone Country: "${country}" not found after scrolling`);
+            throw new Error(`Phone Country: "${phoneNumberCountry}" not found after scrolling`);
         }
 
         const phoneInput = await frameHandle.locator('input[name="phone"]');
         await expect(phoneInput).toBeVisible({timeout: 80000});
-        await phoneInput.fill(bookingData.billing.phone);
+        // await phoneInput.fill(bookingData.billing.phone);
+        const phoneNumber = '345' + String(Math.floor(Math.random() * 10000000)).padStart(7, '0');
+        console.log('Phone Number being entered :', phoneNumber);
+        await phoneInput.fill(phoneNumber);
 
         const countrySelectElement = await frameHandle.locator('select[name="country"]');
         // await page.pause();
