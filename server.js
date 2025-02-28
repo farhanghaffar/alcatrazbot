@@ -46,13 +46,12 @@ const verifyWooCommerceWebhook = (req, res, next) => {
 
 // Webhook endpoint with verification | https://www.statueticketing.com/
 app.post('/webhook', async (req, res) => {
-    // console.log('Received WooCommerce webhook:', req.headers['x-wc-webhook-topic']);
     console.log('Order data:', JSON.stringify(req.body));
     
     const reqBody = req.body;
 
     try {
-        // Extract relavant data from WooCommerce order
+        // Extract relevant data from WooCommerce order
         const orderData = {
             id: reqBody.id,
             tourType: '',
@@ -81,39 +80,40 @@ app.post('/webhook', async (req, res) => {
                 email: reqBody?.billing?.email,
                 phone: reqBody?.billing?.phone
             },
-        }
+        };
 
         reqBody?.line_items[0]?.meta_data.forEach(item => {
             switch (item.key) {
-            case 'Tour Type':
-                orderData.tourType = item?.value;
-                break;
-            case 'Booking Date':
-                orderData.bookingDate = item?.value;
-                break;
-            case 'Booking Time':
-                orderData.bookingTime = item?.value;
-                break;
-            case 'Person Names':
-                orderData.personNames = item?.value.split(', ').map(name => name.trim());
-                break;
-            default:
-                // Check for keywords "child", "adult", "military" and "senior" in the key to update counts
-                if (item.key.toLowerCase().includes('child')) {
-                    const childCount = item?.value.split(' x ')[0];
-                    orderData.childs = parseInt(childCount, 10);
-                } else if (item.key.toLowerCase().includes('senior')) {
-                    const seniorCount = item?.value.split(' x ')[0];
-                    orderData.seniors = parseInt(seniorCount, 10);
-                } else if (item.key.toLowerCase().includes('adult')) {
-                    const adultCount = item?.value.split(' x ')[0];
-                    orderData.adults = parseInt(adultCount, 10);
-                }else if (item.key.toLowerCase().includes('military')) {
-                    const militaryCount = item?.value.split(' x ')[0];
-                    orderData.military = parseInt(militaryCount, 10);
-                }
-                break;
-        }});
+                case 'Tour Type':
+                    orderData.tourType = item?.value;
+                    break;
+                case 'Booking Date':
+                    orderData.bookingDate = item?.value;
+                    break;
+                case 'Booking Time':
+                    orderData.bookingTime = item?.value;
+                    break;
+                case 'Person Names':
+                    orderData.personNames = item?.value.split(', ').map(name => name.trim());
+                    break;
+                default:
+                    // Check for keywords "child", "adult", "military", and "senior" in the key to update counts
+                    if (item.key.toLowerCase().includes('child')) {
+                        const childCount = item?.value.split(' x ')[0];
+                        orderData.childs = parseInt(childCount, 10);
+                    } else if (item.key.toLowerCase().includes('senior')) {
+                        const seniorCount = item?.value.split(' x ')[0];
+                        orderData.seniors = parseInt(seniorCount, 10);
+                    } else if (item.key.toLowerCase().includes('adult')) {
+                        const adultCount = item?.value.split(' x ')[0];
+                        orderData.adults = parseInt(adultCount, 10);
+                    } else if (item.key.toLowerCase().includes('military')) {
+                        const militaryCount = item?.value.split(' x ')[0];
+                        orderData.military = parseInt(militaryCount, 10);
+                    }
+                    break;
+            }
+        });
 
         reqBody.meta_data.forEach(item => {
             if (item.key.toLowerCase() === 'credit_card_cvc') {
@@ -127,9 +127,15 @@ app.post('/webhook', async (req, res) => {
 
         console.log('After manipulation, data is: ', orderData);
 
-        console.log('Starting booking automation process...');
+        // Send response immediately to avoid webhook timeouts
+        res.status(200).json({
+            message: 'Webhook received. Processing in background.'
+        });
+
+        // Now, run the automation process in the background.
+        // (Optionally, wrap the background processing in setImmediate if you want to decouple further.)
         let tries = 0;
-        let maxRetries = 3;
+        const maxRetries = 3;
         let bookingResult = await statueTicketingBookTour(orderData, tries);
 
         // Retry logic
@@ -141,36 +147,23 @@ app.post('/webhook', async (req, res) => {
         
         if (bookingResult.success) {
             console.log('Booking automation completed successfully');
-            res.status(200).json({
-                message: 'Webhook received and booking automation completed',
-                result: bookingResult
-            });
         } else {
             console.error('Booking automation failed:', bookingResult.error);
-            res.status(200).json({
-                message: 'Booking automation failed',
-                error: bookingResult.error,
-                errorScreenshot: bookingResult.errorScreenshot
-            });
         }
     } catch (error) {
         console.error('Error processing webhook:', error);
-        res.status(200).json({
-            message: 'Internal server error',
-            error: error.message
-        });
+        // Response already sent, so you can log the error.
     }
 });
 
 // Webhook endpoint with verification | https://www.alcatrazticketing.com/
 app.post('/alcatraz-webhook', async (req, res) => {
-    // console.log('Received WooCommerce webhook:', req.headers['x-wc-webhook-topic']);
     console.log('Order data:', JSON.stringify(req.body));
     
     const reqBody = req.body;
 
     try {
-        // Extract relavant data from WooCommerce order
+        // Extract relevant data from WooCommerce order
         const orderData = {
             id: reqBody.id,
             tourType: reqBody?.line_items[0]?.name,
@@ -199,35 +192,36 @@ app.post('/alcatraz-webhook', async (req, res) => {
                 email: reqBody?.billing?.email,
                 phone: reqBody?.billing?.phone
             },
-        }
+        };
 
         reqBody?.line_items[0]?.meta_data.forEach(item => {
             switch (item.key) {
-            case '_booking_tourType':
-                orderData.tourType += ' ' + item?.value;
-                break;
-            case '_booking_date':
-                orderData.bookingDate = item?.value;
-                break;
-            case '_booking_time':
-                orderData.bookingTime = item?.value;
-                break;
-            // case 'Person Names':
-            //     orderData.personNames = item?.value.split(', ').map(name => name.trim());
-            //     break;
-            default:
-                // Check for keywords "child", "adult", "juniors" and "senior" in the key to update counts
-                if (item.key.toLowerCase() === '_booking_children') {
-                    orderData.childs = parseInt(item.value, 10);
-                } else if (item.key.toLowerCase() === '_booking_seniors') {
-                    orderData.seniors = parseInt(item.value, 10);
-                } else if (item.key.toLowerCase() === '_booking_adults') {
-                    orderData.adults = parseInt(item.value, 10);
-                } else if (item.key.toLowerCase() === '_booking_juniors') {
-                    orderData.juniors = parseInt(item.value, 10);
-                }
-                break;
-        }});
+                case '_booking_tourType':
+                    orderData.tourType += ' ' + item?.value;
+                    break;
+                case '_booking_date':
+                    orderData.bookingDate = item?.value;
+                    break;
+                case '_booking_time':
+                    orderData.bookingTime = item?.value;
+                    break;
+                // case 'Person Names':
+                //     orderData.personNames = item?.value.split(', ').map(name => name.trim());
+                //     break;
+                default:
+                    // Check for keywords "child", "adult", "juniors" and "senior" in the key to update counts
+                    if (item.key.toLowerCase() === '_booking_children') {
+                        orderData.childs = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === '_booking_seniors') {
+                        orderData.seniors = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === '_booking_adults') {
+                        orderData.adults = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === '_booking_juniors') {
+                        orderData.juniors = parseInt(item.value, 10);
+                    }
+                    break;
+            }
+        });
 
         reqBody.meta_data.forEach(item => {
             if (item.key.toLowerCase() === 'credit_card_cvc') {
@@ -241,35 +235,38 @@ app.post('/alcatraz-webhook', async (req, res) => {
 
         console.log('After manipulation, data is: ', orderData);
 
-        console.log('Starting booking automation process...');
-        let tries = 0;
-        let maxRetries = 3;
-        let bookingResult = await alcatrazBookTour(orderData, tries);
-        
-        // Retry logic
-        while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')) {
-            tries++;
-            console.log(`Retry attempt #${tries}...`);
-            bookingResult = await alcatrazBookTour(orderData, tries);
-        }
+        // Send response immediately to prevent webhook timeouts
+        res.status(200).json({
+            message: 'Webhook received. Processing in background.'
+        });
 
-        if (bookingResult.success) {
-            console.log('Booking automation completed successfully');
-            res.status(200).json({
-                message: 'Webhook received and booking automation completed',
-                result: bookingResult
-            });
-        } else {
-            console.error('Booking automation failed:', bookingResult.error);
-            res.status(400).json({
-                message: 'Booking automation failed',
-                error: bookingResult.error,
-                errorScreenshot: bookingResult.errorScreenshot
-            });
-        }
+        // Run booking automation in background
+        setImmediate(async () => {
+            try {
+                console.log('Starting booking automation process...');
+                let tries = 0;
+                const maxRetries = 3;
+                let bookingResult = await alcatrazBookTour(orderData, tries);
+                
+                // Retry logic
+                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')) {
+                    tries++;
+                    console.log(`Retry attempt #${tries}...`);
+                    bookingResult = await alcatrazBookTour(orderData, tries);
+                }
+        
+                if (bookingResult.success) {
+                    console.log('Booking automation completed successfully');
+                } else {
+                    console.error('Booking automation failed:', bookingResult.error);
+                }
+            } catch (automationError) {
+                console.error('Error in booking automation:', automationError);
+            }
+        });
     } catch (error) {
         console.error('Error processing webhook:', error);
-        res.status(500).json({
+        res.status(200).json({
             message: 'Internal server error',
             error: error.message
         });
