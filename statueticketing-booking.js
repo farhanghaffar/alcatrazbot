@@ -286,62 +286,62 @@ async function statueTicketingBookTour(bookingData, tries) {
         const phoneNumberCountry = 'United States';
 
         // await page.pause();
-        const phoneCountryBtn = await frameHandle.locator('#select-phoneCountry-phone')
-        await expect(phoneCountryBtn).toBeVisible();
-        await phoneCountryBtn.click();
-        const container = frameHandle.locator('div.ReactVirtualized__Grid'); // Replace with your container selector
-        const scrollStep = 100; // Pixels to scroll each time
-        const maxAttempts = 100; // Prevent infinite loops
-        let attempts = 0;
-        let previousScrollTop = -1;
-        let elementFound = false;
+        // const phoneCountryBtn = await frameHandle.locator('#select-phoneCountry-phone')
+        // await expect(phoneCountryBtn).toBeVisible();
+        // await phoneCountryBtn.click();
+        // const container = frameHandle.locator('div.ReactVirtualized__Grid'); // Replace with your container selector
+        // const scrollStep = 100; // Pixels to scroll each time
+        // const maxAttempts = 100; // Prevent infinite loops
+        // let attempts = 0;
+        // let previousScrollTop = -1;
+        // let elementFound = false;
         
-        while (attempts < maxAttempts) {
-            attempts++;
-            let phoneCountryOption;
-            if(country.length === 2) {
-                phoneCountryOption = await frameHandle.locator(`li[value="${phoneNumberCountry}"]`)
-            } else {
-                phoneCountryOption = await frameHandle.locator('li[role="menuitem"]').filter({hasText: phoneNumberCountry});
-            }
+        // while (attempts < maxAttempts) {
+        //     attempts++;
+        //     let phoneCountryOption;
+        //     if(country.length === 2) {
+        //         phoneCountryOption = await frameHandle.locator(`li[value="${phoneNumberCountry}"]`)
+        //     } else {
+        //         phoneCountryOption = await frameHandle.locator('li[role="menuitem"]').filter({hasText: phoneNumberCountry});
+        //     }
 
-            if (await phoneCountryOption.isVisible()) {
-                console.log(`Phone number Country ${phoneNumberCountry} visible`)
-                await phoneCountryOption.click();
-                elementFound = true;
-                break;
-            }
+        //     if (await phoneCountryOption.isVisible()) {
+        //         console.log(`Phone number Country ${phoneNumberCountry} visible`)
+        //         await phoneCountryOption.click();
+        //         elementFound = true;
+        //         break;
+        //     }
             
-            // Get scroll dimensions
-            const { scrollTop, scrollHeight, clientHeight } = await container.evaluate(el => ({
-                scrollTop: el.scrollTop,
-                scrollHeight: el.scrollHeight,
-                clientHeight: el.clientHeight
-            }));
+        //     // Get scroll dimensions
+        //     const { scrollTop, scrollHeight, clientHeight } = await container.evaluate(el => ({
+        //         scrollTop: el.scrollTop,
+        //         scrollHeight: el.scrollHeight,
+        //         clientHeight: el.clientHeight
+        //     }));
         
-            // Check if we're at the bottom
-            if (scrollTop + clientHeight >= scrollHeight) {
-                break;
-            }
+        //     // Check if we're at the bottom
+        //     if (scrollTop + clientHeight >= scrollHeight) {
+        //         break;
+        //     }
         
-            // Check if scroll position is stuck
-            if (scrollTop === previousScrollTop) {
-                break;
-            }
-            previousScrollTop = scrollTop;
+        //     // Check if scroll position is stuck
+        //     if (scrollTop === previousScrollTop) {
+        //         break;
+        //     }
+        //     previousScrollTop = scrollTop;
         
-            // Scroll down
-            await container.evaluate((el, step) => {
-                el.scrollTop += step;
-            }, scrollStep);
+        //     // Scroll down
+        //     await container.evaluate((el, step) => {
+        //         el.scrollTop += step;
+        //     }, scrollStep);
         
-            // Wait for potential dynamic loading
-            await page.waitForTimeout(500);
-        }
+        //     // Wait for potential dynamic loading
+        //     await page.waitForTimeout(500);
+        // }
         
-        if (!elementFound) {
-            throw new Error(`Phone Country: "${phoneNumberCountry}" not found after scrolling`);
-        }
+        // if (!elementFound) {
+        //     throw new Error(`Phone Country: "${phoneNumberCountry}" not found after scrolling`);
+        // }
 
         const phoneInput = await frameHandle.locator('input[name="phone"]');
         await expect(phoneInput).toBeVisible({timeout: 80000});
