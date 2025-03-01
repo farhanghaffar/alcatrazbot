@@ -1,6 +1,6 @@
 const { chromium, firefox } = require('playwright');
 const { expect } = require('@playwright/test');
-const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail } = require('./helper');
+const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
 const fs = require('fs');  
 const path  = require('path');
