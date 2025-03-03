@@ -364,9 +364,9 @@ async function alcatrazBookTour(bookingData, tries) {
         const stateVisible = await stateSelectElement.isVisible();
         if(stateVisible) {
             if(state.length === 2) {
-                await stateSelectElement.selectOption(state);
+                await stateSelectElement.selectOption(state.toUpperCase());
                 const stateSelectElementValue = await stateSelectElement.inputValue();
-                await expect(stateSelectElementValue).toBe(state);
+                await expect(stateSelectElementValue).toBe(state.toUpperCase());
             } else {
                 const stateValue = toTitleCase(state);
                 await stateSelectElement.selectOption(stateValue);
