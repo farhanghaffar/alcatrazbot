@@ -1,10 +1,9 @@
 const { chromium, firefox } = require('playwright');
 const { expect } = require('@playwright/test');
-const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase } = require('./helper');
+const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
 const fs = require('fs');  
 const path  = require('path');
-const { channel } = require('diagnostics_channel');
 
 const proxyUrl = 'proxy.scrapeops.io:5353';
 const SCRAPEOPS_API_KEY = '21729cb2-2903-4ed0-b2f8-0eea01714a24';
@@ -17,9 +16,10 @@ const launchOptions = {
     // },
     headless: false,
     timeout: 55000,
-
     // ignoreHTTPSErrors: true,
 };
+
+let randomtime = 0;
 
 async function alcatrazBookTour(bookingData, tries) {
     const browser = await chromium.launch(launchOptions);
@@ -126,6 +126,9 @@ async function alcatrazBookTour(bookingData, tries) {
                 }
             }
             console.log('Loop Exited');
+            
+            randomtime = getRandomTime();
+            await page.waitForTimeout(randomtime);
 
             // Verify final month selection
             await expect(frameHandle.locator('.CalendarMonth_caption strong')
@@ -150,6 +153,10 @@ async function alcatrazBookTour(bookingData, tries) {
         }
         const showMoreTimesButton = frameHandle.getByRole('button').filter({ hasText: 'Show more times' }).first();
         await page.waitForTimeout(6000);
+
+        randomtime = getRandomTime();
+        await page.waitForTimeout(randomtime);
+
         const isButtonVisible = await showMoreTimesButton.isVisible()
         if (isButtonVisible) {
             console.log('Found Show More Times button, clicking it...');
@@ -159,6 +166,9 @@ async function alcatrazBookTour(bookingData, tries) {
             console.log('Show more times button not visible')
         }
         
+        randomtime = getRandomTime();
+        await page.waitForTimeout(randomtime);
+
         // const timeSlotToSelect = '9:20 AM';
         const timeSlotToSelect = bookingData.bookingTime;
         const timeSlot = frameHandle.getByRole('button').filter({ hasText: new RegExp(`^${timeSlotToSelect}\\s*`) }).first();
@@ -193,6 +203,10 @@ async function alcatrazBookTour(bookingData, tries) {
                 } 
             }
         }
+
+        randomtime = getRandomTime();
+        await page.waitForTimeout(randomtime);
+
         const continueButton = frameHandle.getByRole('button', { name: 'Continue' });
         const buyNowBtn = await frameHandle.getByRole('button', { name: 'Buy Now' });
         const checkOutNowBtn0 = await frameHandle.getByRole('button', {name: 'Checkout Now'});
@@ -223,8 +237,16 @@ async function alcatrazBookTour(bookingData, tries) {
                 await expectedIncrementTickets(frameHandle, ticketLabel, quantity);
             }
         }
+
+        randomtime = getRandomTime();
+        await page.waitForTimeout(randomtime);
+
         const addToCartBtn = await frameHandle.locator(`[data-bdd="add-to-cart-button"]`).getByText('Add to Cart'); 
         const addToCartBtnVisible = await addToCartBtn.isVisible({timeout: 120000});
+
+        randomtime = getRandomTime();
+        await page.waitForTimeout(randomtime);
+
         const checkoutNowBtn = await frameHandle.locator('[data-bdd="checkout-now-button"]').filter({hasText: 'Checkout Now'});
         await page.waitForTimeout(5000);
         const checkoutNowBtnVisible = await checkoutNowBtn.isVisible();
@@ -250,6 +272,9 @@ async function alcatrazBookTour(bookingData, tries) {
         await typeWithDelay(emailInput, bookingData.billing.email);
         console.log('Email filled');
 
+        randomtime = getRandomTime();
+        await page.waitForTimeout(randomtime);
+
         const continueButton2 = await frameHandle.locator('button').filter({ hasText: 'Continue' }).first();
         await expect(continueButton2).toBeVisible({timeout: 80000});
         await continueButton2.click();
@@ -264,7 +289,8 @@ async function alcatrazBookTour(bookingData, tries) {
             for(let i = 0; i < attendeesNamesInputsCount; i++) {
                 const element = await attendeesNamesInputs.nth(i);
                 await expect(element).toBeVisible();
-                await element.fill(attendeesNames[i]);
+                // await element.fill(attendeesNames[i]);
+                await typeWithDelay(element, attendeesNames[i]);
                 console.log(`Attendee name ${i+1} filled`);
             }
     
@@ -276,6 +302,7 @@ async function alcatrazBookTour(bookingData, tries) {
         await expect(firstNameInput).toBeVisible({timeout: 80000});
         // await firstNameInput.fill(bookingData.billing.first_name);
         await typeWithDelay(firstNameInput, bookingData.billing.first_name);
+
         const lastNameInput = await frameHandle.locator('input[name="lastName"]');
         await expect(lastNameInput).toBeVisible({timeout: 80000}); 
         // await lastNameInput.fill(bookingData.billing.last_name);
@@ -346,7 +373,8 @@ async function alcatrazBookTour(bookingData, tries) {
         // await phoneInput.fill(bookingData.billing.phone);
         const phoneNumber = '345' + String(Math.floor(Math.random() * 10000000)).padStart(7, '0');
         console.log('Phone Number being entered :', phoneNumber);
-        await phoneInput.fill(phoneNumber);
+        // await phoneInput.fill(phoneNumber);
+        await typeWithDelay(phoneInput, phoneNumber);
 
         const countrySelectElement = await frameHandle.locator('select[name="country"]');
         await expect(countrySelectElement).toBeVisible({timeout: 80000});
@@ -436,7 +464,7 @@ async function alcatrazBookTour(bookingData, tries) {
         // Card Number
         const cardNumberInput = nestedIframe.locator('.creNumberField');
         await expect(cardNumberInput).toBeVisible({timeout: 30000});
-        await typeWithDelay(cardNumberInput, cardInfo.cardNumber);
+        await typeWithDelay(cardNumberInput, removeSpaces(cardInfo.cardNumber));
     
         // Card CVC
         const cardCVCInput = nestedIframe.locator('.creCVV2Field');
