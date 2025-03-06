@@ -1,10 +1,9 @@
-const { chromium, firefox } = require('playwright');
+const { chromium, msedge } = require('playwright');
 const { expect } = require('@playwright/test');
 const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
 const fs = require('fs');  
 const path  = require('path');
-const { channel } = require('diagnostics_channel');
 
 const proxyUrl = 'proxy.scrapeops.io:5353';
 const SCRAPEOPS_API_KEY = '21729cb2-2903-4ed0-b2f8-0eea01714a24';
@@ -17,7 +16,7 @@ const launchOptions = {
     // },
     headless: false,
     timeout: 55000,
-
+    channel: 'msedge'
     // ignoreHTTPSErrors: true,
 };
 
@@ -421,12 +420,12 @@ async function alcatrazBookTour(bookingData, tries) {
         
         const nestedIframe = frameHandle.frameLocator('iframe[name="chaseHostedPayment"]');
 
-        const cardNameInput = nestedIframe.locator('.creNameField');
-        await expect(cardNameInput).toBeVisible({timeout: 30000});
-        await page.waitForTimeout(2500);
-        await cardNameInput.clear()
-        await page.waitForTimeout(1000);
-        await typeWithDelay(cardNameInput, cardInfo.cardName);
+        // const cardNameInput = nestedIframe.locator('.creNameField');
+        // await expect(cardNameInput).toBeVisible({timeout: 30000});
+        // await page.waitForTimeout(2500);
+        // await cardNameInput.clear()
+        // await page.waitForTimeout(1000);
+        // await typeWithDelay(cardNameInput, cardInfo.cardName);
     
         // Card Zip
         const cardZipInput = nestedIframe.locator('.creZipField');
@@ -470,7 +469,7 @@ async function alcatrazBookTour(bookingData, tries) {
 
         console.log(captchaResult);
         await typeWithDelay(captchaInput, captchaResult.data);
-        await cardNameInput.click();        
+        await cardCVCInput.click();        
 
         const captchaVerifiedMsg = captchaFrame.getByRole('paragraph').filter({hasText: 'Verified Successfully'});
         await page.waitForTimeout(3000);
@@ -485,7 +484,7 @@ async function alcatrazBookTour(bookingData, tries) {
 
             console.log(captchaResult);
             await typeWithDelay(captchaInput, captchaResult.data);
-            await cardNameInput.click();
+            await cardCVCInput.click();
             await page.waitForTimeout(3000);
             captchaVerified = await captchaVerifiedMsg.isVisible();
             if(!captchaVerified) {
@@ -498,7 +497,7 @@ async function alcatrazBookTour(bookingData, tries) {
     
                 console.log(captchaResult);
                 await typeWithDelay(captchaInput, captchaResult.data);
-                await cardNameInput.click();
+                await cardCVCInput.click();
             }
         }
         await expect(captchaVerifiedMsg).toBeVisible({timeout: 60000});

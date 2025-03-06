@@ -16,6 +16,7 @@ const launchOptions = {
     // },
     headless: false,
     timeout: 55000,
+    channel: 'msedge'
     // ignoreHTTPSErrors: true,
 };
 
@@ -420,9 +421,9 @@ async function statueTicketingBookTour(bookingData, tries) {
         
         const nestedIframe = frameHandle.frameLocator('iframe[name="chaseHostedPayment"]');
 
-        const cardNameInput = nestedIframe.locator('.creNameField');
-        await expect(cardNameInput).toBeVisible({timeout: 30000});
-        await typeWithDelay(cardNameInput, cardInfo.cardName);
+        // const cardNameInput = nestedIframe.locator('.creNameField');
+        // await expect(cardNameInput).toBeVisible({timeout: 30000});
+        // await typeWithDelay(cardNameInput, cardInfo.cardName);
     
         // Card Zip
         const cardZipInput = nestedIframe.locator('.creZipField');
@@ -466,7 +467,7 @@ async function statueTicketingBookTour(bookingData, tries) {
 
         console.log(captchaResult);
         await typeWithDelay(captchaInput, captchaResult.data);
-        await cardNameInput.click();
+        await cardCVCInput.click();
 
         const captchaVerifiedMsg = captchaFrame.getByRole('paragraph').filter({hasText: 'Verified Successfully'});
         await page.waitForTimeout(3000);
@@ -481,7 +482,7 @@ async function statueTicketingBookTour(bookingData, tries) {
 
             console.log(captchaResult);
             await typeWithDelay(captchaInput, captchaResult.data);
-            await cardNameInput.click();
+            await cardCVCInput.click();
             await page.waitForTimeout(3000);
             captchaVerified = await captchaVerifiedMsg.isVisible();
             if(!captchaVerified) {
@@ -494,14 +495,14 @@ async function statueTicketingBookTour(bookingData, tries) {
     
                 console.log(captchaResult);
                 await typeWithDelay(captchaInput, captchaResult.data);
-                await cardNameInput.click();
+                await cardCVCInput.click();
             }
         }
 
         await expect(captchaVerifiedMsg).toBeVisible({timeout: 60000});
         console.log('Captcha Verified')
 
-        // await page.pause();
+        await page.pause();
         await page.waitForTimeout(5000);
 
         const completeBtn = await nestedIframe.getByRole('button').filter({hasText: 'Complete'});
