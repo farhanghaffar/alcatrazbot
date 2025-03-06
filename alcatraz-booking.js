@@ -4,6 +4,7 @@ const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, for
 const { Solver } = require('@2captcha/captcha-solver');
 const fs = require('fs');  
 const path  = require('path');
+const { channel } = require('diagnostics_channel');
 
 const proxyUrl = 'proxy.scrapeops.io:5353';
 const SCRAPEOPS_API_KEY = '21729cb2-2903-4ed0-b2f8-0eea01714a24';
@@ -16,6 +17,7 @@ const launchOptions = {
     // },
     headless: false,
     timeout: 55000,
+
     // ignoreHTTPSErrors: true,
 };
 
@@ -370,7 +372,7 @@ async function alcatrazBookTour(bookingData, tries) {
         const stateSelectElement = await frameHandle.locator('select[name="state"]');
         const stateVisible = await stateSelectElement.isVisible();
         if(stateVisible) {
-            if(state.length === 2) {
+            if(state.length === 2 || state.length === 3) {
                 await stateSelectElement.selectOption(state.toUpperCase());
                 const stateSelectElementValue = await stateSelectElement.inputValue();
                 await expect(stateSelectElementValue).toBe(state.toUpperCase());

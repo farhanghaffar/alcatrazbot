@@ -383,7 +383,7 @@ async function statueTicketingBookTour(bookingData, tries) {
         const stateSelectElement = await frameHandle.locator('select[name="state"]');
         const stateVisible = await stateSelectElement.isVisible();
         if(stateVisible) {
-            if(state.length === 2) {
+            if(state.length === 2 || state.length === 3) {
                 await stateSelectElement.selectOption(state.toUpperCase());
                 const stateSelectElementValue = await stateSelectElement.inputValue();
                 await expect(stateSelectElementValue).toBe(state.toUpperCase());
