@@ -6,6 +6,10 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { alcatrazBookTour } = require('./alcatraz-booking');
+const cors = require('cors');
+require('dotenv').config();
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -25,6 +29,9 @@ const PORT = process.env.PORT || 4000;
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
+
+// Cors middleware
+app.use(cors());
 
 // Middleware to verify WooCommerce webhook signature
 const verifyWooCommerceWebhook = (req, res, next) => {
@@ -272,6 +279,37 @@ app.post('/alcatraz-webhook', async (req, res) => {
         });
     }
 });
+
+// To charge service fee for booking 
+app.post('/charge', async (req, res) => {
+    try {
+      const { paymentMethodId, amount, currency, description } = req.body;
+  
+      // Convert dollars to cents
+      const amountInCents = Math.round(amount * 100);
+      
+      if (isNaN(amountInCents) || amountInCents < 50) {
+        throw new Error('Invalid amount');
+      }
+      
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amountInCents,
+        currency: currency || 'usd',
+        payment_method: paymentMethodId,
+        // Restrict to card only if needed
+        payment_method_types: ['card'],
+        // Include description here
+        description,
+        confirmation_method: 'manual',
+        confirm: true,
+      });
+      
+      res.status(200).json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
 
 // Health check endpoint
 app.get('/health', (req, res) => {
