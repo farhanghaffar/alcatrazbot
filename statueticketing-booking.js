@@ -143,6 +143,7 @@ async function statueTicketingBookTour(bookingData, tries) {
                 .toBeVisible();
             console.log(`Verified calendar shows ${targetMonth} ${targetYear}`);
 
+            await page.waitForTimeout(10000);
             console.log(targetDay, `day to select`);
             const dateCell = frameHandle.getByRole('presentation').locator(`.CalendarDay`).filter({ hasText: `${targetDay}` }).first();
             await expect(dateCell).toBeVisible();
@@ -159,11 +160,14 @@ async function statueTicketingBookTour(bookingData, tries) {
         }
         const showMoreTimesButton = frameHandle.getByRole('button').filter({ hasText: 'Show more times' }).first();
         
+        await page.waitForTimeout(5000);
         const isButtonVisible = await showMoreTimesButton.isVisible()
         if (isButtonVisible) {
             console.log('Found Show More Times button, clicking it...');
             await showMoreTimesButton.click();
             console.log('Clicked Show More Times button');
+        } else {
+            console.log('Show more times button not visible')
         }
         
         // const timeSlotToSelect = '9:20 AM';
@@ -251,7 +255,9 @@ async function statueTicketingBookTour(bookingData, tries) {
         console.log('Successfully reached checkout page');
         const emailInput = await frameHandle.locator('input[name="email"]');
         await expect(emailInput).toBeVisible({timeout: 120000});
-        await emailInput.fill(bookingData.billing.email);
+        // await emailInput.fill(bookingData.billing.email);
+        await typeWithDelay(emailInput, bookingData.billing.email);
+
         console.log('Email filled');
         const continueButton2 = await frameHandle.locator('button').filter({ hasText: 'Continue' }).first();
         await expect(continueButton2).toBeVisible({timeout: 80000});
@@ -277,10 +283,14 @@ async function statueTicketingBookTour(bookingData, tries) {
 
         const firstNameInput = await frameHandle.locator('input[name="firstName"]');
         await expect(firstNameInput).toBeVisible({timeout: 80000});
-        await firstNameInput.fill(bookingData.billing.first_name);
+        // await firstNameInput.fill(bookingData.billing.first_name);
+        await typeWithDelay(firstNameInput, bookingData.billing.first_name);
+
         const lastNameInput = await frameHandle.locator('input[name="lastName"]');
         await expect(lastNameInput).toBeVisible({timeout: 80000}); 
-        await lastNameInput.fill(bookingData.billing.last_name);
+        // await lastNameInput.fill(bookingData.billing.last_name);
+        await typeWithDelay(lastNameInput, bookingData.billing.last_name);
+
 
         const country = bookingData.billing.country;
         const phoneNumberCountry = 'United States';
