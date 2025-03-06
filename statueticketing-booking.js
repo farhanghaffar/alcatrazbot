@@ -514,7 +514,7 @@ async function statueTicketingBookTour(bookingData, tries) {
         const errorMsg = await frameHandle.getByText('Oops... something went wrong.');
         const errorMsgVisible = await errorMsg.isVisible();
 
-        const paymentError = await frameHandle.getByText('An error occured while processing your payment.');
+        const paymentError = await frameHandle.getByText('An error occurred while processing your payment.');
         const paymentErrorVisible = await paymentError.isVisible();
         
         if(errorMsgVisible || paymentErrorVisible) {
