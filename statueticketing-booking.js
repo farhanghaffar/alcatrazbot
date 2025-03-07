@@ -10,11 +10,11 @@ const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
 const SCRAPEOPS_API_KEY = process.env.SCRAPEOPS_API_KEY;
 
 const launchOptions = {
-    proxy: {
-        server: proxyUrl,
-        username: 'scrapeops.country=us',
-        password: SCRAPEOPS_API_KEY
-    },
+    // proxy: {
+    //     server: proxyUrl,
+    //     username: 'scrapeops.country=us',
+    //     password: SCRAPEOPS_API_KEY
+    // },
     headless: false,
     timeout: 55000,
     // channel: 'msedge'
