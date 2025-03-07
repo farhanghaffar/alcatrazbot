@@ -4,16 +4,17 @@ const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, for
 const { Solver } = require('@2captcha/captcha-solver');
 const path  = require('path');
 const fs = require('fs');
+require('dotenv').config();
 
-const proxyUrl = 'proxy.scrapeops.io:5353';
-const SCRAPEOPS_API_KEY = '21729cb2-2903-4ed0-b2f8-0eea01714a24';
+const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
+const SCRAPEOPS_API_KEY = process.env.SCRAPEOPS_API_KEY;
 
 const launchOptions = {
-    // proxy: {
-    //     server: proxyUrl,
-    //     username: 'scrapeops.country=us',
-    //     password: SCRAPEOPS_API_KEY
-    // },
+    proxy: {
+        server: proxyUrl,
+        username: 'scrapeops.country=us',
+        password: SCRAPEOPS_API_KEY
+    },
     headless: false,
     timeout: 55000,
     // channel: 'msedge'
@@ -37,7 +38,7 @@ async function statueTicketingBookTour(bookingData, tries) {
     await page.setDefaultTimeout(170000);
     await expect.configure({timeout: 130000});
 
-    const solver = new Solver("9a6941172c5fefa1253e3c39d3496ecb")
+    const solver = new Solver(process.env.CAPTCHA_API_KEY)
 
     try {
         // await page.goto('https://httpbin.org/ip');
