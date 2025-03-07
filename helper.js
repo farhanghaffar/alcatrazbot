@@ -114,4 +114,13 @@ function toTitleCase(str) {
     .join(' '); // Join the words back together
 }
 
-module.exports = { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase };
+function getRandomTime() {
+  return Math.floor(Math.random() * 10000);  // Random time between 0 and 9999 milliseconds
+}
+
+function removeSpaces(inputString) {
+  return inputString.replace(/\s+/g, '');  // Remove all spaces
+}
+
+
+module.exports = { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces };

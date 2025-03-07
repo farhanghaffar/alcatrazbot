@@ -1,9 +1,9 @@
 const { chromium, firefox } = require('playwright');
 const { expect } = require('@playwright/test');
-const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase } = require('./helper');
+const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
 const path  = require('path');
-const fs = require('fs');    
+const fs = require('fs');
 
 const proxyUrl = 'proxy.scrapeops.io:5353';
 const SCRAPEOPS_API_KEY = '21729cb2-2903-4ed0-b2f8-0eea01714a24';
@@ -16,13 +16,15 @@ const launchOptions = {
     // },
     headless: false,
     timeout: 55000,
-    channel: 'msedge'
+    // channel: 'msedge'
     // ignoreHTTPSErrors: true,
 };
 
+let randomtime = 0;
+
 async function statueTicketingBookTour(bookingData, tries) {
 
-    const browser = await chromium.launch(launchOptions);
+    const browser = await firefox.launch(launchOptions);
 
     const context = await browser.newContext({
         viewport: { width: 1280, height: 720 },
@@ -138,6 +140,9 @@ async function statueTicketingBookTour(bookingData, tries) {
             }
             console.log('Loop Exited');
 
+            randomtime = getRandomTime();
+            await page.waitForTimeout(randomtime);
+
             // Verify final month selection
             await expect(frameHandle.locator('.CalendarMonth_caption strong')
                 .filter({ hasText: `${targetMonth} ${targetYear}` }))
@@ -161,7 +166,9 @@ async function statueTicketingBookTour(bookingData, tries) {
         }
         const showMoreTimesButton = frameHandle.getByRole('button').filter({ hasText: 'Show more times' }).first();
         
-        await page.waitForTimeout(5000);
+        randomtime = getRandomTime();
+        await page.waitForTimeout(randomtime);
+
         const isButtonVisible = await showMoreTimesButton.isVisible()
         if (isButtonVisible) {
             console.log('Found Show More Times button, clicking it...');
@@ -202,6 +209,8 @@ async function statueTicketingBookTour(bookingData, tries) {
                 } 
             }
         }
+        randomtime = getRandomTime();
+        await page.waitForTimeout(randomtime);
         // await page.pause(); // Temporarily
         const continueButton = frameHandle.getByRole('button', { name: 'Continue' });
         const buyNowBtn = await frameHandle.getByRole('button', { name: 'Buy Now' });
@@ -233,6 +242,10 @@ async function statueTicketingBookTour(bookingData, tries) {
                 await expectedIncrementTickets(frameHandle, ticketLabel, quantity);
             }
         }
+
+        randomtime = getRandomTime();
+        await page.waitForTimeout(randomtime);
+
         const addToCartBtn = await frameHandle.locator(`[data-bdd="add-to-cart-button"]`).getByText('Add to Cart'); 
         const addToCartBtnVisible = await addToCartBtn.isVisible({timeout: 120000});
         const checkoutNowBtn = await frameHandle.locator('[data-bdd="checkout-now-button"]').filter({hasText: 'Checkout Now'});
@@ -253,6 +266,10 @@ async function statueTicketingBookTour(bookingData, tries) {
         // console.log('Successfully reached cart page');
 
         await expect(page).toHaveURL(/checkout/);   
+
+        randomtime = getRandomTime();
+        await page.waitForTimeout(randomtime);
+
         console.log('Successfully reached checkout page');
         const emailInput = await frameHandle.locator('input[name="email"]');
         await expect(emailInput).toBeVisible({timeout: 120000});
@@ -274,7 +291,8 @@ async function statueTicketingBookTour(bookingData, tries) {
             for(let i = 0; i < attendeesNamesInputsCount; i++) {
                 const element = await attendeesNamesInputs.nth(i);
                 await expect(element).toBeVisible();
-                await element.fill(attendeesNames[i]);
+                // await element.fill(attendeesNames[i]);
+                await typeWithDelay(element, attendeesNames[i]);
                 console.log(`Attendee name ${i+1} filled`);
             }
     
@@ -359,7 +377,8 @@ async function statueTicketingBookTour(bookingData, tries) {
         // await phoneInput.fill(bookingData.billing.phone);
         const phoneNumber = '345' + String(Math.floor(Math.random() * 10000000)).padStart(7, '0');
         console.log('Phone Number being entered :', phoneNumber);
-        await phoneInput.fill(phoneNumber);
+        // await phoneInput.fill(phoneNumber);
+        await typeWithDelay(phoneInput, phoneNumber);
 
         const countrySelectElement = await frameHandle.locator('select[name="country"]');
         // await page.pause();
