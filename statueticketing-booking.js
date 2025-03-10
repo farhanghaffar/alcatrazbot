@@ -4,6 +4,7 @@ const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, for
 const { Solver } = require('@2captcha/captcha-solver');
 const path  = require('path');
 const fs = require('fs');
+const UserAgent = require('user-agents');
 require('dotenv').config();
 
 const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
@@ -18,7 +19,6 @@ const launchOptions = {
     headless: false,
     timeout: 55000,
     // channel: 'msedge'
-    // ignoreHTTPSErrors: true,
 };
 
 let randomtime = 0;
@@ -26,10 +26,12 @@ let randomtime = 0;
 async function statueTicketingBookTour(bookingData, tries) {
 
     const browser = await firefox.launch(launchOptions);
+    const userAgent = new UserAgent().toString();
 
     const context = await browser.newContext({
         viewport: { width: 1280, height: 720 },
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        userAgent: userAgent,
+        // userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         // ignoreHTTPSErrors: true,
     });
 

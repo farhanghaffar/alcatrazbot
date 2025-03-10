@@ -4,10 +4,16 @@ const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, for
 const { Solver } = require('@2captcha/captcha-solver');
 const fs = require('fs');  
 const path  = require('path');
+const UserAgent = require('user-agents');
 require('dotenv').config();
 
 const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
 const SCRAPEOPS_API_KEY = process.env.SCRAPEOPS_API_KEY;
+
+// For BrightData
+const brightDataProxyURL = 'brd.superproxy.io:33335'
+const brightDataUserName = 'brd-customer-hl_986ab42b-zone-residential_proxy1-country-us'
+const brightDataPassword = 'kfwvdwq63bd5'
 
 const launchOptions = {
     // proxy: {
@@ -15,19 +21,28 @@ const launchOptions = {
     //     username: 'scrapeops.country=us',
     //     password: SCRAPEOPS_API_KEY
     // },
+    
+    // BrightData Proxy
+    // proxy: {
+    //     server: brightDataProxyURL,
+    //     username: brightDataUserName,
+    //     password: brightDataPassword
+    // },
     headless: false,
     timeout: 55000,
     // channel: 'msedge'
-    // ignoreHTTPSErrors: true,
 };
 
 let randomtime = 0;
 
 async function alcatrazBookTour(bookingData, tries) {
     const browser = await firefox.launch(launchOptions);
+    const userAgent = new UserAgent().toString();
+    // console.log('User Agent:', userAgent);
     const context = await browser.newContext({
         viewport: { width: 1280, height: 720 },
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        userAgent: userAgent,
+        // userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         // ignoreHTTPSErrors: true,
     });
     const page = await context.newPage();
@@ -37,10 +52,13 @@ async function alcatrazBookTour(bookingData, tries) {
     const solver = new Solver(process.env.CAPTCHA_API_KEY)
 
     try {
-        // await page.goto('https://httpbin.org/ip');
+        await page.goto('https://useragentstring.com/');
+        await page.pause();
+        // await page.goto('https://api.myip.com/');
+        await page.goto('https://httpbin.org/ip');
 
-        // const pageContent = await page.textContent('body');
-        // console.log('Current IP', pageContent);
+        const pageContent = await page.textContent('body');
+        console.log('Current IP', pageContent);
         // await page.pause();
         console.log('Starting booking automation...');
 

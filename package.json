@@ -16,7 +16,8 @@
     "nodemailer": "^6.10.0",
     "playwright": "^1.40.1",
     "selfsigned": "^2.4.1",
-    "stripe": "^17.7.0"
+    "stripe": "^17.7.0",
+    "user-agents": "^1.1.474"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.0",
