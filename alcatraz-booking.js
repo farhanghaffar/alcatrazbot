@@ -11,8 +11,9 @@ const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
 const SCRAPEOPS_API_KEY = process.env.SCRAPEOPS_API_KEY;
 
 // For BrightData
+let proxySession = Math.floor(Math.random() * 100000);
 const brightDataProxyURL = 'brd.superproxy.io:33335'
-const brightDataUserName = 'brd-customer-hl_986ab42b-zone-residential_proxy1-country-us'
+const brightDataUserName = `brd-customer-hl_986ab42b-zone-residential_proxy1-country-us-session-${proxySession}`
 const brightDataPassword = 'kfwvdwq63bd5'
 
 const launchOptions = {
@@ -23,11 +24,11 @@ const launchOptions = {
     // },
     
     // BrightData Proxy
-    // proxy: {
-    //     server: brightDataProxyURL,
-    //     username: brightDataUserName,
-    //     password: brightDataPassword
-    // },
+    proxy: {
+        server: brightDataProxyURL,
+        username: brightDataUserName,
+        password: brightDataPassword
+    },
     headless: false,
     timeout: 55000,
     // channel: 'msedge'
@@ -43,7 +44,7 @@ async function alcatrazBookTour(bookingData, tries) {
         viewport: { width: 1280, height: 720 },
         userAgent: userAgent,
         // userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        // ignoreHTTPSErrors: true,
+        ignoreHTTPSErrors: true,
     });
     const page = await context.newPage();
     await page.setDefaultTimeout(170000);
@@ -52,14 +53,17 @@ async function alcatrazBookTour(bookingData, tries) {
     const solver = new Solver(process.env.CAPTCHA_API_KEY)
 
     try {
-        await page.goto('https://useragentstring.com/');
-        await page.pause();
+        // Check user agent information
+        // await page.goto('https://useragentstring.com/');
+        // await page.pause();
+
+        // Check IP address and log it
         // await page.goto('https://api.myip.com/');
         await page.goto('https://httpbin.org/ip');
-
         const pageContent = await page.textContent('body');
         console.log('Current IP', pageContent);
         // await page.pause();
+
         console.log('Starting booking automation...');
 
         let tourURL = '';
@@ -83,6 +87,8 @@ async function alcatrazBookTour(bookingData, tries) {
         }
         await checkAvailabilityButton.click();
         console.log('Clicked Check Availability, waiting for calendar...');
+
+        await page.pause();
 
         await page.waitForTimeout(10000);
         console.log('Waiting for iframe to load...');
