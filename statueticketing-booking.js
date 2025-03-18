@@ -35,6 +35,10 @@ async function statueTicketingBookTour(bookingData, tries) {
         // ignoreHTTPSErrors: true,
     });
 
+    await context.clearCookies();
+    await context.clearPermissions();
+    await context.storageState({ path: 'state.json' });
+
     const page = await context.newPage();
 
     await page.setDefaultTimeout(170000);
@@ -570,6 +574,11 @@ async function statueTicketingBookTour(bookingData, tries) {
           );
 
         // await page.pause();
+        await context.clearCookies();
+        await context.clearPermissions();
+        await context.storageState({ path: 'state.json' });
+        await context.close();
+        await browser.close();
 
         return {
             success: true
@@ -598,6 +607,13 @@ async function statueTicketingBookTour(bookingData, tries) {
         } catch(err) {
             console.log('Sending mail Error', err);
         }
+
+        await context.clearCookies();
+        await context.clearPermissions();
+        await context.storageState({ path: 'state.json' });
+        await context.close();
+        await browser.close();
+        
         // await page.pause();
         return { 
             success: false, 

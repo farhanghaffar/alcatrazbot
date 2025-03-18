@@ -24,11 +24,11 @@ const launchOptions = {
     // },
     
     // BrightData Proxy
-    proxy: {
-        server: brightDataProxyURL,
-        username: brightDataUserName,
-        password: brightDataPassword
-    },
+    // proxy: {
+    //     server: brightDataProxyURL,
+    //     username: brightDataUserName,
+    //     password: brightDataPassword
+    // },
     headless: false,
     timeout: 55000,
     // channel: 'msedge'
@@ -44,8 +44,13 @@ async function alcatrazBookTour(bookingData, tries) {
         viewport: { width: 1280, height: 720 },
         userAgent: userAgent,
         // userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        ignoreHTTPSErrors: true,
+        // ignoreHTTPSErrors: true,
     });
+    
+    await context.clearCookies();
+    await context.clearPermissions();
+    await context.storageState({ path: 'state.json' });
+
     const page = await context.newPage();
     await page.setDefaultTimeout(170000);
     await expect.configure({timeout: 130000});
@@ -59,9 +64,9 @@ async function alcatrazBookTour(bookingData, tries) {
 
         // Check IP address and log it
         // await page.goto('https://api.myip.com/');
-        await page.goto('https://httpbin.org/ip');
-        const pageContent = await page.textContent('body');
-        console.log('Current IP', pageContent);
+        // await page.goto('https://httpbin.org/ip');
+        // const pageContent = await page.textContent('body');
+        // console.log('Current IP', pageContent);
         // await page.pause();
 
         console.log('Starting booking automation...');
@@ -87,8 +92,6 @@ async function alcatrazBookTour(bookingData, tries) {
         }
         await checkAvailabilityButton.click();
         console.log('Clicked Check Availability, waiting for calendar...');
-
-        await page.pause();
 
         await page.waitForTimeout(10000);
         console.log('Waiting for iframe to load...');
@@ -602,6 +605,11 @@ async function alcatrazBookTour(bookingData, tries) {
           );
 
         // await page.pause();
+        await context.clearCookies();
+        await context.clearPermissions();
+        await context.storageState({ path: 'state.json' });
+        await context.close();
+        await browser.close();
 
         return {
             success: true
@@ -630,6 +638,13 @@ async function alcatrazBookTour(bookingData, tries) {
             console.log('Sending mail Error', err);
         }
         // await page.pause();
+
+        await context.clearCookies();
+        await context.clearPermissions();
+        await context.storageState({ path: 'state.json' });
+        await context.close();
+        await browser.close();
+        
         return { 
             success: false, 
             error: error.message,
