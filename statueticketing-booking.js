@@ -1,6 +1,6 @@
 const { chromium, firefox } = require('playwright');
 const { expect } = require('@playwright/test');
-const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces } = require('./helper');
+const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
 const path  = require('path');
 const fs = require('fs');
@@ -26,7 +26,8 @@ let randomtime = 0;
 async function statueTicketingBookTour(bookingData, tries) {
 
     const browser = await firefox.launch(launchOptions);
-    const userAgent = new UserAgent().toString();
+    // const userAgent = new UserAgent().toString();
+    const userAgent = getRandomUserAgent();
 
     const context = await browser.newContext({
         viewport: { width: 1280, height: 720 },
@@ -47,8 +48,11 @@ async function statueTicketingBookTour(bookingData, tries) {
     const solver = new Solver(process.env.CAPTCHA_API_KEY)
 
     try {
-        // await page.goto('https://httpbin.org/ip');
+        // Check user agent information
+        // await page.goto('https://www.whatismybrowser.com/detect/what-is-my-user-agent/');
+        // await page.pause();
 
+        // await page.goto('https://httpbin.org/ip');
         // const pageContent = await page.textContent('body');
         // console.log('Current IP', pageContent);
         // await page.pause();

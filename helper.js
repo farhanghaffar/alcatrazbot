@@ -1,6 +1,7 @@
 const { expect } = require('@playwright/test');
 const nodemailer = require('nodemailer');
 const path = require('path');
+const UserAgent = require('user-agents');
 
 // Function to send email
 async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails, screenshotPath, screenshotFileName, passed = false) {
@@ -43,6 +44,15 @@ async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails
   return transporter.sendMail(mailOptions);  // Return the promise to handle errors outside
 }
 
+function getRandomUserAgent() {
+  const useMobile = Math.random() < 0.6; // 60% chance for mobile
+
+  if (useMobile) {
+      return new UserAgent({ deviceCategory: 'mobile' }).toString();
+  } else {
+      return new UserAgent({ deviceCategory: 'desktop' }).toString();
+  }
+}
 
 async function incrementTickets(frameHandle, ticketType, quantity) {
     // for(let i = 0; i < quantity; i++) {
@@ -123,4 +133,4 @@ function removeSpaces(inputString) {
 }
 
 
-module.exports = { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces };
+module.exports = { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent };

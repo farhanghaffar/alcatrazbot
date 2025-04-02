@@ -1,10 +1,9 @@
 const { chromium, firefox } = require('playwright');
 const { expect } = require('@playwright/test');
-const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces } = require('./helper');
+const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
 const fs = require('fs');  
 const path  = require('path');
-const UserAgent = require('user-agents');
 require('dotenv').config();
 
 const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
@@ -38,7 +37,8 @@ let randomtime = 0;
 
 async function alcatrazBookTour(bookingData, tries) {
     const browser = await firefox.launch(launchOptions);
-    const userAgent = new UserAgent({deviceCategory: 'mobile'}).toString();
+    // const userAgent = new UserAgent({deviceCategory: 'mobile'}).toString();
+    const userAgent = getRandomUserAgent();
     console.log('User Agent:', userAgent);
     const context = await browser.newContext({
         viewport: { width: 1280, height: 720 },
@@ -46,11 +46,6 @@ async function alcatrazBookTour(bookingData, tries) {
         // userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         // ignoreHTTPSErrors: true,
     });
-    
-    await context.clearCookies();
-    await context.clearPermissions();
-    await context.storageState({ path: 'state.json' });
-
     const page = await context.newPage();
     await page.setDefaultTimeout(170000);
     await expect.configure({timeout: 130000});
@@ -59,14 +54,14 @@ async function alcatrazBookTour(bookingData, tries) {
 
     try {
         // Check user agent information
-        await page.goto('https://www.whatismybrowser.com/detect/what-is-my-user-agent/');
-        await page.pause();
+        // await page.goto('https://www.whatismybrowser.com/detect/what-is-my-user-agent/');
+        // await page.pause();
 
         // Check IP address and log it
         // await page.goto('https://api.myip.com/');
-        // await page.goto('https://httpbin.org/ip');
-        // const pageContent = await page.textContent('body');
-        // console.log('Current IP', pageContent);
+        await page.goto('https://httpbin.org/ip');
+        const pageContent = await page.textContent('body');
+        console.log('Current IP', pageContent);
         // await page.pause();
 
         console.log('Starting booking automation...');
@@ -605,11 +600,6 @@ async function alcatrazBookTour(bookingData, tries) {
           );
 
         // await page.pause();
-        await context.clearCookies();
-        await context.clearPermissions();
-        await context.storageState({ path: 'state.json' });
-        await context.close();
-        await browser.close();
 
         return {
             success: true
@@ -638,13 +628,6 @@ async function alcatrazBookTour(bookingData, tries) {
             console.log('Sending mail Error', err);
         }
         // await page.pause();
-
-        await context.clearCookies();
-        await context.clearPermissions();
-        await context.storageState({ path: 'state.json' });
-        await context.close();
-        await browser.close();
-        
         return { 
             success: false, 
             error: error.message,
