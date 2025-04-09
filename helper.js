@@ -45,14 +45,25 @@ async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails
 }
 
 function getRandomUserAgent() {
-  const useMobile = Math.random() < 0.6; // 60% chance for mobile
+    const useMobile = Math.random() < 0.6; // 60% chance for mobile
+    let userAgent;
 
-  if (useMobile) {
-      return new UserAgent({ deviceCategory: 'mobile' }).toString();
-  } else {
-      return new UserAgent({ deviceCategory: 'desktop' }).toString();
-  }
+    do {
+      if (useMobile) {
+        userAgent = new UserAgent({ deviceCategory: 'mobile' }).toString();
+      } else {
+        userAgent = new UserAgent({ deviceCategory: 'desktop' }).toString();
+
+        if (userAgent.includes('Windows')) {
+          // Force Firefox on Windows using regex match
+          userAgent = new UserAgent({ deviceCategory: 'desktop' }, /Firefox/).toString();
+        }
+      }
+    } while (userAgent.includes('Chrome'));
+
+    return userAgent;
 }
+
 
 async function incrementTickets(frameHandle, ticketType, quantity) {
     // for(let i = 0; i < quantity; i++) {

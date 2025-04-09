@@ -248,29 +248,36 @@ app.post('/alcatraz-webhook', async (req, res) => {
         });
 
         // Run booking automation in background
-        setImmediate(async () => {
-            try {
-                console.log('Starting booking automation process...');
-                let tries = 0;
-                const maxRetries = 3;
-                let bookingResult = await alcatrazBookTour(orderData, tries);
-                
-                // Retry logic
-                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')) {
-                    tries++;
-                    console.log(`Retry attempt #${tries}...`);
-                    bookingResult = await alcatrazBookTour(orderData, tries);
+        if(  
+            (Number(orderData?.adults) || 0) +
+            (Number(orderData?.childs) || 0) +
+            (Number(orderData?.juniors) || 0) +
+            (Number(orderData?.seniors) || 0) <= 2
+        ) {
+            setImmediate(async () => {
+                try {
+                    console.log('Starting booking automation process...');
+                    let tries = 0;
+                    const maxRetries = 3;
+                    let bookingResult = await alcatrazBookTour(orderData, tries);
+                    
+                    // Retry logic
+                    while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')) {
+                        tries++;
+                        console.log(`Retry attempt #${tries}...`);
+                        bookingResult = await alcatrazBookTour(orderData, tries);
+                    }
+            
+                    if (bookingResult.success) {
+                        console.log('Booking automation completed successfully');
+                    } else {
+                        console.error('Booking automation failed:', bookingResult.error);
+                    }
+                } catch (automationError) {
+                    console.error('Error in booking automation:', automationError);
                 }
-        
-                if (bookingResult.success) {
-                    console.log('Booking automation completed successfully');
-                } else {
-                    console.error('Booking automation failed:', bookingResult.error);
-                }
-            } catch (automationError) {
-                console.error('Error in booking automation:', automationError);
-            }
-        });
+            });
+        }
     } catch (error) {
         console.error('Error processing webhook:', error);
         res.status(200).json({
