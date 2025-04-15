@@ -54,15 +54,15 @@ async function alcatrazBookTour(bookingData, tries) {
 
     try {
         // Check user agent information
-        await page.goto('https://www.whatismybrowser.com/detect/what-is-my-user-agent/');
-        // await page.pause();
+        // await page.goto('https://www.whatismybrowser.com/detect/what-is-my-user-agent/');
+        // // await page.pause();
 
-        // Check IP address and log it
-        // await page.goto('https://api.myip.com/');
-        await page.goto('https://httpbin.org/ip');
-        const pageContent = await page.textContent('body');
-        console.log('Current IP', pageContent);
-        // await page.pause();
+        // // Check IP address and log it
+        // // await page.goto('https://api.myip.com/');
+        // await page.goto('https://httpbin.org/ip');
+        // const pageContent = await page.textContent('body');
+        // console.log('Current IP', pageContent);
+        // // await page.pause();
 
         console.log('Starting booking automation...');
 
@@ -593,8 +593,8 @@ async function alcatrazBookTour(bookingData, tries) {
             bookingData.id, // order number
             `Try ${tries + 1}. The final screen snip is attached for your reference.`, // order description
             'farhan.qat123@gmail.com', // recipient email address
-            // ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
-            [],
+            ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
+            // [],
             screenshotPath, // path to the screenshot
             screenshotFileName,
             true,
@@ -620,8 +620,8 @@ async function alcatrazBookTour(bookingData, tries) {
                 bookingData.id, // order number
                 `Try ${tries + 1}.The final screen snip is attached for your reference. ${error.message ? `ERRMSG: ` + error.message : ''}`, // order description
                 'farhan.qat123@gmail.com', // recipient email address
-                // ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
-                [],
+                ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
+                // [],
                 screenshotPath, // path to the screenshot
                 screenshotFileName, // screenshot filename
                 false, // Automation Passed Status
@@ -629,7 +629,7 @@ async function alcatrazBookTour(bookingData, tries) {
         } catch(err) {
             console.log('Sending mail Error', err);
         }
-        await page.pause();
+        // await page.pause();
         return { 
             success: false, 
             error: error.message,

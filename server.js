@@ -248,12 +248,12 @@ app.post('/alcatraz-webhook', async (req, res) => {
         });
 
         // Run booking automation in background
-        if(  
-            (Number(orderData?.adults) || 0) +
-            (Number(orderData?.childs) || 0) +
-            (Number(orderData?.juniors) || 0) +
-            (Number(orderData?.seniors) || 0) <= 2
-        ) {
+        // if(  
+        //     (Number(orderData?.adults) || 0) +
+        //     (Number(orderData?.childs) || 0) +
+        //     (Number(orderData?.juniors) || 0) +
+        //     (Number(orderData?.seniors) || 0) <= 4
+        // ) {
             setImmediate(async () => {
                 try {
                     console.log('Starting booking automation process...');
@@ -277,7 +277,7 @@ app.post('/alcatraz-webhook', async (req, res) => {
                     console.error('Error in booking automation:', automationError);
                 }
             });
-        }
+        // }
     } catch (error) {
         console.error('Error processing webhook:', error);
         res.status(200).json({
