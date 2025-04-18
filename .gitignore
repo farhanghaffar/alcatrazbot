@@ -2,3 +2,5 @@ node_modules
 errors
 successfulOrders
 .env
+automation/errors
+automation/service-charges

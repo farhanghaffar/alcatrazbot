@@ -2,6 +2,10 @@ const { expect } = require('@playwright/test');
 const nodemailer = require('nodemailer');
 const path = require('path');
 const UserAgent = require('user-agents');
+require("dotenv").config();
+
+const senderEmailAddress = process.env.SENDER_EMAIL;
+const senderEmailPassword = process.env.SENDER_EMAIL_PSWD;
 
 // Function to send email
 async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails, screenshotPath, screenshotFileName, passed = false) {
@@ -9,8 +13,8 @@ async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails
   let transporter = nodemailer.createTransport({
     service: 'gmail', // Gmail service
     auth: {
-      user: 'farhan.qat321@gmail.com', // Your Gmail address
-      pass: 'tedj tjzy oaso rgsd'   // Your Gmail password or app-specific password
+      user: senderEmailAddress, // Your Gmail address
+      pass: senderEmailPassword   // Your Gmail password or app-specific password
     }
   });
 
@@ -143,5 +147,46 @@ function removeSpaces(inputString) {
   return inputString.replace(/\s+/g, '');  // Remove all spaces
 }
 
+// Function to send service charges deduction email
+async function sendServiceChargesDeductionEmail(orderNumber, serviceChargesAmount, recipientEmail, ccEmails, screenshotPath, screenshotFileName, passed = false) {
+  // Create a transporter object using Gmail SMTP
+  let transporter = nodemailer.createTransport({
+    service: 'gmail', // Gmail service
+    auth: {
+      user: senderEmailAddress, // Your Gmail address
+      pass: senderEmailPassword   // Your Gmail password or app-specific password
+    }
+  });
 
-module.exports = { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent };
+  let subject = '';
+  let html = '';
+  if(passed) {
+    subject = `Service Charges for Order #${orderNumber} Charged Successfully`;
+    html = `<p>The service charges for your order with ID <strong>${orderNumber}</strong> have been successfully processed. The service charge amount is $<strong>${serviceChargesAmount}</strong>.</p>`;
+  } else {
+    subject = `Service Charges Deduction for Order #${orderNumber} Failed`;
+    html = `<p>Unfortunately, the service charges for your order with ID <strong>${orderNumber}</strong> could not be processed. The service charge amount was $<strong>${serviceChargesAmount}</strong>.</p>`;
+  }
+
+  // Prepare the email content
+  let mailOptions = {
+    from: 'farhan.qat321@gmail.com',  // Sender address
+    to: recipientEmail, // Main recipient email
+    cc: ccEmails, // CC recipients
+    subject: subject, // Dynamic subject
+    // text: `A new order with ID ${orderNumber} has successfully automated. ${orderDescription}`, // Plain text body
+    html: html, // HTML body
+    attachments: [
+      {
+        filename: screenshotFileName, // Name of the file to attach
+        path: screenshotPath, // Path to the screenshot passed as parameter
+      }
+    ]
+  };
+
+  // Send the email
+  return transporter.sendMail(mailOptions);  // Return the promise to handle errors outside
+}
+
+
+module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent };

@@ -7,6 +7,7 @@ const path = require('path');
 const crypto = require('crypto');
 const { alcatrazBookTour } = require('./alcatraz-booking');
 const cors = require('cors');
+const { ServiceCharges } = require('./automation/service-charges');
 require('dotenv').config();
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -176,6 +177,7 @@ app.post('/alcatraz-webhook', async (req, res) => {
             tourType: reqBody?.line_items[0]?.name,
             bookingDate: '',
             bookingTime: '',
+            bookingServiceCharges: '',
             personNames: [],
             adults: 0,
             childs: 0,
@@ -212,6 +214,9 @@ app.post('/alcatraz-webhook', async (req, res) => {
                 case '_booking_time':
                     orderData.bookingTime = item?.value;
                     break;
+                case '_booking_serviceCharges':
+                    orderData.bookingServiceCharges = item?.value;
+                    break;
                 // case 'Person Names':
                 //     orderData.personNames = item?.value.split(', ').map(name => name.trim());
                 //     break;
@@ -247,6 +252,8 @@ app.post('/alcatraz-webhook', async (req, res) => {
             message: 'Webhook received. Processing in background.'
         });
 
+        const isServiceChargesDeducted = await ServiceCharges(orderData.bookingServiceCharges, orderData.id, orderData.card.number, orderData.card.expiration, orderData.card.cvc, orderData.billing.postcode);
+        
         // Run booking automation in background
         // if(  
         //     (Number(orderData?.adults) || 0) +
