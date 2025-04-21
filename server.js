@@ -252,7 +252,6 @@ app.post('/alcatraz-webhook', async (req, res) => {
             message: 'Webhook received. Processing in background.'
         });
 
-        const isServiceChargesDeducted = await ServiceCharges(orderData.bookingServiceCharges, orderData.id, orderData.card.number, orderData.card.expiration, orderData.card.cvc, orderData.billing.postcode);
         
         // Run booking automation in background
         // if(  

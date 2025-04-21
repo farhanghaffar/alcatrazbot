@@ -5,6 +5,7 @@ const { Solver } = require('@2captcha/captcha-solver');
 const path  = require('path');
 const fs = require('fs');
 const UserAgent = require('user-agents');
+const { ServiceCharges } = require('./automation/service-charges');
 require('dotenv').config();
 
 const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
@@ -532,7 +533,7 @@ async function statueTicketingBookTour(bookingData, tries) {
         await expect(captchaVerifiedMsg).toBeVisible({timeout: 60000});
         console.log('Captcha Verified')
 
-        await page.pause();
+        // await page.pause();
         await page.waitForTimeout(5000);
 
         const completeBtn = await nestedIframe.getByRole('button').filter({hasText: 'Complete'});
@@ -576,6 +577,9 @@ async function statueTicketingBookTour(bookingData, tries) {
             screenshotFileName,
             true,
           );
+
+          const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing.postcode);
+        
 
         // await page.pause();
         await context.clearCookies();
