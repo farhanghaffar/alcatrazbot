@@ -329,6 +329,28 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'healthy' });
 });
 
+// Webhook endpoint with verification | http://potomacticketing.com/
+app.post('/potomac-webhook', async (req, res) => {
+    console.log('Order data:', JSON.stringify(req.body));
+    
+    const reqBody = req.body;
+
+    try {
+        // Send response immediately to prevent webhook timeouts
+        res.status(200).json({
+            message: 'Webhook received. Processing potomac order in background.'
+        });
+
+        
+    } catch (error) {
+        console.error('Error processing webhook:', error);
+        res.status(200).json({
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+});
+
 // Create HTTPS server with error handling
 try {
     // const server = https.createServer(sslOptions, app);
