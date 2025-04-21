@@ -4,6 +4,7 @@ const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, for
 const { Solver } = require('@2captcha/captcha-solver');
 const fs = require('fs');  
 const path  = require('path');
+const { ServiceCharges } = require('./automation/service-charges');
 require('dotenv').config();
 
 const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
@@ -601,6 +602,7 @@ async function alcatrazBookTour(bookingData, tries) {
           );
 
         // await page.pause();
+        const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing.postcode);
 
         return {
             success: true
