@@ -575,8 +575,8 @@ async function potomacTourBooking(bookingData, tries) {
       bookingData.id, // order number
       `Try ${tries + 1}. The final screen snip is attached for your reference.`, // order description
       "farhan.qat123@gmail.com", // recipient email address
-      // ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
-      [],
+      ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
+    //   [],
       screenshotPath, // path to the screenshot
       screenshotFileName,
       true,
@@ -619,8 +619,8 @@ async function potomacTourBooking(bookingData, tries) {
           error.message ? `ERRMSG: ` + error.message : ""
         }`, // order description
         "farhan.qat123@gmail.com", // recipient email address
-        // ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
-        [],
+        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
+        // [],
         screenshotPath, // path to the screenshot
         screenshotFileName, // screenshot filename
         false, // Automation Passed Status
