@@ -579,7 +579,7 @@ async function statueTicketingBookTour(bookingData, tries) {
             'StatueTicketing'
           );
 
-          const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing.postcode, "StatueTicketing");
+          const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData?.billing?.postcode, bookingData.billing.email, "StatueTicketing");
         
 
         // await page.pause();

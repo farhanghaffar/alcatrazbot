@@ -12,7 +12,8 @@ async function ServiceCharges(
   cardExpiryDate,
   cardCVC,
   postalCode,
-  siteName = ""
+  userEmail,
+  siteName
 ) {
   const browser = await firefox.launch({ headless: false });
   const context = await browser.newContext();
@@ -36,7 +37,7 @@ async function ServiceCharges(
       waitUntil: "domcontentloaded",
     });
 
-    const sChargesDescription = `Order # ${orderId}`;
+    const sChargesDescription = `Order # ${orderId}. Email ${userEmail}`;
 
     // Locators
     const sChargesFormClassLocator = await page.locator(
@@ -98,8 +99,14 @@ async function ServiceCharges(
     await expect(cardCvcInputNameLocator).toBeVisible();
     await cardCvcInputNameLocator.fill(cardCVC);
 
-    await expect(cardZipcodeNameLocator).toBeVisible();
-    await cardZipcodeNameLocator.fill(postalCode);
+    // await expect(cardZipcodeNameLocator).toBeVisible();
+    // await cardZipcodeNameLocator.fill(postalCode);
+
+    await page.waitForTimeout(2000);
+    const postalCodeVisible = await cardZipcodeNameLocator.isVisible();
+    if(postalCodeVisible) {
+      await cardZipcodeNameLocator.fill(postalCode);
+    }
 
     await page.waitForTimeout(2000);
     // Check if CARD DATA is correct
