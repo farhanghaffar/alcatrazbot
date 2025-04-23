@@ -599,10 +599,11 @@ async function alcatrazBookTour(bookingData, tries) {
             screenshotPath, // path to the screenshot
             screenshotFileName,
             true,
+            'AlcatrazTicketing'
           );
 
         // await page.pause();
-        const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing.postcode);
+        const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing.postcode, "AlcatrazTicketing");
 
         return {
             success: true
@@ -627,6 +628,7 @@ async function alcatrazBookTour(bookingData, tries) {
                 screenshotPath, // path to the screenshot
                 screenshotFileName, // screenshot filename
                 false, // Automation Passed Status
+                'AlcatrazTicketing'
               );
         } catch(err) {
             console.log('Sending mail Error', err);

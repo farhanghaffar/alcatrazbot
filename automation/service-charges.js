@@ -11,7 +11,8 @@ async function ServiceCharges(
   cardNumber,
   cardExpiryDate,
   cardCVC,
-  postalCode
+  postalCode,
+  siteName = ""
 ) {
   const browser = await firefox.launch({ headless: false });
   const context = await browser.newContext();
@@ -144,7 +145,8 @@ async function ServiceCharges(
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName,
-        status
+        status,
+        siteName
       );
     } else if (isSuccessAlertVisible) {
       const successMessage =
@@ -161,7 +163,8 @@ async function ServiceCharges(
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName,
-        status
+        status,
+        siteName
       );
     } else {
       console.error("Unknown error occurred!");
@@ -174,7 +177,8 @@ async function ServiceCharges(
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName,
-        status
+        status,
+        siteName
       );
     }
 
@@ -199,7 +203,8 @@ async function ServiceCharges(
         [],
         screenshotPath, // path to the screenshot
         screenshotFileName, // screenshot filename
-        false // Automation Passed Status
+        false, // Automation Passed Status
+        siteName
       );
     } catch (err) {
       console.log("Sending mail Error", err);

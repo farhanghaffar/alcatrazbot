@@ -8,7 +8,7 @@ const senderEmailAddress = process.env.SENDER_EMAIL;
 const senderEmailPassword = process.env.SENDER_EMAIL_PSWD;
 
 // Function to send email
-async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails, screenshotPath, screenshotFileName, passed = false) {
+async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails, screenshotPath, screenshotFileName, passed = false, automationSite = '') {
   // Create a transporter object using Gmail SMTP
   let transporter = nodemailer.createTransport({
     service: 'gmail', // Gmail service
@@ -21,11 +21,11 @@ async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails
   let subject = '';
   let html = '';
   if(passed) {
-    subject = `Order #${orderNumber} Automation Successful`;
-    html = `<p>A new order with ID <strong>${orderNumber}</strong> has successfully automated. ${orderDescription}</p>`;
+    subject = `${automationSite} Order #${orderNumber} Automation Successful`;
+    html = `<p>A new order of <b>${automationSite}</b> with ID <strong>${orderNumber}</strong> has successfully automated. ${orderDescription}</p>`;
   } else {
-    subject = `Order #${orderNumber} Automation Failed`;
-    html = `<p>A new order automation with ID <strong>${orderNumber}</strong> was unfortunately failed. ${orderDescription}</p>`;
+    subject = `${automationSite} Order #${orderNumber} Automation Failed`;
+    html = `<p>A new order automation of <b>${automationSite}</b> with ID <strong>${orderNumber}</strong> was unfortunately failed. ${orderDescription}</p>`;
   }
 
   // Prepare the email content
@@ -148,7 +148,7 @@ function removeSpaces(inputString) {
 }
 
 // Function to send service charges deduction email
-async function sendServiceChargesDeductionEmail(orderNumber, serviceChargesAmount, recipientEmail, ccEmails, screenshotPath, screenshotFileName, passed = false) {
+async function sendServiceChargesDeductionEmail(orderNumber, serviceChargesAmount, recipientEmail, ccEmails, screenshotPath, screenshotFileName, passed = false, ticketingSite = "") {
   // Create a transporter object using Gmail SMTP
   let transporter = nodemailer.createTransport({
     service: 'gmail', // Gmail service
@@ -161,11 +161,11 @@ async function sendServiceChargesDeductionEmail(orderNumber, serviceChargesAmoun
   let subject = '';
   let html = '';
   if(passed) {
-    subject = `Service Charges for Order #${orderNumber} Charged Successfully`;
-    html = `<p>The service charges for your order with ID <strong>${orderNumber}</strong> have been successfully processed. The service charge amount is $<strong>${serviceChargesAmount}</strong>.</p>`;
+    subject = `Service Charges on ${ticketingSite} for Order #${orderNumber} Charged Successfully`;
+    html = `<p>The service charges on <b>${ticketingSite}</b> for your order with ID <strong>${orderNumber}</strong> have been successfully processed. The service charge amount is $<strong>${serviceChargesAmount}</strong>.</p>`;
   } else {
-    subject = `Service Charges Deduction for Order #${orderNumber} Failed`;
-    html = `<p>Unfortunately, the service charges for your order with ID <strong>${orderNumber}</strong> could not be processed. The service charge amount was $<strong>${serviceChargesAmount}</strong>.</p>`;
+    subject = `Service Charges Deduction on ${ticketingSite} for Order #${orderNumber} Failed`;
+    html = `<p>Unfortunately, the service charges on <b>${ticketingSite}</b> for your order with ID <strong>${orderNumber}</strong> could not be processed. The service charge amount was $<strong>${serviceChargesAmount}</strong>.</p>`;
   }
 
   // Prepare the email content

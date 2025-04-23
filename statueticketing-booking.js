@@ -576,9 +576,10 @@ async function statueTicketingBookTour(bookingData, tries) {
             screenshotPath, // path to the screenshot
             screenshotFileName,
             true,
+            'StatueTicketing'
           );
 
-          const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing.postcode);
+          const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing.postcode, "StatueTicketing");
         
 
         // await page.pause();
@@ -611,6 +612,7 @@ async function statueTicketingBookTour(bookingData, tries) {
                 screenshotPath, // path to the screenshot
                 screenshotFileName, // screenshot filename
                 false, // Automation Passed Status
+                'StatueTicketing'
               );
         } catch(err) {
             console.log('Sending mail Error', err);

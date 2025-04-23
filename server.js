@@ -9,6 +9,7 @@ const { alcatrazBookTour } = require('./alcatraz-booking');
 const cors = require('cors');
 const { ServiceCharges } = require('./automation/service-charges');
 require('dotenv').config();
+const { potomacTourBooking } = require('./automation/potomac/automation')
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -336,9 +337,101 @@ app.post('/potomac-webhook', async (req, res) => {
     const reqBody = req.body;
 
     try {
+        // Extract relevant data from WooCommerce order
+        const orderData = {
+            id: reqBody.id,
+            tourType: '',
+            bookingDate: '',
+            bookingTime: '',
+            bookingServiceCharges: '',
+            personNames: [],
+            ticketQuantity: 0,
+            card: {
+                cvc: '',
+                expiration: '',
+                number: '',
+            },
+            billing: {
+                first_name: reqBody?.billing?.first_name,
+                last_name: reqBody?.billing?.last_name,
+                company: reqBody?.billing?.company,
+                address_1: reqBody?.billing?.address_1,
+                address_2: reqBody?.billing?.address_2,
+                city: reqBody?.billing?.city,
+                state: reqBody?.billing?.state,
+                postcode: reqBody?.billing?.postcode,
+                country: reqBody?.billing?.country,
+                email: reqBody?.billing?.email,
+                phone: reqBody?.billing?.phone
+            },
+        };
+
+        reqBody?.line_items[0]?.meta_data.forEach(item => {
+            switch (item.key) {
+                case 'Tour Type':
+                    orderData.tourType = item?.value;
+                    break;
+                case 'Booking Date':
+                    orderData.bookingDate = item?.value;
+                    break;
+                case 'Booking Time':
+                    orderData.bookingTime = item?.value;
+                    break;
+                case 'Service Charges':
+                    orderData.bookingServiceCharges = item?.value;
+                    break;
+                case 'One Day Pass Quantity':
+                    orderData.ticketQuantity = item?.value;
+                    break;
+                
+                case 'Two Day Pass Quantity':
+                    orderData.ticketQuantity = item?.value;
+                    break;
+
+                default:
+                    break;
+            }
+        });
+
+        reqBody.meta_data.forEach(item => {
+            if (item.key.toLowerCase() === 'credit_card_cvc') {
+                orderData.card.cvc = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_expiration') {
+                orderData.card.expiration = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_number') {
+                orderData.card.number = item.value;
+            }
+        });
+
+        console.log('Potomac: After manipulation, data is: ', orderData);
+
         // Send response immediately to prevent webhook timeouts
         res.status(200).json({
-            message: 'Webhook received. Processing potomac order in background.'
+            message: 'Potomac Webhook received. Processing in background.'
+        });
+
+        setImmediate(async () => {
+            try {
+                console.log('Starting booking automation process...');
+                let tries = 0;
+                const maxRetries = 3;
+                let bookingResult = await potomacTourBooking(orderData, tries);
+                
+                // Retry logic
+                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')) {
+                    tries++;
+                    console.log(`Retry attempt #${tries}...`);
+                    bookingResult = await potomacTourBooking(orderData, tries);
+                }
+        
+                if (bookingResult.success) {
+                    console.log('Potomac Booking automation completed successfully');
+                } else {
+                    console.error('Potomac Booking automation failed:', bookingResult.error);
+                }
+            } catch (automationError) {
+                console.error('Potomac Error in booking automation:', automationError);
+            }
         });
 
         
