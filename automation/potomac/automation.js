@@ -16,6 +16,7 @@ const { Solver } = require("@2captcha/captcha-solver");
 const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
+const {ServiceCharges} = require("../service-charges")
 
 async function potomacTourBooking(bookingData, tries) {
   const browser = await firefox.launch({ headless: false });
@@ -542,6 +543,21 @@ async function potomacTourBooking(bookingData, tries) {
     console.log("Clicked Complete Button");
 
     await page.waitForTimeout(12000);
+
+    const loginSignUpPopup = await frameHandle
+    .locator("span")
+    .filter({ hasText: "Login or Sign Up" });
+  const isLoginSignupPopupVisible = await loginSignUpPopup.isVisible();
+
+  if (isLoginSignupPopupVisible) {
+    const poupCloseBtn = await frameHandle.locator(
+      "[data-bdd='modal-close-button']"
+    );
+
+    await expect(poupCloseBtn).toBeVisible({ timeout: 80000 });
+    await poupCloseBtn.click();
+  }
+
     const errorMsg = await frameHandle.getByText(
       "Oops... something went wrong."
     );
@@ -558,19 +574,6 @@ async function potomacTourBooking(bookingData, tries) {
 
     await page.waitForTimeout(12000);
 
-    const loginSignUpPopup = await frameHandle
-      .locator("span")
-      .filter({ hasText: "Login or Sign Up" });
-    const isLoginSignupPopupVisible = await loginSignUpPopup.isVisible();
-
-    if (isLoginSignupPopupVisible) {
-      const poupCloseBtn = await frameHandle.locator(
-        "[data-bdd='modal-close-button']"
-      );
-
-      await expect(poupCloseBtn).toBeVisible({ timeout: 80000 });
-      await poupCloseBtn.click();
-    }
 
     const thankYouMsg = await frameHandle
       .getByText("Thank you for your purchase!")
