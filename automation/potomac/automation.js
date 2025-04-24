@@ -558,6 +558,20 @@ async function potomacTourBooking(bookingData, tries) {
 
     await page.waitForTimeout(12000);
 
+    const loginSignUpPopup = await frameHandle
+      .locator("span")
+      .filter({ hasText: "Login or Sign Up" });
+    const isLoginSignupPopupVisible = await loginSignUpPopup.isVisible();
+
+    if (isLoginSignupPopupVisible) {
+      const poupCloseBtn = await frameHandle.locator(
+        "[data-bdd='modal-close-button']"
+      );
+
+      await expect(poupCloseBtn).toBeVisible({ timeout: 80000 });
+      await poupCloseBtn.click();
+    }
+
     const thankYouMsg = await frameHandle
       .getByText("Thank you for your purchase!")
       .first();
@@ -575,8 +589,8 @@ async function potomacTourBooking(bookingData, tries) {
       bookingData.id, // order number
       `Try ${tries + 1}. The final screen snip is attached for your reference.`, // order description
       "farhan.qat123@gmail.com", // recipient email address
-      ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
-    //   [],
+      ["mymtvrs@gmail.com"], // CC email(s), can be a single email or comma-separated multiple mails
+      //   [],
       screenshotPath, // path to the screenshot
       screenshotFileName,
       true,
@@ -590,11 +604,11 @@ async function potomacTourBooking(bookingData, tries) {
       bookingData.card.expiration,
       bookingData.card.cvc,
       bookingData.billing.postcode,
-      siteName = "PotomacTicketing"
+      (siteName = "PotomacTicketing")
     );
 
-    if(isServiceChargesDeducted){
-        console.log("Potomac Service charges deducted successfully!");
+    if (isServiceChargesDeducted) {
+      console.log("Potomac Service charges deducted successfully!");
     }
 
     return {
@@ -619,7 +633,7 @@ async function potomacTourBooking(bookingData, tries) {
           error.message ? `ERRMSG: ` + error.message : ""
         }`, // order description
         "farhan.qat123@gmail.com", // recipient email address
-        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
+        ["mymtvrs@gmail.com"], // CC email(s), can be a single email or comma-separated
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName, // screenshot filename
