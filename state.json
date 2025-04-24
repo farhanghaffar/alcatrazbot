@@ -5,20 +5,24 @@
       "origin": "https://www.cityexperiences.com",
       "localStorage": [
         {
-          "name": "__ctm_4326_ttl",
-          "value": "Wed May 21 2025 12:23:17 GMT-0500 (Central Daylight Time)"
+          "name": "snapinsPc",
+          "value": "1"
         },
         {
-          "name": "snapinsPage_1",
-          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/checkout/?cart=0&bookingTypeId=7&propertyID=hstatueco&preselectionFlag=1&qrcode=0&preselection=opcbdbqtselectedDatedbqt:dbqt09/08/2025dbqt,dbqtselectedTimedTicketTypeIddbqt:17706707,dbqtticketSelectiondbqt:opcbdbqt7dbqt:opcbdbqt108363dbqt:2clcbclcb,dbqtdepartureStopdbqt:dbqtdbqt,dbqtdestinationStopdbqt:dbqtdbqt,dbqtcostRateIddbqt:dbqtdbqtclcb"
+          "name": "__ctm_4326_ttl",
+          "value": "Fri May 23 2025 21:08:47 GMT-0500 (Central Daylight Time)"
         },
         {
           "name": "__ctm2_4326",
-          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/new-jersey-crown-reserve/"
+          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/new-york-crown-reserve/"
         },
         {
           "name": "snapinsStart",
-          "value": "1745256153795"
+          "value": "1745460534075"
+        },
+        {
+          "name": "mirage_cache_manifest",
+          "value": "{\"https://assets.cityexperiences.com/wp-content/uploads/2023/02/CC-Statue-Logo-CMYK-Stacked-FullColor.png\":1745460526658,\"https://assets.cityexperiences.com/wp-content/uploads/2023/05/loading-gif.gif\":1745460526687}"
         },
         {
           "name": "__ctm_4326",
@@ -26,31 +30,27 @@
         },
         {
           "name": "snapinsPageTime_0",
-          "value": "1745256153796"
+          "value": "1745460534075"
         },
         {
           "name": "commerceCorrelationId",
-          "value": "41279a74-08e1-4c16-80c7-20949a2b4533:826831518:8"
+          "value": "55844a58-4d69-4a67-b6f3-5c5bee877b10:493790356:7"
         },
         {
           "name": "__ctm2_4326_ttl",
-          "value": "Wed May 21 2025 12:23:17 GMT-0500 (Central Daylight Time)"
+          "value": "Fri May 23 2025 21:08:47 GMT-0500 (Central Daylight Time)"
         },
         {
           "name": "snapinsPage_0",
-          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/new-jersey-crown-reserve/"
+          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/new-york-crown-reserve/"
         },
         {
-          "name": "snapinsPageTime_1",
-          "value": "1745256197415"
+          "name": "mirage_network_connection",
+          "value": "{\"effectiveType\":\"4g\"}"
         },
         {
           "name": "debug",
           "value": "hb*"
-        },
-        {
-          "name": "snapinsPc",
-          "value": "2"
         }
       ]
     },
@@ -59,11 +59,11 @@
       "localStorage": [
         {
           "name": "analytics/session/75168/26",
-          "value": "{\"expires\":1745260052107,\"sessionState\":{\"name\":\"session\",\"startTime\":1745256143475,\"attributes\":{\"formassembly_form_is_submitted\":false,\"formassembly_form_is_attempted\":false,\"formassembly_customer_id\":\"75168\",\"formassembly_form_id\":26,\"formassembly_form_action\":\"https://hornblowergroup.tfaforms.net/api_v2/workflow/processor?faIframeUniqueId=8msdflegsy&hostURL=https://www.cityexperiences.com/new-york/city-cruises/statue/new-jersey-crown-reserve/\",\"http_host\":\"hornblowergroup.tfaforms.net\",\"http_url\":\"https://hornblowergroup.tfaforms.net/26\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Safari/605.1.15\"},\"parentSpanId\":\"\",\"spanId\":\"3541fb7fc3b5669c\",\"endTime\":1745256452107}}"
+          "value": "{\"expires\":1745464126562,\"sessionState\":{\"name\":\"session\",\"startTime\":1745460526562,\"attributes\":{\"formassembly_form_is_submitted\":false,\"formassembly_form_is_attempted\":false,\"formassembly_customer_id\":\"75168\",\"formassembly_form_id\":26,\"formassembly_form_action\":\"https://hornblowergroup.tfaforms.net/api_v2/workflow/processor?faIframeUniqueId=afwxh2uhod&hostURL=https://www.cityexperiences.com/new-york/city-cruises/statue/new-york-crown-reserve/\",\"http_host\":\"hornblowergroup.tfaforms.net\",\"http_url\":\"https://hornblowergroup.tfaforms.net/26\",\"userAgent\":\"Mozilla/5.0 (iPhone; CPU iPhone OS 18_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Mobile/15E148 Safari/604.1\"},\"parentSpanId\":\"\",\"spanId\":\"16e0f133effe02ff\",\"endTime\":1745460526562}}"
         },
         {
           "name": "simpleStorage",
-          "value": "{\"bodyScrollHeight\":211,\"__simpleStorage_meta\":{\"TTL\":{\"expire\":{\"bodyScrollHeight\":1745515654634,\"bodyOffsetHeight\":1745515654634,\"bodyClientHeight\":1745515654634,\"htmlScrollHeight\":1745515654634,\"htmlOffsetHeight\":1745515654634,\"htmlClientHeight\":1745515654634,\"maximumHeight\":1745515654634},\"keys\":[\"bodyScrollHeight\",\"bodyOffsetHeight\",\"bodyClientHeight\",\"htmlScrollHeight\",\"htmlOffsetHeight\",\"htmlClientHeight\",\"maximumHeight\"]}},\"bodyOffsetHeight\":211,\"bodyClientHeight\":211,\"htmlScrollHeight\":250,\"htmlOffsetHeight\":238,\"htmlClientHeight\":250,\"maximumHeight\":250}"
+          "value": "{\"bodyScrollHeight\":211,\"__simpleStorage_meta\":{\"TTL\":{\"expire\":{\"bodyScrollHeight\":1745719739822,\"bodyOffsetHeight\":1745719739822,\"bodyClientHeight\":1745719739822,\"htmlScrollHeight\":1745719739822,\"htmlOffsetHeight\":1745719739822,\"htmlClientHeight\":1745719739822,\"maximumHeight\":1745719739822},\"keys\":[\"bodyScrollHeight\",\"bodyOffsetHeight\",\"bodyClientHeight\",\"htmlScrollHeight\",\"htmlOffsetHeight\",\"htmlClientHeight\",\"maximumHeight\"]}},\"bodyOffsetHeight\":211,\"bodyClientHeight\":211,\"htmlScrollHeight\":250,\"htmlOffsetHeight\":238,\"htmlClientHeight\":250,\"maximumHeight\":250}"
         }
       ]
     },
@@ -72,52 +72,23 @@
       "localStorage": [
         {
           "name": "pos-posdeviceid",
-          "value": "\"pos-mjczeqeo6a\""
+          "value": "\"pos-huv4eta24f6\""
         },
         {
-          "name": "__ctm_4326_ttl",
-          "value": "Wed May 21 2025 12:23:22 GMT-0500 (Central Daylight Time)"
-        },
-        {
-          "name": "__ctm2_4326",
-          "value": "https://my.cityexperiences.com/sdk/checkout?useFrontendV2=1&hideInitialSkeleton=1&parent_url=https%3A//www.cityexperiences.com/new-york/city-cruises/statue/checkout/%3Fcart%3D0%26bookingTypeId%3D7%26propertyID%3Dhstatueco%26preselectionFlag%3D1%26qrcode%3D0%26preselection%3DopcbdbqtselectedDatedbqt%3Adbqt09/08/2025dbqt%2CdbqtselectedTimedTicketTypeIddbqt%3A17706707%2CdbqtticketSelectiondbqt%3Aopcbdbqt7dbqt%3Aopcbdbqt108363dbqt%3A2clcbclcb%2CdbqtdepartureStopdbqt%3Adbqtdbqt%2CdbqtdestinationStopdbqt%3Adbqtdbqt%2CdbqtcostRateIddbqt%3Adbqtdbqtclcb&property_id=hstatueco&uid=6dd1c02d5d&logLevel=error&version=latest&xcomponent=1"
-        },
-        {
-          "name": "commerceCorrelationId",
-          "value": "41279a74-08e1-4c16-80c7-20949a2b4533:826831518:8"
+          "name": "tealium_timing",
+          "value": "{\"domain\":\"my.cityexperiences.com\",\"pathname\":\"/sdk/checkout\",\"query_string\":\"useFrontendV2=1&hideInitialSkeleton=1&parent_url=https%3A//www.cityexperiences.com/new-york/city-cruises/statue/new-york-crown-reserve/&property_id=hstatueco&uid=138613919b&logLevel=error&version=latest&xcomponent=1\",\"timestamp\":1745460531806,\"dns\":0,\"connect\":0,\"response\":0,\"dom_loading_to_interactive\":94,\"dom_interactive_to_complete\":2171,\"load\":4,\"time_to_first_byte\":174,\"front_end\":2278,\"fetch_to_response\":174,\"fetch_to_complete\":2452,\"fetch_to_interactive\":281}"
         },
         {
           "name": "currentPage",
           "value": "/checkout"
         },
         {
-          "name": "clickXY",
-          "value": "x:389,y:1551"
-        },
-        {
-          "name": "__ctm2_4326_ttl",
-          "value": "Wed May 21 2025 12:23:22 GMT-0500 (Central Daylight Time)"
+          "name": "commerceCorrelationId",
+          "value": "55844a58-4d69-4a67-b6f3-5c5bee877b10:493790356:7"
         },
         {
           "name": "ed73f20edbf2b74",
-          "value": "0:3:1745256152434:1745256287137:52c7ba234aabd0f8de62880b1feb3a5a"
-        },
-        {
-          "name": "tealium_timing",
-          "value": "{\"domain\":\"my.cityexperiences.com\",\"pathname\":\"/sdk/checkout\",\"query_string\":\"useFrontendV2=1&hideInitialSkeleton=1&parent_url=https%3A//www.cityexperiences.com/new-york/city-cruises/statue/checkout/%3Fcart%3D0%26bookingTypeId%3D7%26propertyID%3Dhstatueco%26preselectionFlag%3D1%26qrcode%3D0%26preselection%3DopcbdbqtselectedDatedbqt%3Adbqt09/08/2025dbqt%2CdbqtselectedTimedTicketTypeIddbqt%3A17706707%2CdbqtticketSelectiondbqt%3Aopcbdbqt7dbqt%3Aopcbdbqt108363dbqt%3A2clcbclcb%2CdbqtdepartureStopdbqt%3Adbqtdbqt%2CdbqtdestinationStopdbqt%3Adbqtdbqt%2CdbqtcostRateIddbqt%3Adbqtdbqtclcb&property_id=hstatueco&uid=6dd1c02d5d&logLevel=error&version=latest&xcomponent=1\",\"timestamp\":1745256433295,\"dns\":0,\"connect\":0,\"response\":0,\"dom_loading_to_interactive\":142,\"dom_interactive_to_complete\":1664,\"load\":3,\"time_to_first_byte\":261,\"front_end\":1809,\"fetch_to_response\":261,\"fetch_to_complete\":2070,\"fetch_to_interactive\":406}"
-        },
-        {
-          "name": "__ctm_4326",
-          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/checkout/?cart=0&bookingTypeId=7&propertyID=hstatueco&preselectionFlag=1&qrcode=0&preselection=opcbdbqtselectedDatedbqt:dbqt09/08/2025dbqt,dbqtselectedTimedTicketTypeIddbqt:17706707,dbqtticketSelectiondbqt:opcbdbqt7dbqt:opcbdbqt108363dbqt:2clcbclcb,dbqtdepartureStopdbqt:dbqtdbqt,dbqtdestinationStopdbqt:dbqtdbqt,dbqtcostRateIddbqt:dbqtdbqtclcb"
-        }
-      ]
-    },
-    {
-      "origin": "https://checkout.paze.com",
-      "localStorage": [
-        {
-          "name": "_config",
-          "value": "6305d479-4d10-4cad-9c53-d33181e07ed1"
+          "value": "0:1:1745460530834:1745460530834:3576c4967828aa3fcc5fd440417b756a"
         }
       ]
     }

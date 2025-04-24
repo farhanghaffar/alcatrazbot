@@ -579,7 +579,7 @@ async function potomacTourBooking(bookingData, tries) {
 
     const successDir = path.join(__dirname, "successful-orders-screenshots");
     if (!fs.existsSync(successDir)) {
-      fs.mkdir(successDir);
+        await fs.promises.mkdir(successDir);
     }
     const screenshotFileName = bookingData.id + "-order-sucess.png";
     const screenshotPath = path.join(successDir, screenshotFileName);
@@ -618,7 +618,7 @@ async function potomacTourBooking(bookingData, tries) {
     console.error("Booking automation error:", error);
     const errorsDir = path.join(__dirname, "errors-screenshots");
     if (!fs.existsSync(errorsDir)) {
-      fs.mkdirSync(errorsDir);
+      await fs.promises.mkdir(errorsDir);      
     }
     const screenshotFileName = bookingData.id + "-error-screenshot.png";
     const screenshotPath = path.join(errorsDir, screenshotFileName);

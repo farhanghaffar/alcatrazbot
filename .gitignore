@@ -4,3 +4,5 @@ successfulOrders
 .env
 automation/errors
 automation/service-charges
+automation/potomac/errors-screenshots
+automation/potomac/succesful-orders-screenshots
