@@ -600,8 +600,9 @@ async function potomacTourBooking(bookingData, tries) {
       "PotomacTicketing"
     );
 
+    const bookingCharges = parseFloat(bookingData.bookingServiceCharges.replace('$', ''));
     const isServiceChargesDeducted = await ServiceCharges(
-      bookingData.bookingServiceCharges,
+      bookingCharges,
       bookingData.id,
       bookingData.card.number,
       bookingData.card.expiration,
