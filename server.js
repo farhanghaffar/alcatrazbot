@@ -66,6 +66,7 @@ app.post('/webhook', async (req, res) => {
             tourType: '',
             bookingDate: '',
             bookingTime: '',
+            bookingServiceCharges: '',
             personNames: [],
             adults: 0,
             childs: 0,
@@ -104,6 +105,9 @@ app.post('/webhook', async (req, res) => {
                     break;
                 case 'Person Names':
                     orderData.personNames = item?.value.split(', ').map(name => name.trim());
+                    break;
+                case 'Service Charges':
+                    orderData.bookingServiceCharges = item?.value;
                     break;
                 default:
                     // Check for keywords "child", "adult", "military", and "senior" in the key to update counts

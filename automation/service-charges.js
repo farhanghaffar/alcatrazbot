@@ -206,8 +206,8 @@ async function ServiceCharges(
         orderId, // order number
         sChargesAmount, // order description
         recepientEmail, // recipient email address
-        // ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
-        [],
+        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
+        // [],
         screenshotPath, // path to the screenshot
         screenshotFileName, // screenshot filename
         false, // Automation Passed Status

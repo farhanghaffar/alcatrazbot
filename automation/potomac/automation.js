@@ -600,7 +600,7 @@ async function potomacTourBooking(bookingData, tries) {
       "PotomacTicketing"
     );
 
-    const bookingCharges = parseFloat(bookingData.bookingServiceCharges.replace('$', ''));
+    const bookingCharges = bookingData.bookingServiceCharges.replace('$', '');
     const isServiceChargesDeducted = await ServiceCharges(
       bookingCharges,
       bookingData.id,
@@ -608,7 +608,8 @@ async function potomacTourBooking(bookingData, tries) {
       bookingData.card.expiration,
       bookingData.card.cvc,
       bookingData.billing.postcode,
-      (siteName = "PotomacTicketing")
+      bookingData.billing?.email,
+      "PotomacTicketing"
     );
 
     if (isServiceChargesDeducted) {
