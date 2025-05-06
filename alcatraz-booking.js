@@ -616,10 +616,10 @@ async function alcatrazBookTour(bookingData, tries) {
         // await page.pause();
         const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "AlcatrazTicketing");
         if (isServiceChargesDeducted) {
-            const username = process.env.ALCATRAZ_WP_USERNAME;
-            const password = process.env.ALCATRAZ_WP_PASSWORD;
-            await updateOrderStatus("AlcatrazTicketing",username, password, bookingData.id, "Completed");
-            console.log("Order status changed successfully!");      
+            // ORDERS STATUS API PARAM OPTIONS
+            // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
+            const updatedOrder = await updateOrderStatus(bookingData.id, "completed");
+            console.log(`Order#${bookingData.id} status changed to ${updatedOrder.status} successfully!`); 
         }
 
         return {
