@@ -618,7 +618,7 @@ async function alcatrazBookTour(bookingData, tries) {
         if (isServiceChargesDeducted) {
             // ORDERS STATUS API PARAM OPTIONS
             // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
-            const updatedOrder = await updateOrderStatus(bookingData.id, "completed");
+            const updatedOrder = await updateOrderStatus("AlcatrazTicketing", bookingData.id, "completed");
             console.log(`Order#${bookingData.id} status changed to ${updatedOrder.status} successfully!`); 
         }
 
