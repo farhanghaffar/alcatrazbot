@@ -5,6 +5,7 @@ const { Solver } = require('@2captcha/captcha-solver');
 const fs = require('fs');  
 const path  = require('path');
 const { ServiceCharges } = require('./automation/service-charges');
+const { updateOrderStatus } = require('./automation/wp-update-order-status/automation');
 require('dotenv').config();
 
 const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
@@ -513,49 +514,59 @@ async function alcatrazBookTour(bookingData, tries) {
         await page.waitForTimeout(5000);
         const captchaFrame = nestedIframe.frameLocator('#mtcaptcha-iframe-1');
         const captchaImg = captchaFrame.locator('img[aria-label="captcha image."]');
-        let imgSrc = await captchaImg.getAttribute('src');
 
-        const captchaInput = await captchaFrame.locator('input[placeholder="Enter text from image"]');
-
-        let captchaResult = await solver.imageCaptcha({
+        const isCaptchaVisible = await captchaImg.isVisible();
+        if (isCaptchaVisible) {
+          let imgSrc = await captchaImg.getAttribute("src");
+    
+          const captchaInput = await captchaFrame.locator(
+            'input[placeholder="Enter text from image"]'
+          );
+    
+          let captchaResult = await solver.imageCaptcha({
             body: imgSrc,
-        })
-
-        console.log(captchaResult);
-        await typeWithDelay(captchaInput, captchaResult.data);
-        await cardCVCInput.click();        
-
-        const captchaVerifiedMsg = captchaFrame.getByRole('paragraph').filter({hasText: 'Verified Successfully'});
-        await page.waitForTimeout(3000);
-        let captchaVerified = await captchaVerifiedMsg.isVisible();
-        if(!captchaVerified) {
-            console.log('Captcha try #2');
+          });
+    
+          console.log(captchaResult);
+          await typeWithDelay(captchaInput, captchaResult.data);
+          await cardCVCInput.click();
+    
+          const captchaVerifiedMsg = captchaFrame
+            .getByRole("paragraph")
+            .filter({ hasText: "Verified Successfully" });
+          await page.waitForTimeout(3000);
+          let captchaVerified = await captchaVerifiedMsg.isVisible();
+          if (!captchaVerified) {
+            console.log("Captcha try #2");
             await captchaInput.clear();
-            imgSrc = await captchaImg.getAttribute('src');
+            imgSrc = await captchaImg.getAttribute("src");
             captchaResult = await solver.imageCaptcha({
-                body: imgSrc,
-            })
-
+              body: imgSrc,
+            });
+    
             console.log(captchaResult);
             await typeWithDelay(captchaInput, captchaResult.data);
             await cardCVCInput.click();
             await page.waitForTimeout(3000);
             captchaVerified = await captchaVerifiedMsg.isVisible();
-            if(!captchaVerified) {
-                console.log('Captcha try #3');
-                await captchaInput.clear();
-                imgSrc = await captchaImg.getAttribute('src');
-                captchaResult = await solver.imageCaptcha({
-                    body: imgSrc,
-                })
+            if (!captchaVerified) {
+              console.log("Captcha try #3");
+              await captchaInput.clear();
+              imgSrc = await captchaImg.getAttribute("src");
+              captchaResult = await solver.imageCaptcha({
+                body: imgSrc,
+              });
     
-                console.log(captchaResult);
-                await typeWithDelay(captchaInput, captchaResult.data);
-                await cardCVCInput.click();
+              console.log(captchaResult);
+              await typeWithDelay(captchaInput, captchaResult.data);
+              await cardCVCInput.click();
             }
+          }
+          await expect(captchaVerifiedMsg).toBeVisible({ timeout: 60000 });
+          console.log("Captcha Verified");
         }
-        await expect(captchaVerifiedMsg).toBeVisible({timeout: 60000});
-        console.log('Captcha Verified');
+    
+        console.log("Skipped captcha! Clicking Complete...");
 
         // await page.pause();
         await page.waitForTimeout(5000);
@@ -604,6 +615,12 @@ async function alcatrazBookTour(bookingData, tries) {
 
         // await page.pause();
         const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "AlcatrazTicketing");
+        if (isServiceChargesDeducted) {
+            const username = process.env.ALCATRAZ_WP_USERNAME;
+            const password = process.env.ALCATRAZ_WP_PASSWORD;
+            await updateOrderStatus("AlcatrazTicketing",username, password, bookingData.id, "Completed");
+            console.log("Order status changed successfully!");      
+        }
 
         return {
             success: true

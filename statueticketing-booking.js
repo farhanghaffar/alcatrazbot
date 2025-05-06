@@ -488,50 +488,58 @@ async function statueTicketingBookTour(bookingData, tries) {
         await page.waitForTimeout(5000);
         const captchaFrame = nestedIframe.frameLocator('#mtcaptcha-iframe-1');
         const captchaImg = captchaFrame.locator('img[aria-label="captcha image."]');
-        let imgSrc = await captchaImg.getAttribute('src');
-
-        const captchaInput = await captchaFrame.locator('input[placeholder="Enter text from image"]');
-
-        let captchaResult = await solver.imageCaptcha({
+        const isCaptchaVisible = await captchaImg.isVisible();
+        if (isCaptchaVisible) {
+          let imgSrc = await captchaImg.getAttribute("src");
+    
+          const captchaInput = await captchaFrame.locator(
+            'input[placeholder="Enter text from image"]'
+          );
+    
+          let captchaResult = await solver.imageCaptcha({
             body: imgSrc,
-        })
-
-        console.log(captchaResult);
-        await typeWithDelay(captchaInput, captchaResult.data);
-        await cardCVCInput.click();
-
-        const captchaVerifiedMsg = captchaFrame.getByRole('paragraph').filter({hasText: 'Verified Successfully'});
-        await page.waitForTimeout(3000);
-        let captchaVerified = await captchaVerifiedMsg.isVisible();
-        if(!captchaVerified) {
-            console.log('Captcha try #2');
+          });
+    
+          console.log(captchaResult);
+          await typeWithDelay(captchaInput, captchaResult.data);
+          await cardCVCInput.click();
+    
+          const captchaVerifiedMsg = captchaFrame
+            .getByRole("paragraph")
+            .filter({ hasText: "Verified Successfully" });
+          await page.waitForTimeout(3000);
+          let captchaVerified = await captchaVerifiedMsg.isVisible();
+          if (!captchaVerified) {
+            console.log("Captcha try #2");
             await captchaInput.clear();
-            imgSrc = await captchaImg.getAttribute('src');
+            imgSrc = await captchaImg.getAttribute("src");
             captchaResult = await solver.imageCaptcha({
-                body: imgSrc,
-            })
-
+              body: imgSrc,
+            });
+    
             console.log(captchaResult);
             await typeWithDelay(captchaInput, captchaResult.data);
             await cardCVCInput.click();
             await page.waitForTimeout(3000);
             captchaVerified = await captchaVerifiedMsg.isVisible();
-            if(!captchaVerified) {
-                console.log('Captcha try #3');
-                await captchaInput.clear();
-                imgSrc = await captchaImg.getAttribute('src');
-                captchaResult = await solver.imageCaptcha({
-                    body: imgSrc,
-                })
+            if (!captchaVerified) {
+              console.log("Captcha try #3");
+              await captchaInput.clear();
+              imgSrc = await captchaImg.getAttribute("src");
+              captchaResult = await solver.imageCaptcha({
+                body: imgSrc,
+              });
     
-                console.log(captchaResult);
-                await typeWithDelay(captchaInput, captchaResult.data);
-                await cardCVCInput.click();
+              console.log(captchaResult);
+              await typeWithDelay(captchaInput, captchaResult.data);
+              await cardCVCInput.click();
             }
+          }
+          await expect(captchaVerifiedMsg).toBeVisible({ timeout: 60000 });
+          console.log("Captcha Verified");
         }
-
-        await expect(captchaVerifiedMsg).toBeVisible({timeout: 60000});
-        console.log('Captcha Verified')
+    
+        console.log("Skipped captcha! Clicking Complete...");
 
         // await page.pause();
         await page.waitForTimeout(5000);
@@ -580,7 +588,12 @@ async function statueTicketingBookTour(bookingData, tries) {
           );
 
           const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges.replace('$', ''), bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData?.billing?.postcode, bookingData.billing.email, "StatueTicketing");
-        
+          if (isServiceChargesDeducted) {
+            const username = process.env.STATUE_WP_USERNAME;
+            const password = process.env.STATUE_WP_PASSWORD;
+            await updateOrderStatus("StatueTicketing",username, password, bookingData.id, "Completed");
+            console.log("Order status changed successfully!");      
+        }
 
         // await page.pause();
         await context.clearCookies();

@@ -485,40 +485,30 @@ async function potomacTourBooking(bookingData, tries) {
     await page.waitForTimeout(5000);
     const captchaFrame = nestedIframe.frameLocator("#mtcaptcha-iframe-1");
     const captchaImg = captchaFrame.locator('img[aria-label="captcha image."]');
-    let imgSrc = await captchaImg.getAttribute("src");
+    
+    const isCaptchaVisible = await captchaImg.isVisible();
+    if (isCaptchaVisible) {
+      let imgSrc = await captchaImg.getAttribute("src");
 
-    const captchaInput = await captchaFrame.locator(
-      'input[placeholder="Enter text from image"]'
-    );
+      const captchaInput = await captchaFrame.locator(
+        'input[placeholder="Enter text from image"]'
+      );
 
-    let captchaResult = await solver.imageCaptcha({
-      body: imgSrc,
-    });
-
-    console.log(captchaResult);
-    await typeWithDelay(captchaInput, captchaResult.data);
-    await cardCVCInput.click();
-
-    const captchaVerifiedMsg = captchaFrame
-      .getByRole("paragraph")
-      .filter({ hasText: "Verified Successfully" });
-    await page.waitForTimeout(3000);
-    let captchaVerified = await captchaVerifiedMsg.isVisible();
-    if (!captchaVerified) {
-      console.log("Captcha try #2");
-      await captchaInput.clear();
-      imgSrc = await captchaImg.getAttribute("src");
-      captchaResult = await solver.imageCaptcha({
+      let captchaResult = await solver.imageCaptcha({
         body: imgSrc,
       });
 
       console.log(captchaResult);
       await typeWithDelay(captchaInput, captchaResult.data);
       await cardCVCInput.click();
+
+      const captchaVerifiedMsg = captchaFrame
+        .getByRole("paragraph")
+        .filter({ hasText: "Verified Successfully" });
       await page.waitForTimeout(3000);
-      captchaVerified = await captchaVerifiedMsg.isVisible();
+      let captchaVerified = await captchaVerifiedMsg.isVisible();
       if (!captchaVerified) {
-        console.log("Captcha try #3");
+        console.log("Captcha try #2");
         await captchaInput.clear();
         imgSrc = await captchaImg.getAttribute("src");
         captchaResult = await solver.imageCaptcha({
@@ -528,10 +518,26 @@ async function potomacTourBooking(bookingData, tries) {
         console.log(captchaResult);
         await typeWithDelay(captchaInput, captchaResult.data);
         await cardCVCInput.click();
+        await page.waitForTimeout(3000);
+        captchaVerified = await captchaVerifiedMsg.isVisible();
+        if (!captchaVerified) {
+          console.log("Captcha try #3");
+          await captchaInput.clear();
+          imgSrc = await captchaImg.getAttribute("src");
+          captchaResult = await solver.imageCaptcha({
+            body: imgSrc,
+          });
+
+          console.log(captchaResult);
+          await typeWithDelay(captchaInput, captchaResult.data);
+          await cardCVCInput.click();
+        }
       }
+      await expect(captchaVerifiedMsg).toBeVisible({ timeout: 60000 });
+      console.log("Captcha Verified");
     }
-    await expect(captchaVerifiedMsg).toBeVisible({ timeout: 60000 });
-    console.log("Captcha Verified");
+
+    console.log("Skipped captcha! Clicking Complete...");
 
     await page.waitForTimeout(5000);
 

@@ -15,7 +15,7 @@ require("dotenv").config();
 */
 
 async function updateOrderStatus(siteName, username, password, orderId, newStatus) {
-    console.log("Data Received:", siteName, username, password, orderId, newStatus);
+    console.log("Data Received:", siteName, orderId, newStatus);
     
     const browser = await firefox.launch({ headless: false }); // set to true for headless mode
     const context = await browser.newContext();
@@ -97,7 +97,6 @@ async function updateOrderStatus(siteName, username, password, orderId, newStatu
         await updateOrderInfoBtn.click();
 
         console.log(`✅ Order ${orderId} updated to ${newStatus}`);
-        await page.pause()
     } catch (error) {
         console.error(`❌ Error updating order:`, error);
     } finally {
