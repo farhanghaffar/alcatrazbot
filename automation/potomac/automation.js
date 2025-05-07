@@ -16,7 +16,8 @@ const { Solver } = require("@2captcha/captcha-solver");
 const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
-const {ServiceCharges} = require("../service-charges")
+const {ServiceCharges} = require("../service-charges");
+const { updateOrderStatus } = require("../wp-update-order-status/automation");
 
 async function potomacTourBooking(bookingData, tries) {
   const browser = await firefox.launch({ headless: false });
@@ -619,8 +620,11 @@ async function potomacTourBooking(bookingData, tries) {
     );
 
     if (isServiceChargesDeducted) {
-      console.log("Potomac Service charges deducted successfully!");
-    }
+      // ORDERS STATUS API PARAM OPTIONS
+      // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
+      const updatedOrder = await updateOrderStatus("PotomacTicketing", bookingData.id, "completed");
+      console.log(`Potomac: Order#${bookingData.id} status changed to ${updatedOrder.status} successfully!`); 
+  }
 
     return {
       success: true,

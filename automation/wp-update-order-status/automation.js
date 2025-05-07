@@ -13,6 +13,17 @@ const AlcatrazWooCommerceInstance = new WooCommerceRestApi({
   version: "wc/v3"
 });
 
+const potomac_site_url = process.env.POTOMAC_WP_SITE_URL;
+const potomac_consumer_key = process.env.POTOMAC_WC_REST_API_CONSUMER_KEY;
+const potomac_consumer_secret = process.env.POTOMAC_WC_REST_API_CONSUMER_SECRET;
+
+const PotomacWooCommerceInstance = new WooCommerceRestApi({
+  url: potomac_site_url,           
+  consumerKey: potomac_consumer_key,     
+  consumerSecret: potomac_consumer_secret, 
+  version: "wc/v3"
+});
+
 /**
  * Update WooCommerce order status
  * @param {number|string} orderId - WooCommerce Order ID
@@ -24,6 +35,8 @@ const updateOrderStatus = async (siteName,orderId, status) => {
     let woocommerceApi = null;
     if (siteName == "AlcatrazTicketing") {
         woocommerceApi = AlcatrazWooCommerceInstance;
+    } else if(siteName == "PotomacTicketing"){
+      woocommerceApi = PotomacWooCommerceInstance;
     }
   try {
     const response = await woocommerceApi.put(`orders/${orderId}`, {
