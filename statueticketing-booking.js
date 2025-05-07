@@ -6,6 +6,7 @@ const path  = require('path');
 const fs = require('fs');
 const UserAgent = require('user-agents');
 const { ServiceCharges } = require('./automation/service-charges');
+const { updateOrderStatus } = require('./automation/wp-update-order-status/automation');
 require('dotenv').config();
 
 const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
@@ -589,10 +590,10 @@ async function statueTicketingBookTour(bookingData, tries) {
 
           const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges.replace('$', ''), bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData?.billing?.postcode, bookingData.billing.email, "StatueTicketing");
           if (isServiceChargesDeducted) {
-            const username = process.env.STATUE_WP_USERNAME;
-            const password = process.env.STATUE_WP_PASSWORD;
-            await updateOrderStatus("StatueTicketing",username, password, bookingData.id, "Completed");
-            console.log("Order status changed successfully!");      
+            // ORDERS STATUS API PARAM OPTIONS
+            // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
+            const updatedOrder = await updateOrderStatus("StatueTicketing", bookingData.id, "completed");
+            console.log(`StatueTicketing: Order#${bookingData.id} status changed to ${updatedOrder.status} successfully!`); 
         }
 
         // await page.pause();
