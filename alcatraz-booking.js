@@ -1,6 +1,6 @@
 const { chromium, firefox } = require('playwright');
 const { expect } = require('@playwright/test');
-const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent } = require('./helper');
+const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
 const fs = require('fs');  
 const path  = require('path');
@@ -81,6 +81,14 @@ async function alcatrazBookTour(bookingData, tries) {
         });
         
         console.log('Page loaded, looking for Check Availability button...');
+
+        console.log("Checking Card expiry date validity! before Order proceeding...");
+    
+        // formatAndValidateCardExpirationDate
+        // Validate Payment Card expiry date
+        const { cardMonth, cardYear } = formatAndValidateCardExpirationDate(bookingData.card.expiration);
+        console.log("Checked: Card expiry date is valid!", cardMonth, cardYear, typeof(cardMonth), typeof(cardYear));
+
         const checkAvailabilityButton = await page.locator('a.ce-book-now-action:has-text("Check Availability")').first();
         await expect(checkAvailabilityButton).toBeVisible({timeout: 300000});
         const checkAvailabilityButtonVisible = await checkAvailabilityButton.isVisible();
@@ -439,7 +447,12 @@ async function alcatrazBookTour(bookingData, tries) {
         // await page.pause();
         const postalCodeInput = await frameHandle.locator('input[name="postalCode"]');
         await expect(postalCodeInput).toBeVisible({timeout: 80000});
-        await postalCodeInput.fill(bookingData.billing.postcode);
+        // await postalCodeInput.fill(bookingData.billing.postcode);
+        let postcodeeValue = bookingData.billing.postcode;
+        if (!postcodeeValue && bookingData.billing.country === "AE") {
+          postcodeeValue = "1224"
+        }
+        await postalCodeInput.fill(postcodeeValue);
 
         // await page.pause();
 
@@ -461,11 +474,13 @@ async function alcatrazBookTour(bookingData, tries) {
         }
         // await frameHandle.getByRole('heading', { name: 'Debit/Credit Card' }).click();
 
-        const {cardMonth, cardYear} = formatCardDate(bookingData.card.expiration);
+        // const {cardMonth, cardYear} = formatCardDate(bookingData.card.expiration);
+        console.log("Zipcode value:", postcodeeValue);
         
         const cardInfo = {
             cardName: bookingData.billing.first_name + ' ' + bookingData.billing.last_name,
-            cardZip: bookingData.billing.postcode,
+            // cardZip: bookingData.billing.postcode,
+            cardZip: bookingData.billing.postcode || (bookingData.billing.country === "AE" ? postcodeeValue : ""),
             cardNumber: bookingData.card.number,
             cardType: getCardType(bookingData.card.number),
             cardCVC: bookingData.card.cvc,

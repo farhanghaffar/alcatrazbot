@@ -188,5 +188,48 @@ async function sendServiceChargesDeductionEmail(orderNumber, serviceChargesAmoun
   return transporter.sendMail(mailOptions);  // Return the promise to handle errors outside
 }
 
+function formatAndValidateCardExpirationDate(inputDate) {
+  // Check if the input is in the correct format (MM/YY)
+  const regex = /^(0[1-9]|1[0-2])\/(\d{2})$/;
+  const match = inputDate.match(regex);
 
-module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent };
+  if (!match) {
+      throw new Error(`Card Expiry Date: Invalid date format: "${inputDate}". Expected format is MM/YY.`);
+  }
+
+  // Extract the month and year from the matched input
+  const [_, month, year] = match;
+
+  // Convert the year part to a full 4-digit year, assuming '20' prefix
+  const fullYear = `20${year}`;
+
+  // Convert the month to a number for validation
+  const cardMonth = Number(month);
+  const cardYear = Number(fullYear);
+
+  // Get the current year and month for comparison
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed
+
+  // Validate the month (should be between 1 and 12)
+  if (cardMonth < 1 || cardMonth > 12) {
+      throw new Error(`Card Expiry Date: Invalid month: ${cardMonth}. Month should be between 1 and 12.`);
+  }
+
+  // Validate the year (should not be a past year)
+  if (cardYear < currentYear || (cardYear === currentYear && cardMonth < currentMonth)) {
+      throw new Error(`Card Expiry Date: Invalid expiration date: ${month}/${year}. The card has expired.`);
+  }
+  const cardMonthString = cardMonth.toString()
+  const cardYearString = cardYear.toString()
+
+  // Apply padStart only if the month is a single digit
+const formattedCardMonth = cardMonthString.length === 1 ? cardMonthString.padStart(2, '0') : cardMonthString;
+
+
+  // Return valid month and year
+  return { cardMonth: formattedCardMonth, cardYear: cardYearString };
+}
+
+
+module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate };

@@ -67,6 +67,7 @@ app.post('/webhook', async (req, res) => {
             bookingDate: '',
             bookingTime: '',
             bookingServiceCharges: '',
+            bookingSubTotal: '',
             personNames: [],
             adults: 0,
             childs: 0,
@@ -152,7 +153,7 @@ app.post('/webhook', async (req, res) => {
         let bookingResult = await statueTicketingBookTour(orderData, tries);
 
         // Retry logic
-        while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')) {
+        while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
             tries++;
             console.log(`Retry attempt #${tries}...`);
             bookingResult = await statueTicketingBookTour(orderData, tries);
@@ -183,6 +184,7 @@ app.post('/alcatraz-webhook', async (req, res) => {
             bookingDate: '',
             bookingTime: '',
             bookingServiceCharges: '',
+            bookingSubTotal: '',
             personNames: [],
             adults: 0,
             childs: 0,
@@ -221,6 +223,9 @@ app.post('/alcatraz-webhook', async (req, res) => {
                     break;
                 case '_booking_serviceCharges':
                     orderData.bookingServiceCharges = item?.value;
+                    break;
+                case '_booking_subTotal':
+                    orderData.bookingSubTotal = item?.value;
                     break;
                 // case 'Person Names':
                 //     orderData.personNames = item?.value.split(', ').map(name => name.trim());
@@ -273,7 +278,7 @@ app.post('/alcatraz-webhook', async (req, res) => {
                     let bookingResult = await alcatrazBookTour(orderData, tries);
                     
                     // Retry logic
-                    while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')) {
+                    while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
                         tries++;
                         console.log(`Retry attempt #${tries}...`);
                         bookingResult = await alcatrazBookTour(orderData, tries);
@@ -348,6 +353,7 @@ app.post('/potomac-webhook', async (req, res) => {
             bookingDate: '',
             bookingTime: '',
             bookingServiceCharges: '',
+            bookingSubTotal: '',
             personNames: [],
             ticketQuantity: 0,
             card: {
@@ -422,7 +428,7 @@ app.post('/potomac-webhook', async (req, res) => {
                 let bookingResult = await potomacTourBooking(orderData, tries);
                 
                 // Retry logic
-                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed')) {
+                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
                     tries++;
                     console.log(`Retry attempt #${tries}...`);
                     bookingResult = await potomacTourBooking(orderData, tries);

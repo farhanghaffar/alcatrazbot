@@ -11,6 +11,7 @@ const {
   getRandomTime,
   removeSpaces,
   getRandomUserAgent,
+  formatAndValidateCardExpirationDate,
 } = require("../../helper");
 const { Solver } = require("@2captcha/captcha-solver");
 const fs = require("fs");
@@ -53,6 +54,14 @@ async function potomacTourBooking(bookingData, tries) {
     console.log(
       "Potomac: Page loaded, looking for Check Availability button..."
     );
+ 
+    console.log("Checking Card expiry date validity! before Order proceeding...");
+    
+    // formatAndValidateCardExpirationDate
+    // Validate Payment Card expiry date
+    const { cardMonth, cardYear } = formatAndValidateCardExpirationDate(bookingData.card.expiration);
+    console.log("Checked: Card expiry date is valid!", cardMonth, cardYear, typeof(cardMonth), typeof(cardYear));
+    
     const checkAvailabilityButton = await page
       .locator('a.ce-book-now-action:has-text("Check Availability")')
       .first();
@@ -437,7 +446,7 @@ async function potomacTourBooking(bookingData, tries) {
       }
     }
 
-    const { cardMonth, cardYear } = formatCardDate(bookingData.card.expiration);
+    // const { cardMonth, cardYear } = formatCardDate(bookingData.card.expiration);
 
     const cardInfo = {
       cardName:

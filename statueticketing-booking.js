@@ -1,6 +1,6 @@
 const { chromium, firefox } = require('playwright');
 const { expect } = require('@playwright/test');
-const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent } = require('./helper');
+const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
 const path  = require('path');
 const fs = require('fs');
@@ -83,6 +83,16 @@ async function statueTicketingBookTour(bookingData, tries) {
         });
         
         console.log('Page loaded, looking for Check Availability button...');
+        
+    
+    console.log("Checking Card expiry date validity! before Order proceeding...");
+    
+    // formatAndValidateCardExpirationDate
+    // Validate Payment Card expiry date
+    const { cardMonth, cardYear } = formatAndValidateCardExpirationDate(bookingData.card.expiration);
+    console.log("Checked: Card expiry date is valid!", cardMonth, cardYear, typeof(cardMonth), typeof(cardYear));
+    
+
         const checkAvailabilityButton = await page.locator('a.ce-book-now-action:has-text("Check Availability")').first();
         await expect(checkAvailabilityButton).toBeVisible({timeout: 300000});
         const checkAvailabilityButtonVisible = await checkAvailabilityButton.isVisible();
@@ -439,7 +449,7 @@ async function statueTicketingBookTour(bookingData, tries) {
         await frameHandle.locator('button').getByText('Continue to Payment').first().click();
         console.log('Successfully Filled Booking details');
 
-        const {cardMonth, cardYear} = formatCardDate(bookingData.card.expiration);
+        // const {cardMonth, cardYear} = formatCardDate(bookingData.card.expiration);
         
         const cardInfo = {
             cardName: bookingData.billing.first_name + ' ' + bookingData.billing.last_name,
