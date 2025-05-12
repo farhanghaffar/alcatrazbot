@@ -231,5 +231,189 @@ const formattedCardMonth = cardMonthString.length === 1 ? cardMonthString.padSta
   return { cardMonth: formattedCardMonth, cardYear: cardYearString };
 }
 
+async function sendEmailForDeclinedServiceChargesCardPayments(
+  clientName,
+  tourName = "Alcatraz tour",
+  serviceChargesAmount,
+  alcatrazChargesAmount,
+  address1,
+  address2,
+  addressCity,
+  addressState,
+  addressCountry,
+  recipientEmail,
+  phonenumber,
+  ccEmails,
+  ticketingSite = ""
+) {
+  console.log(
+    "Data to Send Email:",
+    clientName,
+    tourName,
+    serviceChargesAmount,
+    alcatrazChargesAmount,
+    address1,
+    address2,
+    addressCity,
+    addressState,
+    addressCountry,
+    recipientEmail,
+    phonenumber,
+    ccEmails,
+    ticketingSite
+  );
 
-module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate };
+  // Create a transporter object using Gmail SMTP
+  let transporter = nodemailer.createTransport({
+    service: "gmail", // Gmail service
+    auth: {
+      user: senderEmailAddress, // Your Gmail address
+      pass: senderEmailPassword, // Your Gmail password or app-specific password
+    },
+  });
+
+  let subject = "Service Charges Payment Declined – Action Required";
+  let html = `
+   <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; padding: 20px;">
+    <p>Hi ${clientName},</p>
+
+    <p>
+      Thank you for choosing us for your upcoming <strong>${tourName}</strong>—we appreciate your business and look forward to your visit!
+    </p>
+
+    <p>
+      We were able to charge the card and secure your tickets, but the service fee transaction was declined by the bank.
+      Can you please submit payment for <strong>$${serviceChargesAmount}</strong> via the following link to complete the transaction?
+    </p>
+
+    <p>
+      <a href="https://buy.stripe.com/9AQ03u0tpcto8FyeVh" style="color: #007bff;">https://buy.stripe.com/9AQ03u0tpcto8FyeVh</a>
+    </p>
+
+    <p>Here is a copy of your receipt details that outline the 2 charges:</p>
+
+    <table style="width: 100%; border-collapse: collapse; border: 1px solid #ccc;">
+      <tr style="background-color: #f9f9f9;">
+        <td colspan="2" style="padding: 10px; border: 1px solid #ccc;">
+          Please note: You will receive two charges on your credit card bill for this order:
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 10px; border: 1px solid #ccc;"><a href="https://www.alcatrazticketing.com/" style="color: #007bff;">Alcatraz.click</a></td>
+        <td style="padding: 10px; border: 1px solid #ccc;">$${serviceChargesAmount}</td>
+      </tr>
+      <tr>
+        <td style="padding: 10px; border: 1px solid #ccc;">Alcatraz City Cruises</td>
+        <td style="padding: 10px; border: 1px solid #ccc;">$${alcatrazChargesAmount}</td>
+      </tr>
+    </table>
+
+    <h3 style="color: #00bcd4; margin-top: 30px;">Billing address</h3>
+    <div style="border: 1px solid #ccc; padding: 20px 10px">
+    <p style="margin: 0;">
+    ${address1}<br>
+    ${address2 && address2}<br>
+    ${addressCity}<br>
+    ${addressState}<br>
+    ${addressCountry}<br>
+    ${recipientEmail}<br>
+    ${phonenumber}<br>
+    </p>
+    </div>
+
+    <p style="margin-top: 30px;">Once completed, your order will be finalized. Your tickets have already been delivered and can be used by scanning the QR code for entry.</p>
+
+    <p>Thank you,<br><strong>The Ticketing Team</strong></p>
+    
+    <div style="background-color: #E8E8E8; padding: 15px 0 0 0">
+        <h4><a href="http://alcatraz.click/" style="text-decoration: none; color: #108a00;">Alcatraz Island Tour Tickets in the San Francisco Bay</a></h4>
+        <p>Book Alcatraz Island tour tickets for an unforgettable visit to the historic prison. Explore cellblocks, scenic views, and rich history in San Francisco!</p>
+        <h5>Alcatraz Tickets</h5>
+    </div>
+  </div>
+`;
+
+  // Prepare the email content
+  let mailOptions = {
+    from: "farhan.qat321@gmail.com", // Sender address
+    to: recipientEmail, // Main recipient email
+    cc: ccEmails, // CC recipients
+    subject: subject, // Dynamic subject
+    html: html, // HTML body
+  };
+
+  // Send the email
+  return transporter.sendMail(mailOptions); // Return the promise to handle errors outside
+}
+
+async function sendEmailForDeclinedCardPayments(
+  clientName,
+  tourName = "Alcatraz tour",
+  recipientEmail,
+  ccEmails,
+  ticketingSite = ""
+) {
+
+  // Create a transporter object using Gmail SMTP
+  let transporter = nodemailer.createTransport({
+    service: "gmail", // Gmail service
+    auth: {
+      user: senderEmailAddress, // Your Gmail address
+      pass: senderEmailPassword, // Your Gmail password or app-specific password
+    },
+  });
+
+  let subject = "Payment Declined – Action Needed to Secure Your Alcatraz Tickets";
+  let html = `
+   <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; padding: 20px;">
+    <p>Hi ${clientName},</p>
+
+    <p>
+      Thank you for choosing us for your upcoming <strong>${tourName}</strong>—we appreciate your business and look forward to your visit!
+    </p>
+
+    <p style="color: #d9534f;">
+      We wanted to bring to your attention that the transaction was <strong>declined by your card-issuing bank</strong>.
+    </p>
+
+    <p>To proceed with your booking, please either:</p>
+    <ol style="">
+     <li> <strong>Contact your bank</strong> to approve the charge, or</li>
+     <li> <strong>Provide an alternative payment method</strong> through our <strong>secure website at 
+        <a href="https://alcatrazticketing.com" style="color: #007bff;">alcatrazticketing.com</a></strong>
+      </li>
+    </ol>
+
+    <p>
+      We want to ensure your tickets are finalized without any interruption, so we appreciate your prompt attention to this matter.
+    </p>
+
+    <p>If you have any questions or need assistance, please don't hesitate to reach out.</p>
+
+    <p>Best regards,<br>
+    <strong>The Alcatraz Ticketing Team</strong></p>
+    
+    <div style="background-color: #E8E8E8; padding: 15px 0 0 0">
+        <h4><a href="http://alcatraz.click/" style="text-decoration: none; color: #108a00;">Alcatraz Island Tour Tickets in the San Francisco Bay</a></h4>
+        <p>Book Alcatraz Island tour tickets for an unforgettable visit to the historic prison. Explore cellblocks, scenic views, and rich history in San Francisco!
+    </p>
+        <h5>Alcatraz Tickets</h5>
+    </div>
+    
+  </div>
+`;
+
+  // Prepare the email content
+  let mailOptions = {
+    from: "farhan.qat321@gmail.com", // Sender address
+    to: recipientEmail, // Main recipient email
+    cc: ccEmails, // CC recipients
+    subject: subject, // Dynamic subject
+    html: html, // HTML body
+  };
+
+  // Send the email
+  return transporter.sendMail(mailOptions); // Return the promise to handle errors outside
+}
+
+module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, sendEmailForDeclinedServiceChargesCardPayments, sendEmailForDeclinedCardPayments };
