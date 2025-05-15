@@ -9,7 +9,8 @@ const { alcatrazBookTour } = require('./alcatraz-booking');
 const cors = require('cors');
 const { ServiceCharges } = require('./automation/service-charges');
 require('dotenv').config();
-const { potomacTourBooking } = require('./automation/potomac/automation')
+const { potomacTourBooking } = require('./automation/potomac/automation');
+const { BayCruiseTickets } = require('./automation/bay-cruise-tickets/automation');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -441,6 +442,137 @@ app.post('/potomac-webhook', async (req, res) => {
                 }
             } catch (automationError) {
                 console.error('Potomac Error in booking automation:', automationError);
+            }
+        });
+
+        
+    } catch (error) {
+        console.error('Error processing webhook:', error);
+        res.status(200).json({
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+});
+
+// Webhook endpoint with verification | https://baycruisetickets.com/
+app.post('/bay-cruise-tickets-webhook', async (req, res) => {
+    console.log('Bay Cruises Tickets: Order data:', JSON.stringify(req.body));
+    
+    const reqBody = req.body;
+
+    try {
+        // Extract relevant data from WooCommerce order
+        const orderData = {
+            id: reqBody.id,
+            tourType: '',
+            bookingDate: '',
+            bookingTime: '',
+            bookingServiceCharges: '',
+            bookingSubTotal: '',
+            personNames: [],
+            ticketQuantity: 0,
+            adults: 0,
+            childs: 0,
+            juniors: 0,
+            seniors: 0,
+            military: 0,
+            child_under_five: 0,
+            card: {
+                cvc: '',
+                expiration: '',
+                number: '',
+            },
+            billing: {
+                first_name: reqBody?.billing?.first_name,
+                last_name: reqBody?.billing?.last_name,
+                company: reqBody?.billing?.company,
+                address_1: reqBody?.billing?.address_1,
+                address_2: reqBody?.billing?.address_2,
+                city: reqBody?.billing?.city,
+                state: reqBody?.billing?.state,
+                postcode: reqBody?.billing?.postcode,
+                country: reqBody?.billing?.country,
+                email: reqBody?.billing?.email,
+                phone: reqBody?.billing?.phone
+            },
+        };
+
+        reqBody?.line_items[0]?.meta_data.forEach(item => {
+            switch (item.key) {
+                case 'Tour Type':
+                    orderData.tourType = item?.value;
+                    break;
+                case 'Booking Date':
+                    orderData.bookingDate = item?.value;
+                    break;
+                case 'Booking Time':
+                    orderData.bookingTime = item?.value;
+                    break;
+                case 'Service Charges':
+                    orderData.bookingServiceCharges = item?.value;
+                    break;
+                case 'Subtotal':
+                    orderData.bookingSubTotal = item?.value;
+                    break;
+
+                default:
+                    // Check for keywords "child", "adult", "juniors" and "senior" in the key to update counts
+                    if (item.key.toLowerCase() === 'child (ages 5-11) quantity') {
+                        orderData.childs = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === 'senior (ages 65+) quantity') {
+                        orderData.seniors = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === 'adult quantity') {
+                        orderData.adults = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === 'junior (ages 12-17) quantity') {
+                        orderData.juniors = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === 'military quantity') {
+                        orderData.military = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === 'child (under 5) quantity') {
+                        orderData.child_under_five = parseInt(item.value, 10);
+                    }
+                    break;
+            }
+        });
+
+        reqBody.meta_data.forEach(item => {
+            if (item.key.toLowerCase() === 'credit_card_cvc') {
+                orderData.card.cvc = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_expiration') {
+                orderData.card.expiration = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_number') {
+                orderData.card.number = item.value;
+            }
+        });
+
+        console.log('Bay Cruises Tickets: After manipulation, data is: ', orderData);
+
+        // Send response immediately to prevent webhook timeouts
+        res.status(200).json({
+            message: 'Bay Cruises Tickets: Webhook received. Processing in background.'
+        });
+
+        setImmediate(async () => {
+            try {
+                console.log('Starting booking automation process...');
+                let tries = 0;
+                const maxRetries = 3;
+                let bookingResult = await BayCruiseTickets(orderData, tries);
+                
+                // Retry logic
+                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
+                    tries++;
+                    console.log(`Retry attempt #${tries}...`);
+                    bookingResult = await BayCruiseTickets(orderData, tries);
+                }
+        
+                if (bookingResult.success) {
+                    console.log('Bay Cruises Tickets: Booking automation completed successfully');
+                } else {
+                    console.error('Bay Cruises Tickets: Booking automation failed:', bookingResult.error);
+                }
+            } catch (automationError) {
+                console.error('Bay Cruises Tickets: Error in booking automation:', automationError);
             }
         });
 

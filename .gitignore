@@ -6,3 +6,5 @@ automation/errors
 automation/service-charges
 automation/potomac/errors-screenshots
 automation/potomac/successful-orders-screenshots
+automation/bay-cruise-tickets/errors-screenshots
+automation/bay-cruise-tickets/successful-orders-screenshots
