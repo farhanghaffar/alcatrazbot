@@ -532,6 +532,22 @@ async function BayCruiseTickets(bookingData, tries) {
       await typeWithDelay(postalCodeeInput, cardInfo.cardZip);
     }
 
+    const saveInfoCheckboxInput = await nestedIframe.locator(
+      "#checkbox-linkOptIn"
+    );
+    // await expect(saveInfoCheckboxInput).toBeVisible({ timeout: 2000 });
+    if (await saveInfoCheckboxInput.isVisible()) {
+      const isChecked = await checkbox.isChecked();
+      if (isChecked) {
+        await checkbox.click(); // Uncheck it
+        console.log("Checkbox was checked, now unchecked.");
+      } else {
+        console.log("Checkbox is already unchecked.");
+      }
+    } else {
+      console.log("Checkbox is not visible.");
+    }
+
     console.log("Card payment information filled");
 
     const payNowToCompleteOrderButton = await nestedIframe.locator(
