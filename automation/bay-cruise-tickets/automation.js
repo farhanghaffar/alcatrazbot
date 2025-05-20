@@ -557,7 +557,7 @@ async function BayCruiseTickets(bookingData, tries) {
     await expect(payNowToCompleteOrderButton).toBeVisible({ timeout: 80000 });
 
     await page.pause();
-
+    console.log("Skipped captcha! Clicking Complete...");
     await payNowToCompleteOrderButton.click();
 
     await page.pause();
@@ -617,22 +617,50 @@ async function BayCruiseTickets(bookingData, tries) {
     //   console.log("Captcha Verified");
     // }
 
-    console.log("Skipped captcha! Clicking Complete...");
-
     await page.waitForTimeout(12000);
-    const errorMsg = await frameHandle.getByText(
-      "Oops... something went wrong."
-    );
-    const errorMsgVisible = await errorMsg.isVisible();
 
-    const paymentError = await frameHandle.getByText(
-      "An error occurred while processing your payment."
+    const paymentMessageContainer = await frameHandle.locator(
+      'div[id="payment-message"]'
     );
-    const paymentErrorVisible = await paymentError.isVisible();
+    const isPaymentMessageDivVisible =
+      await paymentMessageContainer.isVisible();
+      console.log("Payment message container:", isPaymentMessageDivVisible);
+      await page.pause();
 
-    if (errorMsgVisible || paymentErrorVisible) {
-      throw new Error("Payment not completed");
+    if (isPaymentMessageDivVisible) {
+      const messageText = await paymentMessageContainer.textContent();
+      const trimmedMessage = messageText?.trim() || "";
+
+      console.log("Payment Message:", trimmedMessage);
+      await page.pause();
+
+      if (trimmedMessage.includes("Your card was declined")) {
+        throw new Error("Payment failed: Card was declined.");
+      } else if (trimmedMessage.includes("We are unable to authenticate your payment method. Please choose a different payment method and try again.")) {
+        throw new Error("Payment failed: Some other error occurred.");
+      } else if (trimmedMessage.includes("An error occurred while processing your payment.")) {
+        throw new Error("Payment not completed: Some other error occurred.");
+      } else {
+        console.log("Payment message:", trimmedMessage);
+        throw new Error("Payment not completed");
+      }
+    } else {
+      console.log("Payment message error div is not visible.");
     }
+
+    // const errorMsg = await frameHandle.getByText(
+    //   "Oops... something went wrong."
+    // );
+    // const errorMsgVisible = await errorMsg.isVisible();
+
+    // const paymentError = await frameHandle.getByText(
+    //   "An error occurred while processing your payment."
+    // );
+    // const paymentErrorVisible = await paymentError.isVisible();
+
+    // if (errorMsgVisible || paymentErrorVisible) {
+    //   throw new Error("Payment not completed");
+    // }
 
     await page.waitForTimeout(12000);
 
@@ -663,7 +691,7 @@ async function BayCruiseTickets(bookingData, tries) {
     );
 
     // await page.pause();
-    // const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "AlcatrazTicketing");
+    // const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "BayCruiseTicketing");
     // if (isServiceChargesDeducted) {
     //     // ORDERS STATUS API PARAM OPTIONS
     //     // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
