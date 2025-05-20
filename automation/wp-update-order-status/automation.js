@@ -36,6 +36,17 @@ const StatueWooCommerceInstance = new WooCommerceRestApi({
   version: "wc/v3",
 });
 
+const bayCruiseTickets_site_url = process.env.BAY_CRUISE_TICKETING_WP_SITE_URL;
+const bayCruiseTickets_consumer_key = process.env.BAY_CRUISE_TICKETING_WC_REST_API_CONSUMER_KEY;
+const bayCruiseTickets_consumer_secret = process.env.BAY_CRUISE_TICKETING_WC_REST_API_CONSUMER_SECRET;
+
+const bayCruiseTicketsWooCommerceInstance = new WooCommerceRestApi({
+  url: bayCruiseTickets_site_url,
+  consumerKey: bayCruiseTickets_consumer_key,
+  consumerSecret: bayCruiseTickets_consumer_secret,
+  version: "wc/v3",
+});
+
 /**
  * Update WooCommerce order status
  * @param {number|string} orderId - WooCommerce Order ID
@@ -51,6 +62,8 @@ const updateOrderStatus = async (siteName, orderId, status) => {
     woocommerceApi = PotomacWooCommerceInstance;
   } else if (siteName == "StatueTicketing") {
     woocommerceApi = StatueWooCommerceInstance;
+  } else if (siteName == "BayCruiseTicketing") {
+    woocommerceApi = bayCruiseTicketsWooCommerceInstance;
   }
   try {
     const response = await woocommerceApi.put(`orders/${orderId}`, {

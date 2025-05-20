@@ -695,7 +695,7 @@ async function BayCruiseTickets(bookingData, tries) {
     // if (isServiceChargesDeducted) {
     //     // ORDERS STATUS API PARAM OPTIONS
     //     // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
-    //     const updatedOrder = await updateOrderStatus("ByCruiseTicketing", bookingData.id, "completed");
+    //     const updatedOrder = await updateOrderStatus("BayCruiseTicketing", bookingData.id, "completed");
     //     console.log(`Order#${bookingData.id} status changed to ${updatedOrder.status} successfully!`);
     // }
 
