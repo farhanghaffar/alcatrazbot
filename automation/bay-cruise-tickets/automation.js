@@ -109,7 +109,6 @@ async function BayCruiseTickets(bookingData, tries) {
 
     console.log("Clicked Card expiry date validaty, waiting for calendar...");
 
-    await page.pause();
 
     await page.waitForTimeout(10000);
     console.log("Waiting for iframe to load...");
@@ -694,14 +693,12 @@ console.log('h-captcha-response field exists:', fieldExists);
     const isPaymentMessageDivVisible =
       await paymentMessageContainer.isVisible();
       console.log("Payment message container:", isPaymentMessageDivVisible);
-      await page.pause();
 
     if (isPaymentMessageDivVisible) {
       const messageText = await paymentMessageContainer.textContent();
       const trimmedMessage = messageText?.trim() || "";
 
       console.log("Payment Message:", trimmedMessage);
-      await page.pause();
 
       if (trimmedMessage.includes("Your card was declined")) {
         throw new Error("Payment failed: Card was declined.");
