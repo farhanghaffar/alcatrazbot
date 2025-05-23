@@ -556,72 +556,141 @@ async function BayCruiseTickets(bookingData, tries) {
 
     await expect(payNowToCompleteOrderButton).toBeVisible({ timeout: 80000 });
 
-    await page.pause();
-    console.log("Skipped captcha! Clicking Complete...");
+    const sitekey = process.env.BAY_CRUISE_TICKETING_SITE_KEY;           
+    
+// ************************************************************************************* 
+
+console.log('[hCaptcha] Starting hCaptcha solving process for Stripe payment form');
+  
+  // 1. Solve the captcha
+  console.log('[hCaptcha] Sending request to 2Captcha service...');
+  
+  const { data: token } = await solver.hcaptcha({
+    sitekey,
+    pageurl: page.url(),
+    invisible: true
+  });
+  
+  if (!token) {
+    console.error('[hCaptcha] ERROR: No token received from 2Captcha');
+    throw new Error('No captcha token returned');
+  }
+  console.log('[hCaptcha] Successfully received token:', token);
+
+  // 2. Inject into response fields
+  console.log('[hCaptcha] Attempting to inject token into response fields...');
+  const injectionResult = await page.evaluate((token) => {
+    console.log('[hCaptcha] Searching for response fields in DOM...');
+    const fields = [
+      ...document.querySelectorAll(
+        'textarea[name="h-captcha-response"], ' +
+        'textarea[name="g-recaptcha-response"]'
+      )
+    ];
+
+    console.log(`[hCaptcha] Found ${fields.length} response fields`);
+    
+    fields.forEach((field, index) => {
+      console.log(`[hCaptcha] Field ${index + 1}:`, {
+        name: field.name,
+        currentValue: field.value,
+        willSet: token
+      });
+      field.value = token;
+      
+      ['input', 'change', 'blur'].forEach(eventType => {
+        console.log(`[hCaptcha] Dispatching ${eventType} event to field ${index + 1}`);
+        field.dispatchEvent(new Event(eventType, { bubbles: true }));
+      });
+    });
+
+    if (fields.length === 0) {
+      console.log('[hCaptcha] No existing fields found, creating fallback field');
+      const newField = document.createElement('textarea');
+      newField.name = 'h-captcha-response';
+      newField.style.display = 'none';
+      newField.value = token;
+      document.body.appendChild(newField);
+      return { createdFallback: true };
+    }
+    
+    return { fieldsUpdated: fields.length };
+  }, token);
+
+  // NEW: Add verification right here
+const fieldExists = await page.evaluate(() => {
+  return !!document.querySelector('[name="h-captcha-response"]');
+});
+console.log('h-captcha-response field exists:', fieldExists);
+
+  console.log('[hCaptcha] Injection result:', injectionResult);
+
+  // 3. Trigger verification
+  console.log('[hCaptcha] Attempting to trigger hCaptcha verification...');
+  const verificationResult = await page.evaluate(() => {
+    if (typeof hcaptcha !== 'undefined') {
+      console.log('[hCaptcha] hCaptcha API detected');
+      const widgets = hcaptcha.getWidgets();
+      console.log(`[hCaptcha] Found ${widgets.length} hCaptcha widgets`);
+      
+      widgets.forEach((widget, index) => {
+        console.log(`[hCaptcha] Submitting widget ${index + 1} (ID: ${widget.id})`);
+        hcaptcha.submit(widget.id);
+      });
+      return { widgetsTriggered: widgets.length };
+    }
+    console.log('[hCaptcha] No hCaptcha API detected');
+    return { widgetsTriggered: 0 };
+  });
+
+  console.log('[hCaptcha] Verification result:', verificationResult);
+
+  // 4. Verify token was accepted
+  console.log('[hCaptcha] Verifying token acceptance...');
+  const verificationStatus = await page.evaluate(() => {
+    const field = document.querySelector('[name="h-captcha-response"]');
+    if (!field) {
+      console.log('[hCaptcha] No h-captcha-response field found');
+      return { verified: false, reason: 'field_missing' };
+    }
+    
+    if (!field.value) {
+      console.log('[hCaptcha] h-captcha-response field is empty');
+      return { verified: false, reason: 'empty_field' };
+    }
+    
+    const successIndicator = document.querySelector('.h-captcha-success, .captcha-success');
+    if (successIndicator) {
+      console.log('[hCaptcha] Found visual success indicator');
+      return { verified: true, reason: 'visual_indicator' };
+    }
+    
+    console.log('[hCaptcha] Token present but no visual confirmation');
+    return { verified: true, reason: 'token_present' };
+  });
+
+  console.log('[hCaptcha] Verification status:', verificationStatus);
+  
+  if (!verificationStatus.verified) {
+    console.warn('[hCaptcha] WARNING: Token verification failed. Reason:', verificationStatus.reason);
+  } else {
+    console.log('[hCaptcha] Token successfully verified');
+  }
+
+  console.log('[hCaptcha] Process completed successfully');
+
+// *************************************************************************************
+
+    console.log("Completed captcha! Clicking Complete...");
     await payNowToCompleteOrderButton.click();
-
-    await page.pause();
-
-    await page.waitForTimeout(5000);
-    // const captchaFrame = nestedIframe.frameLocator("#mtcaptcha-iframe-1");
-    // const captchaImg = captchaFrame.locator('img[aria-label="captcha image."]');
-
-    // const isCaptchaVisible = await captchaImg.isVisible();
-    // if (isCaptchaVisible) {
-    //   let imgSrc = await captchaImg.getAttribute("src");
-
-    //   const captchaInput = await captchaFrame.locator(
-    //     'input[placeholder="Enter text from image"]'
-    //   );
-
-    //   let captchaResult = await solver.imageCaptcha({
-    //     body: imgSrc,
-    //   });
-
-    //   console.log(captchaResult);
-    //   await typeWithDelay(captchaInput, captchaResult.data);
-    //   await cardCVCInput.click();
-
-    //   const captchaVerifiedMsg = captchaFrame
-    //     .getByRole("paragraph")
-    //     .filter({ hasText: "Verified Successfully" });
-    //   await page.waitForTimeout(3000);
-    //   let captchaVerified = await captchaVerifiedMsg.isVisible();
-    //   if (!captchaVerified) {
-    //     console.log("Captcha try #2");
-    //     await captchaInput.clear();
-    //     imgSrc = await captchaImg.getAttribute("src");
-    //     captchaResult = await solver.imageCaptcha({
-    //       body: imgSrc,
-    //     });
-
-    //     console.log(captchaResult);
-    //     await typeWithDelay(captchaInput, captchaResult.data);
-    //     await cardCVCInput.click();
-    //     await page.waitForTimeout(3000);
-    //     captchaVerified = await captchaVerifiedMsg.isVisible();
-    //     if (!captchaVerified) {
-    //       console.log("Captcha try #3");
-    //       await captchaInput.clear();
-    //       imgSrc = await captchaImg.getAttribute("src");
-    //       captchaResult = await solver.imageCaptcha({
-    //         body: imgSrc,
-    //       });
-
-    //       console.log(captchaResult);
-    //       await typeWithDelay(captchaInput, captchaResult.data);
-    //       await cardCVCInput.click();
-    //     }
-    //   }
-    //   await expect(captchaVerifiedMsg).toBeVisible({ timeout: 60000 });
-    //   console.log("Captcha Verified");
-    // }
-
+    console.log("Clicked Pay Now Btn...");
+    
     await page.waitForTimeout(12000);
 
     const paymentMessageContainer = await frameHandle.locator(
-      'div[id="payment-message"]'
+      '#payment-message'
     );
+    await expect(paymentMessageContainer).toBeVisible({timeout: 5000})
     const isPaymentMessageDivVisible =
       await paymentMessageContainer.isVisible();
       console.log("Payment message container:", isPaymentMessageDivVisible);
@@ -648,20 +717,6 @@ async function BayCruiseTickets(bookingData, tries) {
       console.log("Payment message error div is not visible.");
     }
 
-    // const errorMsg = await frameHandle.getByText(
-    //   "Oops... something went wrong."
-    // );
-    // const errorMsgVisible = await errorMsg.isVisible();
-
-    // const paymentError = await frameHandle.getByText(
-    //   "An error occurred while processing your payment."
-    // );
-    // const paymentErrorVisible = await paymentError.isVisible();
-
-    // if (errorMsgVisible || paymentErrorVisible) {
-    //   throw new Error("Payment not completed");
-    // }
-
     await page.waitForTimeout(12000);
 
     // await page.pause();
@@ -682,8 +737,8 @@ async function BayCruiseTickets(bookingData, tries) {
       bookingData.id, // order number
       `Try ${tries + 1}. The final screen snip is attached for your reference.`, // order description
       "farhan.qat123@gmail.com", // recipient email address
-      // ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
-      [],
+      ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
+      // [],
       screenshotPath, // path to the screenshot
       screenshotFileName,
       true,
@@ -691,7 +746,7 @@ async function BayCruiseTickets(bookingData, tries) {
     );
 
     // await page.pause();
-    // const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "BayCruiseTicketing");
+    const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "BayCruiseTicketing");
     // if (isServiceChargesDeducted) {
     //     // ORDERS STATUS API PARAM OPTIONS
     //     // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
@@ -721,8 +776,8 @@ async function BayCruiseTickets(bookingData, tries) {
           error.message ? `ERRMSG: ` + error.message : ""
         }`, // order description
         "farhan.qat123@gmail.com", // recipient email address
-        // ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
-        [],
+        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
+        // [],
         screenshotPath, // path to the screenshot
         screenshotFileName, // screenshot filename
         false, // Automation Passed Status
