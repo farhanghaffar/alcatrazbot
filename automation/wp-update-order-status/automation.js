@@ -47,6 +47,17 @@ const bayCruiseTicketsWooCommerceInstance = new WooCommerceRestApi({
   version: "wc/v3",
 });
 
+const bostonHarborCruiseTickets_site_url = process.env.BOSTON_HARBOR_CRUISE_TICKETING_WP_SITE_URL;
+const bostonHarborCruiseTickets_consumer_key = process.env.BOSTON_HARBOR_CRUISE_TICKETING_WC_REST_API_CONSUMER_KEY;
+const bostonHarborCruiseTickets_consumer_secret = process.env.BOSTON_HARBOR_CRUISE_TICKETING_WC_REST_API_CONSUMER_SECRET;
+
+const bostonHarborCruiseTicketsWooCommerceInstance = new WooCommerceRestApi({
+  url: bostonHarborCruiseTickets_site_url,
+  consumerKey: bostonHarborCruiseTickets_consumer_key,
+  consumerSecret: bostonHarborCruiseTickets_consumer_secret,
+  version: "wc/v3",
+});
+
 /**
  * Update WooCommerce order status
  * @param {number|string} orderId - WooCommerce Order ID
@@ -64,6 +75,8 @@ const updateOrderStatus = async (siteName, orderId, status) => {
     woocommerceApi = StatueWooCommerceInstance;
   } else if (siteName == "BayCruiseTicketing") {
     woocommerceApi = bayCruiseTicketsWooCommerceInstance;
+  } else if (siteName == "BostonHarborCruiseTicketing") {
+    woocommerceApi = bostonHarborCruiseTicketsWooCommerceInstance;
   }
   try {
     const response = await woocommerceApi.put(`orders/${orderId}`, {

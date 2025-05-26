@@ -37,7 +37,7 @@ async function ServiceCharges(
       waitUntil: "domcontentloaded",
     });
 
-    const sChargesDescription = `Order # ${orderId}. Email ${userEmail}`;
+    const sChargesDescription = `${siteName} Order#${orderId} | Email: ${userEmail}`;
 
     // Locators
     const sChargesFormClassLocator = await page.locator(
