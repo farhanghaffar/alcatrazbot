@@ -603,7 +603,7 @@ async function statueTicketingBookTour(bookingData, tries) {
             // ORDERS STATUS API PARAM OPTIONS
             // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
             const updatedOrder = await updateOrderStatus("StatueTicketing", bookingData.id, "completed");
-            console.log(`StatueTicketing: Order#${bookingData.id} status changed to ${updatedOrder.status} successfully!`); 
+            console.log(`StatueTicketing: Order#${bookingData?.id} status changed to ${updatedOrder?.status} successfully!`); 
         }
 
         // await page.pause();

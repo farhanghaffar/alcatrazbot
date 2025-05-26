@@ -632,7 +632,7 @@ async function potomacTourBooking(bookingData, tries) {
       // ORDERS STATUS API PARAM OPTIONS
       // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
       const updatedOrder = await updateOrderStatus("PotomacTicketing", bookingData.id, "completed");
-      console.log(`Potomac: Order#${bookingData.id} status changed to ${updatedOrder.status} successfully!`); 
+      console.log(`Potomac: Order#${bookingData?.id} status changed to ${updatedOrder?.status} successfully!`); 
   }
 
     return {

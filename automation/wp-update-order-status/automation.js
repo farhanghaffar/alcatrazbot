@@ -77,7 +77,7 @@ const updateOrderStatus = async (siteName, orderId, status) => {
       `❌ Failed to update order ${orderId}:`,
       error.response?.data || error.message
     );
-    throw error;
+    // throw error;
   }
 };
 

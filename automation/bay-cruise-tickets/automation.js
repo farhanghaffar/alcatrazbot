@@ -744,12 +744,12 @@ console.log('h-captcha-response field exists:', fieldExists);
 
     // await page.pause();
     const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "BayCruiseTicketing");
-    // if (isServiceChargesDeducted) {
-    //     // ORDERS STATUS API PARAM OPTIONS
-    //     // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
-    //     const updatedOrder = await updateOrderStatus("BayCruiseTicketing", bookingData.id, "completed");
-    //     console.log(`Order#${bookingData.id} status changed to ${updatedOrder.status} successfully!`);
-    // }
+    if (isServiceChargesDeducted) {
+        // ORDERS STATUS API PARAM OPTIONS
+        // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
+        const updatedOrder = await updateOrderStatus("BayCruiseTicketing", bookingData.id, "completed");
+        console.log(`Order#${bookingData?.id} status changed to ${updatedOrder?.status} successfully!`);
+    }
 
     return {
       success: true,

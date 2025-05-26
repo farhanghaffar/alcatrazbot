@@ -314,6 +314,20 @@ async function alcatrazBookTour(bookingData, tries) {
         await continueButton2.click();
         console.log('Clicked Continue');
 
+        await page.waitForTimeout(3000);
+
+        const ticketAssuranceSectionHeading = await frameHandle.locator(
+        '//h6/span[normalize-space()="Ticket Assurance (Recommended)"]'
+        );
+        await expect(ticketAssuranceSectionHeading).toBeVisible({ timeout: 3000 });
+
+        const ticketAssuranceSectionNoOption = await frameHandle.locator(
+        '[data-bdd="insurance-no-radio"]'
+        );
+        await expect(ticketAssuranceSectionNoOption).toBeVisible({ timeout: 5000 });
+        await ticketAssuranceSectionNoOption.click();
+
+
         const attendeesNames = bookingData.personNames;
         const attendeesNamesInputs = await frameHandle.locator('[autocomplete="name"]')
         const attendeesNamesInputsCount = await attendeesNamesInputs.count();
@@ -634,7 +648,7 @@ async function alcatrazBookTour(bookingData, tries) {
             // ORDERS STATUS API PARAM OPTIONS
             // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
             const updatedOrder = await updateOrderStatus("AlcatrazTicketing", bookingData.id, "completed");
-            console.log(`Order#${bookingData.id} status changed to ${updatedOrder.status} successfully!`); 
+            console.log(`Order#${bookingData?.id} status changed to ${updatedOrder?.status} successfully!`); 
         }
 
         return {
