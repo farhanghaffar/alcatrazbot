@@ -543,9 +543,14 @@ async function alcatrazBookTour(bookingData, tries) {
         await page.waitForTimeout(5000);
         const captchaFrame = nestedIframe.frameLocator('#mtcaptcha-iframe-1');
         const captchaImg = captchaFrame.locator('img[aria-label="captcha image."]');
+        const captchaCardImgContainer = captchaFrame.locator('#mtcap-card-1');
 
         const isCaptchaVisible = await captchaImg.isVisible();
-        if (isCaptchaVisible) {
+        const isCaptchaCardVisible = await captchaCardImgContainer.isVisible();
+        console.log("isCaptchaCardVisible:", isCaptchaCardVisible)
+        console.log("isCaptchaVisible:", isCaptchaVisible);
+        
+        if (isCaptchaCardVisible) {
           let imgSrc = await captchaImg.getAttribute("src");
     
           const captchaInput = await captchaFrame.locator(
@@ -593,9 +598,11 @@ async function alcatrazBookTour(bookingData, tries) {
           }
           await expect(captchaVerifiedMsg).toBeVisible({ timeout: 60000 });
           console.log("Captcha Verified");
+        } else {
+            console.log("Captcha is not visible!");
+            console.log("Skipped captcha! Clicking Complete...");
         }
     
-        console.log("Skipped captcha! Clicking Complete...");
 
         // await page.pause();
         await page.waitForTimeout(5000);
