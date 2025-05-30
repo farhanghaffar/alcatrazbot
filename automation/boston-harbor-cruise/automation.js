@@ -692,7 +692,7 @@ async function bostonHarborCruise(bookingData, tries) {
       screenshotPath, // path to the screenshot
       screenshotFileName,
       true,
-      "BostonHarborCruise"
+      "BostonHarborCruiseTicketing"
     );
 
     // await page.pause();
@@ -746,7 +746,7 @@ async function bostonHarborCruise(bookingData, tries) {
         screenshotPath, // path to the screenshot
         screenshotFileName, // screenshot filename
         false, // Automation Passed Status
-        "AlcatrazTicketing"
+        "BostonHarborCruiseTicketing"
       );
     } catch (err) {
       console.log("Sending mail Error", err);
