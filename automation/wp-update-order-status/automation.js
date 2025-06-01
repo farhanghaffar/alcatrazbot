@@ -58,6 +58,18 @@ const bostonHarborCruiseTicketsWooCommerceInstance = new WooCommerceRestApi({
   version: "wc/v3",
 });
 
+// Niagara Cruise Ticketing
+const niagaraCruiseTickets_site_url = process.env.NIAGARA_CRUISE_TICKETING_WP_SITE_URL;
+const niagaraCruiseTickets_consumer_key = process.env.NIAGARA_CRUISE_TICKETING_WC_REST_API_CONSUMER_KEY
+const niagaraCruiseTickets_consumer_secret = process.env.NIAGARA_CRUISE_TICKETING_WC_REST_API_CONSUMER_SECRET;
+
+const niagaraCruiseTicketsWooCommerceInstance = new WooCommerceRestApi({
+  url: niagaraCruiseTickets_site_url,
+  consumerKey: niagaraCruiseTickets_consumer_key,
+  consumerSecret: niagaraCruiseTickets_consumer_secret,
+  version: "wc/v3",
+});
+
 /**
  * Update WooCommerce order status
  * @param {number|string} orderId - WooCommerce Order ID
@@ -77,6 +89,8 @@ const updateOrderStatus = async (siteName, orderId, status) => {
     woocommerceApi = bayCruiseTicketsWooCommerceInstance;
   } else if (siteName == "BostonHarborCruiseTicketing") {
     woocommerceApi = bostonHarborCruiseTicketsWooCommerceInstance;
+  }  else if (siteName == "NiagaraCruiseTicketing") {
+    woocommerceApi = niagaraCruiseTicketsWooCommerceInstance;
   }
   try {
     const response = await woocommerceApi.put(`orders/${orderId}`, {
@@ -90,7 +104,6 @@ const updateOrderStatus = async (siteName, orderId, status) => {
       `❌ Failed to update order ${orderId}:`,
       error.response?.data || error.message
     );
-    // throw error;
   }
 };
 
