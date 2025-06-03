@@ -630,8 +630,8 @@ async function alcatrazBookTour(bookingData, tries) {
         await expect(thankYouMsg).toBeVisible({timeout: 120000});
 
         const successDir = path.join(__dirname, 'successfulOrders');
-        if(!fs.existsSync(successDir)) {
-            fs.mkdir(successDir);
+        if (!fs.existsSync(successDir)) {
+            await fs.promises.mkdir(successDir);
         }
         const screenshotFileName = bookingData.id + '-order-sucess.png';
         const screenshotPath = path.join(successDir, screenshotFileName);
@@ -665,7 +665,7 @@ async function alcatrazBookTour(bookingData, tries) {
         console.error('Booking automation error:', error);
         const errorsDir = path.join(__dirname, 'errors');
         if (!fs.existsSync(errorsDir)) {
-            fs.mkdirSync(errorsDir);
+            await fs.promises.mkdir(errorsDir);
         }
         const screenshotFileName =  bookingData.id + 'error-screenshot.png';
         const screenshotPath = path.join(errorsDir, screenshotFileName);
