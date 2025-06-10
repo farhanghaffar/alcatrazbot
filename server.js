@@ -13,6 +13,7 @@ const { potomacTourBooking } = require('./automation/potomac/automation');
 const { BayCruiseTickets } = require('./automation/bay-cruise-tickets/automation');
 const { bostonHarborCruise } = require('./automation/boston-harbor-cruise/automation');
 const { NiagaraCruiseTickets } = require('./automation/niagara-cruise-tickets/automation');
+const { FortSumterTickets } = require('./automation/fort-sumter-tickets/automation');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -819,6 +820,132 @@ app.post('/niagara-cruise-tickets-webhook', async (req, res) => {
                 }
             } catch (automationError) {
                 console.error('Error in Niagara Cruise booking automation:', automationError);
+            }
+        });
+
+        
+    } catch (error) {
+        console.error('Error processing webhook:', error);
+        res.status(200).json({
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+});
+
+
+// Webhook endpoint with verification | https://fortsumterticketing.com/
+app.post('/fort-sumter-ticketing-webhook', async (req, res) => {
+    console.log('Fort Sumter Tickets: Order data:', JSON.stringify(req.body));
+    
+    const reqBody = req.body;
+
+    try {
+        // Extract relevant data from WooCommerce order
+        const orderData = {
+            id: reqBody.id,
+            tourType: '',
+            bookingDate: '',
+            bookingTime: '',
+            bookingServiceCharges: '',
+            bookingSubTotal: '',
+            personNames: [],
+            ticketQuantity: 0,
+            adults: 0,
+            childs: 0,
+            senior_military: 0,
+            infants_under_three: 0,
+            card: {
+                cvc: '',
+                expiration: '',
+                number: '',
+            },
+            billing: {
+                first_name: reqBody?.billing?.first_name,
+                last_name: reqBody?.billing?.last_name,
+                company: reqBody?.billing?.company,
+                address_1: reqBody?.billing?.address_1,
+                address_2: reqBody?.billing?.address_2,
+                city: reqBody?.billing?.city,
+                state: reqBody?.billing?.state,
+                postcode: reqBody?.billing?.postcode,
+                country: reqBody?.billing?.country,
+                email: reqBody?.billing?.email,
+                phone: reqBody?.billing?.phone
+            },
+        };
+
+        reqBody?.line_items[0]?.meta_data.forEach(item => {
+            switch (item.key) {
+                case 'Tour Type':
+                    orderData.tourType = item?.value;
+                    break;
+                case 'Booking Date':
+                    orderData.bookingDate = item?.value;
+                    break;
+                case 'Booking Time':
+                    orderData.bookingTime = item?.value;
+                    break;
+                case 'Service Charges':
+                    orderData.bookingServiceCharges = item?.value;
+                    break;
+                case 'Subtotal':
+                    orderData.bookingSubTotal = item?.value;
+                    break;
+
+                default:
+                    // Check for keywords "child", "adult", "juniors" and "senior" in the key to update counts
+                    if (item.key.toLowerCase() === 'children (4-11) quantity') {
+                        orderData.childs = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === 'adult (12-61) quantity') {
+                        orderData.adults = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === 'senior/military (62 & older/active military) quantity') {
+                        orderData.senior_military = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === 'infants (ages 3 & younger) quantity') {
+                        orderData.infants_under_three = parseInt(item.value, 10);
+                    }
+                    break;
+            }
+        });
+
+        reqBody.meta_data.forEach(item => {
+            if (item.key.toLowerCase() === 'credit_card_cvc') {
+                orderData.card.cvc = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_expiration') {
+                orderData.card.expiration = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_number') {
+                orderData.card.number = item.value;
+            }
+        });
+
+        console.log('Fort Sumter Tickets: After manipulation, data is: ', orderData);
+
+        // Send response immediately to prevent webhook timeouts
+        res.status(200).json({
+            message: 'Fort Sumter Tickets: Webhook received. Processing in background.'
+        });
+
+        setImmediate(async () => {
+            try {
+                console.log('Starting booking automation process...');
+                let tries = 0;
+                const maxRetries = 3;
+                let bookingResult = await FortSumterTickets(orderData, tries);
+                
+                // Retry logic
+                // while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
+                //     tries++;
+                //     console.log(`Retry attempt #${tries}...`);
+                //     bookingResult = await FortSumterTickets(orderData, tries);
+                // }
+        
+                if (bookingResult.success) {
+                    console.log('Fort Sumter Tickets: Booking automation completed successfully');
+                } else {
+                    console.error('Fort Sumter Tickets: Booking automation failed:', bookingResult.error);
+                }
+            } catch (automationError) {
+                console.error('Fort Sumter Tickets: Error in booking automation:', automationError);
             }
         });
 

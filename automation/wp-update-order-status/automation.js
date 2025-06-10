@@ -70,6 +70,18 @@ const niagaraCruiseTicketsWooCommerceInstance = new WooCommerceRestApi({
   version: "wc/v3",
 });
 
+// Fort Sumter Ticketing
+const fortSumterickets_site_url = process.env.FORT_SUMTER_TICKETING_WP_SITE_URL;
+const fortSumterTickets_consumer_key = process.env.FORT_SUMTER_TICKETING_WC_REST_API_CONSUMER_KEY
+const fortSumterTickets_consumer_secret = process.env.FORT_SUMTER_TICKETING_WC_REST_API_CONSUMER_SECRET;
+
+const fortSumterTicketsWooCommerceInstance = new WooCommerceRestApi({
+  url: fortSumterickets_site_url,
+  consumerKey: fortSumterTickets_consumer_key,
+  consumerSecret: fortSumterTickets_consumer_secret,
+  version: "wc/v3",
+});
+
 /**
  * Update WooCommerce order status
  * @param {number|string} orderId - WooCommerce Order ID
@@ -91,7 +103,11 @@ const updateOrderStatus = async (siteName, orderId, status) => {
     woocommerceApi = bostonHarborCruiseTicketsWooCommerceInstance;
   }  else if (siteName == "NiagaraCruiseTicketing") {
     woocommerceApi = niagaraCruiseTicketsWooCommerceInstance;
+  } else if (siteName == "FortSumterTicketing") {
+    woocommerceApi = fortSumterTicketsWooCommerceInstance;
   }
+
+
   try {
     const response = await woocommerceApi.put(`orders/${orderId}`, {
       status: status,
