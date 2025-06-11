@@ -325,7 +325,7 @@ async function FortSumterTickets(bookingData, tries) {
     const checkoutPageHeading = await tourBookingFrameHandler.locator(
       "#booking-item-label"
     );
-    await expect(checkoutPageHeading).toBeVisible({ timeout: 20000 });
+    await expect(checkoutPageHeading).toBeVisible({ timeout: 50000 });
 
     const ticketsSelectorAdults = await tourBookingFrameHandler.locator(
       "[data-test-id='user-type-adult']"
