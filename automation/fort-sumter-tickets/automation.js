@@ -306,7 +306,13 @@ async function FortSumterTickets(bookingData, tries) {
     // await page.pause();
 
     // const timeSlotToSelect = '9:20 AM';
-    const timeSlotToSelect = bookingData.bookingTime;
+    // const timeSlotToSelect = bookingData.bookingTime;
+    let timeSlotToSelect = bookingData.bookingTime;
+
+    if (timeSlotToSelect.startsWith('0')) {
+      timeSlotToSelect = timeSlotToSelect.replace(/^0/, '');
+      console.log("Removing leading 0 from the time string...");
+    }
     console.log("timeSlotToSelect:", timeSlotToSelect);
 
     const timeSlot = await tourBookingFrameHandler.locator(
@@ -661,7 +667,6 @@ async function FortSumterTickets(bookingData, tries) {
       "[data-test-id='test-flash-message-indicator']"
     );
 
-    await expect(flashErrorMessageContainer).toBeVisible({ timeout: 5000 });
     const isPaymentMessageDivVisible =
       await flashErrorMessageContainer.isVisible();
     console.log("Payment message container:", isPaymentMessageDivVisible);
@@ -702,8 +707,8 @@ async function FortSumterTickets(bookingData, tries) {
     await page.waitForTimeout(12000);
 
     // await page.pause();
-    const thankYouMsg = await frameHandle
-      .getByText("Thank you for your purchase!")
+    const thankYouMsg = await tourBookingFrameHandler
+      .getByText("Thanks for booking with us! We've emailed you this confirmation.")
       .first();
     await expect(thankYouMsg).toBeVisible({ timeout: 120000 });
 
