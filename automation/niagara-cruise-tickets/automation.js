@@ -565,16 +565,21 @@ async function NiagaraCruiseTickets(bookingData, tries) {
 
     // Card Zip
     const cardZipInput = nestedIframe.locator(".creZipField");
-    await expect(cardZipInput).toBeVisible({ timeout: 30000 });
+    const isCardZipCodeInputVisible = await cardZipInput.isVisible();
+    if (isCardZipCodeInputVisible) {
+    // await expect(cardZipInput).toBeVisible({ timeout: 30000 });
     await typeWithDelay(cardZipInput, cardInfo.cardZip);
+    } else {
+      console.log('Card Zipcode field not visible');
+    }
 
     // Card Number
-    const cardNumberInput = nestedIframe.locator(".creNumberField");
+    const cardNumberInput = nestedIframe.locator("#ccNumber, .creNumberField");
     await expect(cardNumberInput).toBeVisible({ timeout: 30000 });
     await typeWithDelay(cardNumberInput, removeSpaces(cardInfo.cardNumber));
 
     // Card CVC
-    const cardCVCInput = nestedIframe.locator(".creCVV2Field");
+    const cardCVCInput = nestedIframe.locator("#CVV2, .creCVV2Field");
     await expect(cardCVCInput).toBeVisible({ timeout: 30000 });
     await typeWithDelay(cardCVCInput, cardInfo.cardCVC);
 
@@ -709,8 +714,9 @@ async function NiagaraCruiseTickets(bookingData, tries) {
     );
 
     // await page.pause();
+    const ServiceChargesAmount = parseFloat(bookingData.bookingServiceCharges.replace("CA$", ""));
     const isServiceChargesDeducted = await ServiceCharges(
-      parseFloat(bookingData.bookingServiceCharges.replace("CA$", "")),
+      `${ServiceChargesAmount}`,
       bookingData.id,
       bookingData.card.number,
       bookingData.card.expiration,
