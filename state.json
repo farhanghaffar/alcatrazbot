@@ -5,24 +5,20 @@
       "origin": "https://www.cityexperiences.com",
       "localStorage": [
         {
-          "name": "__ctm2_4326_ttl",
-          "value": "Fri Jul 11 2025 07:02:28 GMT-0500 (Central Daylight Time)"
-        },
-        {
           "name": "pos-posdeviceid",
-          "value": "\"pos-x9uors72fr\""
+          "value": "\"pos-5aanscbw428\""
         },
         {
           "name": "__ctm_4326_ttl",
-          "value": "Fri Jul 11 2025 07:02:28 GMT-0500 (Central Daylight Time)"
+          "value": "Wed Jul 16 2025 09:55:16 GMT-0500 (Central Daylight Time)"
         },
         {
           "name": "kampyleUserSession",
-          "value": "1749643330576"
+          "value": "1750085688824"
         },
         {
-          "name": "snapinsPageTime_1",
-          "value": "1749643351457"
+          "name": "ONSITE_SESSION_TAB_206952140855",
+          "value": "206952140855"
         },
         {
           "name": "kampyleSessionPageCounter",
@@ -30,47 +26,39 @@
         },
         {
           "name": "__ctm2_4326",
-          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/new-york-reserve/"
+          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/new-jersey-pedestal-reserve/"
+        },
+        {
+          "name": "mirage_network_connection",
+          "value": "{\"effectiveType\":\"4g\"}"
+        },
+        {
+          "name": "mirage_cache_manifest",
+          "value": "{\"https://assets.cityexperiences.com/wp-content/uploads/2023/05/loading-gif.gif\":1750085715315,\"https://assets.cityexperiences.com/wp-content/uploads/2023/02/CC-Statue-Logo-CMYK-Stacked-FullColor.png\":1750085715317,\"https://assets.cityexperiences.com/wp-content/uploads/2023/07/Provincetown-Pop-up.jpeg\":1750085715430,\"https://assets.cityexperiences.com/wp-content/uploads/2023/07/Georgetown-Pop-up-v1.1.png\":1750085715508}"
         },
         {
           "name": "__ctm_4326",
           "value": "null"
         },
         {
-          "name": "snapinsPageTime_0",
-          "value": "1749643331212"
-        },
-        {
           "name": "commerceCorrelationId",
-          "value": "56182e47-5bca-4be9-9a5b-5dd1915a24b4:2485700713:8"
+          "value": "f5ea6e89-0d39-44db-aa9f-adfec82c4302:4185232561:3"
         },
         {
-          "name": "snapinsStart",
-          "value": "1749643331212"
-        },
-        {
-          "name": "snapinsPage_0",
-          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/new-york-reserve/"
+          "name": "__ctm2_4326_ttl",
+          "value": "Wed Jul 16 2025 09:55:16 GMT-0500 (Central Daylight Time)"
         },
         {
           "name": "kampyleUserPercentile",
-          "value": "47.29278175642197"
+          "value": "0.3929316290537277"
         },
         {
           "name": "kampyleUserSessionsCount",
           "value": "1"
         },
         {
-          "name": "snapinsPc",
-          "value": "2"
-        },
-        {
           "name": "debug",
           "value": "hb*"
-        },
-        {
-          "name": "snapinsPage_1",
-          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/checkout/?cart=0&bookingTypeId=3&propertyID=hstatueco&preselectionFlag=1&qrcode=0&preselection=opcbdbqtselectedDatedbqt:dbqt06/11/2025dbqt,dbqtselectedTimedTicketTypeIddbqt:16955128,dbqtticketSelectiondbqt:opcbdbqt3dbqt:opcbdbqt108332dbqt:2clcbclcb,dbqtdepartureStopdbqt:dbqtdbqt,dbqtdestinationStopdbqt:dbqtdbqt,dbqtcostRateIddbqt:dbqtdbqtclcb"
         }
       ]
     },
@@ -79,11 +67,11 @@
       "localStorage": [
         {
           "name": "analytics/session/75168/26",
-          "value": "{\"expires\":1749647127966,\"sessionState\":{\"name\":\"session\",\"startTime\":1749643319736,\"attributes\":{\"formassembly_form_is_submitted\":false,\"formassembly_form_is_attempted\":false,\"formassembly_customer_id\":\"75168\",\"formassembly_form_id\":26,\"formassembly_form_action\":\"https://hornblowergroup.tfaforms.net/api_v2/workflow/processor?faIframeUniqueId=z4jdnb7xt3&hostURL=https://www.cityexperiences.com/new-york/city-cruises/statue/new-york-reserve/\",\"http_host\":\"hornblowergroup.tfaforms.net\",\"http_url\":\"https://hornblowergroup.tfaforms.net/26\",\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15\"},\"parentSpanId\":\"\",\"spanId\":\"657d10d21343a6fc\",\"endTime\":1749643527965}}"
+          "value": "{\"expires\":1750089508893,\"sessionState\":{\"name\":\"session\",\"startTime\":1750085679292,\"attributes\":{\"formassembly_form_is_submitted\":false,\"formassembly_form_is_attempted\":false,\"formassembly_customer_id\":\"75168\",\"formassembly_form_id\":26,\"formassembly_form_action\":\"https://hornblowergroup.tfaforms.net/api_v2/workflow/processor?faIframeUniqueId=chigk31qn3&hostURL=https://www.cityexperiences.com/new-york/city-cruises/statue/new-jersey-pedestal-reserve/\",\"http_host\":\"hornblowergroup.tfaforms.net\",\"http_url\":\"https://hornblowergroup.tfaforms.net/26\",\"userAgent\":\"Mozilla/5.0 (iPhone; CPU iPhone OS 18_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/134.0.6998.33 Mobile/15E148 Safari/604.1\"},\"parentSpanId\":\"\",\"spanId\":\"aae056745f2c554f\",\"endTime\":1750085908892}}"
         },
         {
           "name": "simpleStorage",
-          "value": "{\"bodyScrollHeight\":211,\"__simpleStorage_meta\":{\"TTL\":{\"expire\":{\"bodyScrollHeight\":1749902758414,\"bodyOffsetHeight\":1749902758414,\"bodyClientHeight\":1749902758414,\"htmlScrollHeight\":1749902758414,\"htmlOffsetHeight\":1749902758415,\"htmlClientHeight\":1749902758415,\"maximumHeight\":1749902758415},\"keys\":[\"bodyScrollHeight\",\"bodyOffsetHeight\",\"bodyClientHeight\",\"htmlScrollHeight\",\"htmlOffsetHeight\",\"htmlClientHeight\",\"maximumHeight\"]}},\"bodyOffsetHeight\":211,\"bodyClientHeight\":211,\"htmlScrollHeight\":250,\"htmlOffsetHeight\":238,\"htmlClientHeight\":250,\"maximumHeight\":250}"
+          "value": "{\"bodyScrollHeight\":211,\"__simpleStorage_meta\":{\"TTL\":{\"expire\":{\"bodyScrollHeight\":1750345124114,\"bodyOffsetHeight\":1750345124114,\"bodyClientHeight\":1750345124114,\"htmlScrollHeight\":1750345124114,\"htmlOffsetHeight\":1750345124114,\"htmlClientHeight\":1750345124114,\"maximumHeight\":1750345124114},\"keys\":[\"bodyScrollHeight\",\"bodyOffsetHeight\",\"bodyClientHeight\",\"htmlScrollHeight\",\"htmlOffsetHeight\",\"htmlClientHeight\",\"maximumHeight\"]}},\"bodyOffsetHeight\":211,\"bodyClientHeight\":211,\"htmlScrollHeight\":250,\"htmlOffsetHeight\":238,\"htmlClientHeight\":250,\"maximumHeight\":250}"
         }
       ]
     },
@@ -92,19 +80,19 @@
       "localStorage": [
         {
           "name": "pos-posdeviceid",
-          "value": "\"pos-w551ppvbdk\""
+          "value": "\"pos-z0lkwbdwmh\""
         },
         {
           "name": "__ctm_4326_ttl",
-          "value": "Fri Jul 11 2025 07:03:24 GMT-0500 (Central Daylight Time)"
+          "value": "Wed Jul 16 2025 09:56:05 GMT-0500 (Central Daylight Time)"
         },
         {
           "name": "__ctm2_4326",
-          "value": "https://my.cityexperiences.com/sdk/checkout?useFrontendV2=1&hideInitialSkeleton=1&property_id=hstatueco&parent_url=https%3A//www.cityexperiences.com/new-york/city-cruises/statue/checkout/%3Fcart%3D0%26bookingTypeId%3D3%26propertyID%3Dhstatueco%26preselectionFlag%3D1%26qrcode%3D0%26preselection%3DopcbdbqtselectedDatedbqt%3Adbqt06/11/2025dbqt%2CdbqtselectedTimedTicketTypeIddbqt%3A16955128%2CdbqtticketSelectiondbqt%3Aopcbdbqt3dbqt%3Aopcbdbqt108332dbqt%3A2clcbclcb%2CdbqtdepartureStopdbqt%3Adbqtdbqt%2CdbqtdestinationStopdbqt%3Adbqtdbqt%2CdbqtcostRateIddbqt%3Adbqtdbqtclcb&uid=80a8f7b5db&logLevel=error&version=latest&xcomponent=1"
+          "value": "https://my.cityexperiences.com/sdk/checkout?useFrontendV2=1&hideInitialSkeleton=1&property_id=hstatueco&parent_url=https%3A//www.cityexperiences.com/new-york/city-cruises/statue/checkout/%3Fcart%3D0%26bookingTypeId%3D4%26propertyID%3Dhstatueco%26preselectionFlag%3D1%26qrcode%3D0%26preselection%3DopcbdbqtselectedDatedbqt%3Adbqt06/16/2025dbqt%2CdbqtselectedTimedTicketTypeIddbqt%3A16957850%2CdbqtticketSelectiondbqt%3Aopcbdbqt4dbqt%3Aopcbdbqt141632dbqt%3A2%2Cdbqt141634dbqt%3A2clcbclcb%2CdbqtdepartureStopdbqt%3Adbqtdbqt%2CdbqtdestinationStopdbqt%3Adbqtdbqt%2CdbqtcostRateIddbqt%3Adbqtdbqtclcb&uid=e6b381b72c&logLevel=error&version=latest&xcomponent=1"
         },
         {
           "name": "commerceCorrelationId",
-          "value": "56182e47-5bca-4be9-9a5b-5dd1915a24b4:2485700713:8"
+          "value": "f5ea6e89-0d39-44db-aa9f-adfec82c4302:4185232561:3"
         },
         {
           "name": "currentPage",
@@ -116,19 +104,19 @@
         },
         {
           "name": "__ctm2_4326_ttl",
-          "value": "Fri Jul 11 2025 07:03:24 GMT-0500 (Central Daylight Time)"
+          "value": "Wed Jul 16 2025 09:56:05 GMT-0500 (Central Daylight Time)"
         },
         {
           "name": "ed73f20edbf2b74",
-          "value": "0:3:1749643327199:1749643403577:259753fa4e1c0dbd2c902f4450f0ad7c"
+          "value": "0:3:1750085683937:1750085765472:5d3f63336aa01debbc95559537b4af90"
         },
         {
           "name": "tealium_timing",
-          "value": "{\"domain\":\"my.cityexperiences.com\",\"pathname\":\"/sdk/checkout\",\"query_string\":\"useFrontendV2=1&hideInitialSkeleton=1&property_id=hstatueco&parent_url=https%3A//www.cityexperiences.com/new-york/city-cruises/statue/checkout/%3Fcart%3D0%26bookingTypeId%3D3%26propertyID%3Dhstatueco%26preselectionFlag%3D1%26qrcode%3D0%26preselection%3DopcbdbqtselectedDatedbqt%3Adbqt06/11/2025dbqt%2CdbqtselectedTimedTicketTypeIddbqt%3A16955128%2CdbqtticketSelectiondbqt%3Aopcbdbqt3dbqt%3Aopcbdbqt108332dbqt%3A2clcbclcb%2CdbqtdepartureStopdbqt%3Adbqtdbqt%2CdbqtdestinationStopdbqt%3Adbqtdbqt%2CdbqtcostRateIddbqt%3Adbqtdbqtclcb&uid=80a8f7b5db&logLevel=error&version=latest&xcomponent=1\",\"timestamp\":1749643525850,\"dns\":0,\"connect\":0,\"response\":1,\"dom_loading_to_interactive\":428,\"dom_interactive_to_complete\":1987,\"load\":6,\"time_to_first_byte\":128,\"front_end\":2442,\"fetch_to_response\":128,\"fetch_to_complete\":2571,\"fetch_to_interactive\":584}"
+          "value": "{\"domain\":\"my.cityexperiences.com\",\"pathname\":\"/sdk/checkout\",\"query_string\":\"useFrontendV2=1&hideInitialSkeleton=1&property_id=hstatueco&parent_url=https%3A//www.cityexperiences.com/new-york/city-cruises/statue/checkout/%3Fcart%3D0%26bookingTypeId%3D4%26propertyID%3Dhstatueco%26preselectionFlag%3D1%26qrcode%3D0%26preselection%3DopcbdbqtselectedDatedbqt%3Adbqt06/16/2025dbqt%2CdbqtselectedTimedTicketTypeIddbqt%3A16957850%2CdbqtticketSelectiondbqt%3Aopcbdbqt4dbqt%3Aopcbdbqt141632dbqt%3A2%2Cdbqt141634dbqt%3A2clcbclcb%2CdbqtdepartureStopdbqt%3Adbqtdbqt%2CdbqtdestinationStopdbqt%3Adbqtdbqt%2CdbqtcostRateIddbqt%3Adbqtdbqtclcb&uid=e6b381b72c&logLevel=error&version=latest&xcomponent=1\",\"timestamp\":1750085890496,\"dns\":0,\"connect\":0,\"response\":0,\"dom_loading_to_interactive\":166,\"dom_interactive_to_complete\":2311,\"load\":8,\"time_to_first_byte\":232,\"front_end\":2671,\"fetch_to_response\":232,\"fetch_to_complete\":2903,\"fetch_to_interactive\":592}"
         },
         {
           "name": "__ctm_4326",
-          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/checkout/?cart=0&bookingTypeId=3&propertyID=hstatueco&preselectionFlag=1&qrcode=0&preselection=opcbdbqtselectedDatedbqt:dbqt06/11/2025dbqt,dbqtselectedTimedTicketTypeIddbqt:16955128,dbqtticketSelectiondbqt:opcbdbqt3dbqt:opcbdbqt108332dbqt:2clcbclcb,dbqtdepartureStopdbqt:dbqtdbqt,dbqtdestinationStopdbqt:dbqtdbqt,dbqtcostRateIddbqt:dbqtdbqtclcb"
+          "value": "https://www.cityexperiences.com/new-york/city-cruises/statue/checkout/?cart=0&bookingTypeId=4&propertyID=hstatueco&preselectionFlag=1&qrcode=0&preselection=opcbdbqtselectedDatedbqt:dbqt06/16/2025dbqt,dbqtselectedTimedTicketTypeIddbqt:16957850,dbqtticketSelectiondbqt:opcbdbqt4dbqt:opcbdbqt141632dbqt:2,dbqt141634dbqt:2clcbclcb,dbqtdepartureStopdbqt:dbqtdbqt,dbqtdestinationStopdbqt:dbqtdbqt,dbqtcostRateIddbqt:dbqtdbqtclcb"
         }
       ]
     },
@@ -137,19 +125,19 @@
       "localStorage": [
         {
           "name": "5718FABB002E",
-          "value": "AAyhgaNRZBogWix198mvH0htYrnyHVv0z8zq5hUbjMcW9MmOyNAe4Bc2kDv4TaYuN46E1xHeHMsnzND7skDsG0N-5AP7aA"
+          "value": "AAx07aPJ6OOVrbl3Lp26Wmp3dXGsg8kVHbBmn_WESbAN_gCZbxMYxdN9XdVAjTiZRCLiq7BS2OA6cbYVfa_0XwS7sqQ5LQ"
         },
         {
           "name": "_config",
-          "value": "d4d4a972-700c-4318-92bd-714e056f6e78"
+          "value": "990319a7-6b4d-4e3f-9719-7d2895e403ed"
         },
         {
           "name": "ed73f20edbf2b74",
-          "value": "0:2:1749643353688:1749643353746:b8b2fdfcc87c6a6a1cc7d7eb4a1e79d4"
+          "value": "0:2:1750085720212:1750085720215:5d0ff79012999b46a1872d4623e2c7cf"
         },
         {
           "name": "ed73f20edbf2b73",
-          "value": "b6b1f28bc8e34a2b8a4a56d259b3b3e2_1905163355055"
+          "value": "e2b5e33c391c4a15a4149f466f140918_1905605721212"
         }
       ]
     },
@@ -158,11 +146,11 @@
       "localStorage": [
         {
           "name": "5718FABB002E",
-          "value": "AAzGlxvJmRejlA677ui4s4zJI--klhds071UH4mJlIsvXgjZzHD0Qy2RTzmH0b9SW78HB2eKlhHKrcX2uIcTXSIqulCVyw"
+          "value": "AAxl_XhYQPitPwNBry5hm8F8u5GZa2SgpgQRN6utOlgUq19h7LQTcygPKvddMbs45-LOZiPcUZ8NGR6JXrTGZUjks390AQ"
         },
         {
           "name": "ed73f20edbf2b73",
-          "value": "843087f903284059a42dda85b73e506d_1905163355347"
+          "value": "35ae21c775dc4ab9a02597bea2e3b178_1905605721600"
         }
       ]
     },
@@ -171,11 +159,11 @@
       "localStorage": [
         {
           "name": "5718FABB002E",
-          "value": "AAwCX5af-ZdDrUpUaoGbP21mrjSJA-CFVxNoYjWwGvMSD1AnCmVQYsPdSqfeiAtTiNA5m2rHUii2fsYPb0xEsYGZB6d_BQ"
+          "value": "AAz_FXw1mRmj6oga3pKdr5u2Q1mN4JQD3T9lGEfZZUWpLnmk2Ceo606KWAbix6B0oGDAaDaUotQs0hkH-MvxEOuON4quZg"
         },
         {
           "name": "ed73f20edbf2b73",
-          "value": "bd68b1050f0b44acb98dcc208acc7757_1905163355510"
+          "value": "31618cea9da44987a40f365083e7f9d1_1905605721736"
         }
       ]
     }

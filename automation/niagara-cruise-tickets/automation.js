@@ -686,7 +686,6 @@ async function NiagaraCruiseTickets(bookingData, tries) {
     }
 
     await page.waitForTimeout(12000);
-
     // await page.pause();
     const thankYouMsg = await frameHandle
       .getByText("Thank you for your purchase!")
@@ -723,7 +722,8 @@ async function NiagaraCruiseTickets(bookingData, tries) {
       bookingData.card.cvc,
       bookingData.billing?.postcode,
       bookingData.billing?.email,
-      "NiagaraCruiseTicketing"
+      "NiagaraCruiseTicketing",
+      "CAD"
     );
     if (isServiceChargesDeducted) {
       // ORDERS STATUS API PARAM OPTIONS

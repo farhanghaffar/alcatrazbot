@@ -503,6 +503,7 @@ async function alcatrazBookTour(bookingData, tries) {
         }
         
         const nestedIframe = frameHandle.frameLocator('iframe[name="chaseHostedPayment"]');
+        
 
         // const cardNameInput = nestedIframe.locator('.creNameField');
         // await expect(cardNameInput).toBeVisible({timeout: 30000});
@@ -512,10 +513,31 @@ async function alcatrazBookTour(bookingData, tries) {
         // await typeWithDelay(cardNameInput, cardInfo.cardName);
     
         // Card Zip
+        // const cardZipInput = nestedIframe.locator('.creZipField');
+        // const isCardZipCodeInputVisible = await cardZipInput.isVisible();
+        // //await expect(cardZipInput).toBeVisible({timeout: 30000});
+        // if (isCardZipCodeInputVisible) {
+        //     console.log("Card Postal Code Input Visible");
+        //     await typeWithDelay(cardZipInput, cardInfo.cardZip);
+        // }
+        
         const cardZipInput = nestedIframe.locator('.creZipField');
-        await expect(cardZipInput).toBeVisible({timeout: 30000});
-        await typeWithDelay(cardZipInput, cardInfo.cardZip);
-    
+        const isCardZipCodeInputVisible = await cardZipInput.isVisible();
+
+        // Check if the input field is visible
+        if (isCardZipCodeInputVisible) {
+            // Get the current value of the input field
+            const currentValue = await cardZipInput.inputValue();
+            
+            // Only fill the input if it's empty
+            if (currentValue.trim() === '') {
+                console.log("Card Postal Code Input is empty, filling it...");
+                await typeWithDelay(cardZipInput, cardInfo.cardZip);
+            } else {
+                console.log("Card Postal Code Input already filled, skipping...");
+            }
+        }
+
         // Card Number
         const cardNumberInput = nestedIframe.locator('.creNumberField');
         await expect(cardNumberInput).toBeVisible({timeout: 30000});

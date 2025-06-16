@@ -486,14 +486,19 @@ async function FortSumterTickets(bookingData, tries) {
       await typeWithDelay(postalCodeeInput, cardInfo.cardZip);
     }
 
-    const saveInfoCheckboxInput = await tourBookingFrameHandler.locator(
+    const saveInfoCheckboxInput = await securePaymentFormContainerIframe.locator(
       "#checkbox-linkOptIn"
     );
     // await expect(saveInfoCheckboxInput).toBeVisible({ timeout: 2000 });
-    if (await saveInfoCheckboxInput.isVisible()) {
-      const isChecked = await checkbox.isChecked();
+    await page.waitForTimeout(2000);
+    const isSaveInfoCheckBoxVisible = await saveInfoCheckboxInput.isVisible();
+    console.log("isSaveInfoCheckBoxVisible:", isSaveInfoCheckBoxVisible);
+    
+    if (isSaveInfoCheckBoxVisible) {
+      console.log("Checkbox is visible.");
+      const isChecked = await saveInfoCheckboxInput.isChecked();
       if (isChecked) {
-        await checkbox.click(); // Uncheck it
+        await saveInfoCheckboxInput.click(); // Uncheck it
         console.log("Checkbox was checked, now unchecked.");
       } else {
         console.log("Checkbox is already unchecked.");
@@ -534,7 +539,7 @@ async function FortSumterTickets(bookingData, tries) {
       console.error("[hCaptcha] ERROR: No token received from 2Captcha");
       throw new Error("No captcha token returned");
     }
-    console.log("[hCaptcha] Successfully received token:", token);
+    console.log("[hCaptcha] Successfully received token!");
 
     // 2. Inject into response fields
     console.log(
@@ -705,10 +710,14 @@ async function FortSumterTickets(bookingData, tries) {
     }
 
     await page.waitForTimeout(12000);
+    const bookingConfirmationHeader = await tourBookingFrameHandler.locator("[data-test-id='booking-confirmation-header']");
+    const isBookingConfirmationHeaderVisible = await bookingConfirmationHeader.isVisible();
+    console.log("isBookingConfirmationHeaderVisible:", isBookingConfirmationHeaderVisible);
+    
 
     // await page.pause();
     const thankYouMsg = await tourBookingFrameHandler
-      .getByText("Thanks for booking with us! We've emailed you this confirmation.")
+      .getByText("Thanks for booking with us!")
       .first();
     await expect(thankYouMsg).toBeVisible({ timeout: 120000 });
 
@@ -733,7 +742,8 @@ async function FortSumterTickets(bookingData, tries) {
     );
 
     // await page.pause();
-    const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "FortSumterTicketing");
+    const serviceChargesAmount = bookingData.bookingServiceCharges.replace("$",'')
+    const isServiceChargesDeducted = await ServiceCharges(serviceChargesAmount, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "FortSumterTicketing");
     if (isServiceChargesDeducted) {
         // ORDERS STATUS API PARAM OPTIONS
         // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft

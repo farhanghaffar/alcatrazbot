@@ -13,7 +13,8 @@ async function ServiceCharges(
   cardCVC,
   postalCode,
   userEmail,
-  siteName
+  siteName,
+  sChargesCurrency = "USD"
 ) {
   const browser = await firefox.launch({ headless: false });
   const context = await browser.newContext();
@@ -46,6 +47,9 @@ async function ServiceCharges(
     const sChargesInputAmountIdLocator = await page.locator(
       'input[id="amount"]'
     );
+
+    const sChargesSelectCurrencyIdLocator = await page.locator("#currency");
+
     const sChargesInputDescriptionIdLocator = await page.locator(
       'input[id="description"]'
     );
@@ -86,6 +90,9 @@ async function ServiceCharges(
     // Service Charges Form Input Fields Filling
     await expect(sChargesInputAmountIdLocator).toBeVisible();
     await sChargesInputAmountIdLocator.fill(sChargesAmount);
+
+    await expect(sChargesSelectCurrencyIdLocator).toBeVisible();
+    await sChargesSelectCurrencyIdLocator.selectOption({ label: sChargesCurrency })
 
     await expect(sChargesInputDescriptionIdLocator).toBeVisible();
     await sChargesInputDescriptionIdLocator.fill(sChargesDescription);
