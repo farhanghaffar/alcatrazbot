@@ -435,9 +435,18 @@ async function statueTicketingBookTour(bookingData, tries) {
                 await stateSelectElement.selectOption(stateValue);
             }
         }
+        // const postalCodeInput = await frameHandle.locator('input[name="postalCode"]');
+        // await expect(postalCodeInput).toBeVisible({timeout: 80000});
+        // await postalCodeInput.fill(bookingData.billing.postcode);
+
         const postalCodeInput = await frameHandle.locator('input[name="postalCode"]');
         await expect(postalCodeInput).toBeVisible({timeout: 80000});
-        await postalCodeInput.fill(bookingData.billing.postcode);
+        // await postalCodeInput.fill(bookingData.billing.postcode);
+        let postcodeeValue = bookingData.billing.postcode;
+        if (!postcodeeValue && bookingData.billing.country === "AE") {
+          postcodeeValue = "1224"
+        }
+        await postalCodeInput.fill(postcodeeValue);
 
         // await page.pause(); // Temporarily
 
