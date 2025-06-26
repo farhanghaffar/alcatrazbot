@@ -14,6 +14,7 @@ const { BayCruiseTickets } = require('./automation/bay-cruise-tickets/automation
 const { bostonHarborCruise } = require('./automation/boston-harbor-cruise/automation');
 const { NiagaraCruiseTickets } = require('./automation/niagara-cruise-tickets/automation');
 const { FortSumterTickets } = require('./automation/fort-sumter-tickets/automation');
+const { KennedySpaceCenterTickets } = require('./automation/kennedy-space-center-tickets/automation');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -933,11 +934,11 @@ app.post('/fort-sumter-ticketing-webhook', async (req, res) => {
                 let bookingResult = await FortSumterTickets(orderData, tries);
                 
                 // Retry logic
-                // while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
-                //     tries++;
-                //     console.log(`Retry attempt #${tries}...`);
-                //     bookingResult = await FortSumterTickets(orderData, tries);
-                // }
+                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
+                    tries++;
+                    console.log(`Retry attempt #${tries}...`);
+                    bookingResult = await FortSumterTickets(orderData, tries);
+                }
         
                 if (bookingResult.success) {
                     console.log('Fort Sumter Tickets: Booking automation completed successfully');
@@ -946,6 +947,127 @@ app.post('/fort-sumter-ticketing-webhook', async (req, res) => {
                 }
             } catch (automationError) {
                 console.error('Fort Sumter Tickets: Error in booking automation:', automationError);
+            }
+        });
+
+        
+    } catch (error) {
+        console.error('Error processing webhook:', error);
+        res.status(200).json({
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+});
+
+// Webhook endpoint with verification | https://www.kennedyspacecenter.com/
+app.post('/kennedy-space-center-ticketing-webhook', async (req, res) => {
+    console.log('Kennedy SpaceCenter Tickets: Order data:', JSON.stringify(req.body));
+    
+    const reqBody = req.body;
+
+    try {
+        // Extract relevant data from WooCommerce order
+        const orderData = {
+            id: reqBody.id,
+            tourType: '',
+            bookingDate: '',
+            bookingTime: '',
+            bookingServiceCharges: '',
+            bookingSubTotal: '',
+            personNames: [],
+            ticketQuantity: 0,
+            adults: 0,
+            childs: 0,
+            senior_military: 0,
+            infants_under_three: 0,
+            card: {
+                cvc: '',
+                expiration: '',
+                number: '',
+            },
+            billing: {
+                first_name: reqBody?.billing?.first_name,
+                last_name: reqBody?.billing?.last_name,
+                company: reqBody?.billing?.company,
+                address_1: reqBody?.billing?.address_1,
+                address_2: reqBody?.billing?.address_2,
+                city: reqBody?.billing?.city,
+                state: reqBody?.billing?.state,
+                postcode: reqBody?.billing?.postcode,
+                country: reqBody?.billing?.country,
+                email: reqBody?.billing?.email,
+                phone: reqBody?.billing?.phone
+            },
+        };
+
+        reqBody?.line_items[0]?.meta_data.forEach(item => {
+            switch (item.key) {
+                case 'Tour Type':
+                    orderData.tourType = item?.value;
+                    break;
+                case 'Booking Date':
+                    orderData.bookingDate = item?.value;
+                    break;
+                case 'Booking Time':
+                    orderData.bookingTime = item?.value;
+                    break;
+                case 'Service Charges':
+                    orderData.bookingServiceCharges = item?.value;
+                    break;
+                case 'Subtotal':
+                    orderData.bookingSubTotal = item?.value;
+                    break;
+
+                default:
+                    // Check for keywords "child" and "adult" in the key to update counts
+                    if (item.key.toLowerCase() === 'child quantity') {
+                        orderData.childs = parseInt(item.value, 10);
+                    } else if (item.key.toLowerCase() === 'adult quantity') {
+                        orderData.adults = parseInt(item.value, 10);
+                    }
+                    break;
+            }
+        });
+
+        reqBody.meta_data.forEach(item => {
+            if (item.key.toLowerCase() === 'credit_card_cvc') {
+                orderData.card.cvc = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_expiration') {
+                orderData.card.expiration = item?.value;
+            } else if (item.key.toLowerCase() === 'credit_card_number') {
+                orderData.card.number = item.value;
+            }
+        });
+
+        console.log('Kennedy SpaceCenter Tickets: After manipulation, data is: ', orderData);
+
+        // Send response immediately to prevent webhook timeouts
+        res.status(200).json({
+            message: 'Kennedy SpaceCenter Tickets: Webhook received. Processing in background.'
+        });
+
+        setImmediate(async () => {
+            try {
+                console.log('Starting booking automation process...');
+                let tries = 0;
+                const maxRetries = 3;
+                let bookingResult = await KennedySpaceCenterTickets(orderData, tries);
+                
+                // Retry logic
+                // while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
+                //     tries++;
+                //     console.log(`Retry attempt #${tries}...`);
+                //     bookingResult = await KennedySpaceCenterTickets(orderData, tries);
+                // }
+        
+                if (bookingResult.success) {
+                    console.log('Kennedy SpaceCenter Tickets: Booking automation completed successfully');
+                } else {
+                    console.error('Kennedy SpaceCenter Tickets: Booking automation failed:', bookingResult.error);
+                }
+            } catch (automationError) {
+                console.error('Kennedy SpaceCenter Tickets: Error in booking automation:', automationError);
             }
         });
 

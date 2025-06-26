@@ -82,6 +82,18 @@ const fortSumterTicketsWooCommerceInstance = new WooCommerceRestApi({
   version: "wc/v3",
 });
 
+// Kennedy Space Center Ticketing
+const kscTickets_site_url = process.env.KENNEDY_SPACE_CENTER_TICKETING_WP_SITE_URL;
+const kscTickets_consumer_key = process.env.KENNEDY_SPACE_CENTER_TICKETING_WC_REST_API_CONSUMER_KEY
+const kscTickets_consumer_secret = process.env.KENNEDY_SPACE_CENTER_TICKETING_WC_REST_API_CONSUMER_SECRET;
+
+const kscTicketsTicketsWooCommerceInstance = new WooCommerceRestApi({
+  url: kscTickets_site_url,
+  consumerKey: kscTickets_consumer_key,
+  consumerSecret: kscTickets_consumer_secret,
+  version: "wc/v3",
+});
+
 /**
  * Update WooCommerce order status
  * @param {number|string} orderId - WooCommerce Order ID
@@ -105,6 +117,8 @@ const updateOrderStatus = async (siteName, orderId, status) => {
     woocommerceApi = niagaraCruiseTicketsWooCommerceInstance;
   } else if (siteName == "FortSumterTicketing") {
     woocommerceApi = fortSumterTicketsWooCommerceInstance;
+  } else if (siteName == "KennedySpaceCenterTicketing") {
+    woocommerceApi = kscTicketsTicketsWooCommerceInstance;
   }
 
 
