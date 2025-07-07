@@ -122,8 +122,8 @@ async function KennedySpaceCenterTickets(bookingData, tries) {
       .locator('span.ng-binding:has-text("2-Day Admission Tickets")')
       .first();
 
-    await expect(oneDayAdmissionTicketsBtn).toBeVisible();
-    await expect(twoDayAdmissionTicketsBtn).toBeVisible();
+    await expect(oneDayAdmissionTicketsBtn).toBeVisible({ timeout: 80000});
+    await expect(twoDayAdmissionTicketsBtn).toBeVisible({ timeout: 80000});
 
     if (bookingData.tourType === "1-Day Admission") {
       await oneDayAdmissionTicketsBtn.click();
@@ -1264,7 +1264,7 @@ async function KennedySpaceCenterTickets(bookingData, tries) {
       await errorMessageContainer.isVisible();
     console.log("Payment message container:", isPaymentErrorMessageDivVisible);
 
-    if (isPaymentMessageDivVisible) {
+    if (isPaymentErrorMessageDivVisible) {
       // const messageText = await errorMessageContainer.textContent();
       const messageText = await errorMessageContainer
         .locator("p")
@@ -1314,43 +1314,43 @@ async function KennedySpaceCenterTickets(bookingData, tries) {
     );
 
     // await page.pause();
-    const thankYouMsg = await tourBookingFrameHandler
+    const thankYouMsg = await page
       .getByText("Thank you! We have received your order.")
       .first();
     await expect(thankYouMsg).toBeVisible({ timeout: 120000 });
 
-    const printTicketsLink = await page.locator(
-      "#ctl00_ContentPlaceHolder_PrintFriendlyHyperLink"
-    );
-    await expect(printTicketsLink).toBeVisible({ timeout: 10000 });
-    // await printTicketsLink.click();
+    // const printTicketsLink = await page.locator(
+    //   "#ctl00_ContentPlaceHolder_PrintFriendlyHyperLink"
+    // );
+    // await expect(printTicketsLink).toBeVisible({ timeout: 10000 });
+    // // await printTicketsLink.click();
 
-    // Step 2: Capture the new page that opens
-    const [newPage] = await Promise.all([
-      page.context().waitForEvent("page"), // Wait for a new page to open
-      printTicketsLink.click(), // Click the link to trigger the new page
-    ]);
+    // // Step 2: Capture the new page that opens
+    // const [newPage] = await Promise.all([
+    //   page.context().waitForEvent("page"), // Wait for a new page to open
+    //   printTicketsLink.click(), // Click the link to trigger the new page
+    // ]);
 
-    // Step 3: Perform actions on the new page (e.g., check for ticket info, download PDF)
-    await newPage.waitForLoadState("load"); // Wait for the new page to load
+    // // Step 3: Perform actions on the new page (e.g., check for ticket info, download PDF)
+    // await newPage.waitForLoadState("load"); // Wait for the new page to load
 
-    // Log the URL of the new page
-    console.log("New page opened at:", newPage.url());
+    // // Log the URL of the new page
+    // console.log("New page opened at:", newPage.url());
 
-    // If there’s a PDF link on this page, you can locate it and download the PDF:
-    const pdfLink = await newPage.locator("#printButton"); // Adjust selector as needed
-    await pdfLink.click();
+    // // If there’s a PDF link on this page, you can locate it and download the PDF:
+    // const pdfLink = await newPage.locator("#printButton"); // Adjust selector as needed
+    // await pdfLink.click();
 
-    // Optional: You can also listen for the download event to save the file
-    const [download] = await Promise.all([
-      newPage.waitForEvent("download"), // Wait for the download event
-      pdfLink.click(), // Trigger the download
-      console.log("downloading the PDF!"),
-    ]);
+    // // Optional: You can also listen for the download event to save the file
+    // const [download] = await Promise.all([
+    //   newPage.waitForEvent("download"), // Wait for the download event
+    //   pdfLink.click(), // Trigger the download
+    //   console.log("downloading the PDF!"),
+    // ]);
 
-    // Step 4: Save the PDF file to a specific location
-    const pdfSavePath = await download.path();
-    console.log("PDF saved at:", pdfSavePath);
+    // // Step 4: Save the PDF file to a specific location
+    // const pdfSavePath = await download.path();
+    // console.log("PDF saved at:", pdfSavePath);
 
     const successDir = path.join(__dirname, "successful-orders-screenshots");
     if (!fs.existsSync(successDir)) {

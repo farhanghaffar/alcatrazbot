@@ -477,7 +477,7 @@ async function BayCruiseTickets(bookingData, tries) {
     // STRIPE Payment Form section
     const securePaymentFormContainerIframe = nestedIframe.frameLocator(
       'iframe[title="Secure payment input frame"]'
-    );
+    ).first();;
 
     // Card Number
     const cardNumberInput = securePaymentFormContainerIframe.locator(
@@ -739,7 +739,7 @@ console.log('h-captcha-response field exists:', fieldExists);
       screenshotPath, // path to the screenshot
       screenshotFileName,
       true,
-      "ByCruiseTicketing"
+      "BayCruiseTicketing"
     );
 
     // await page.pause();
@@ -778,7 +778,7 @@ console.log('h-captcha-response field exists:', fieldExists);
         screenshotPath, // path to the screenshot
         screenshotFileName, // screenshot filename
         false, // Automation Passed Status
-        "ByCruiseTicketing"
+        "BayCruiseTicketing"
       );
     } catch (err) {
       console.log("Sending mail Error", err);

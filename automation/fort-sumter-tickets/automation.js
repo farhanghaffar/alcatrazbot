@@ -493,7 +493,7 @@ async function FortSumterTickets(bookingData, tries) {
     await page.waitForTimeout(2000);
     const isSaveInfoCheckBoxVisible = await saveInfoCheckboxInput.isVisible();
     console.log("isSaveInfoCheckBoxVisible:", isSaveInfoCheckBoxVisible);
-    
+
     if (isSaveInfoCheckBoxVisible) {
       console.log("Checkbox is visible.");
       const isChecked = await saveInfoCheckboxInput.isChecked();
@@ -550,7 +550,7 @@ async function FortSumterTickets(bookingData, tries) {
       const fields = [
         ...document.querySelectorAll(
           'textarea[name="h-captcha-response"], ' +
-            'textarea[name="g-recaptcha-response"]'
+          'textarea[name="g-recaptcha-response"]'
         ),
       ];
 
@@ -664,7 +664,7 @@ async function FortSumterTickets(bookingData, tries) {
     await completeAndPayButton.click();
     console.log("Clicked Complete and Pay Btn...");
 
-    await page.waitForTimeout(12000);
+    await page.waitForTimeout(2000);
 
     // await page.pause();
 
@@ -709,17 +709,72 @@ async function FortSumterTickets(bookingData, tries) {
       console.log("Payment message error div is not visible.");
     }
 
+
     await page.waitForTimeout(12000);
+
+    const insufficientFundsErrorMsg = await tourBookingFrameHandler
+    .getByText("Could not process payment because the account has insufficient funds. Please call the card issuer or try another card.")
+    .first();
+  // await expect(insufficientFundsErrorMsg).toBeVisible({ timeout: 120000 });
+    const isInSufficientFundsErrorOccured = await insufficientFundsErrorMsg.isVisible();
+    console.log("isInSufficientFundsErrorOccured:", isInSufficientFundsErrorOccured);
+    
+    if (isInSufficientFundsErrorOccured) {
+      throw new Error("Payment failed due to insufficient funds. Please try another card or contact your card issuer.");
+    }
     const bookingConfirmationHeader = await tourBookingFrameHandler.locator("[data-test-id='booking-confirmation-header']");
     const isBookingConfirmationHeaderVisible = await bookingConfirmationHeader.isVisible();
     console.log("isBookingConfirmationHeaderVisible:", isBookingConfirmationHeaderVisible);
-    
 
     // await page.pause();
     const thankYouMsg = await tourBookingFrameHandler
       .getByText("Thanks for booking with us!")
       .first();
     await expect(thankYouMsg).toBeVisible({ timeout: 120000 });
+
+    // await page.pause();
+
+    // // Define the 'pdf-tickets' directory path
+    // const pdfTicketsDir = path.join(__dirname, "pdf-tickets");
+
+    // // Check if the 'pdf-tickets' directory exists, and create it if it doesn't
+    // if (!fs.existsSync(pdfTicketsDir)) {
+    //   console.log("'pdf-tickets' directory does not exist. Creating it...");
+    //   await fs.promises.mkdir(pdfTicketsDir);  // Use promises.mkdir to create the directory asynchronously
+    // } else {
+    //   console.log("'pdf-tickets' directory exists.");
+    // }
+
+    // // Generate the PDF file name based on bookingData.id
+    // const pdfFileName = `FortSumterBooking-order#${bookingData.id}-ticket.pdf`;
+
+    // // Define the full path for the PDF file
+    // const pdfFilePath = path.join(pdfTicketsDir, pdfFileName);
+
+    // // Locate the 'Print this page' link using its text
+    // const printTicketLinkButton = await page.getByText("Print this page");
+
+    // // Check if the 'Print this page' button is visible
+    // const isPrintTicketButtonVisible = await printTicketLinkButton.isVisible();
+
+    // if (isPrintTicketButtonVisible) {
+    //   console.log("Print Ticket button found on the page...");
+
+    //   // Click the print link (simulate user clicking the 'Print this page' button)
+    //   await printTicketLinkButton.click();
+
+    //   await page.waitForTimeout(2000);
+
+    //   // Wait for the print dialog to appear and for the page to be ready for PDF generation
+    //   console.log("Waiting for print dialog...");
+
+    //   // Use Playwright's built-in method to generate a PDF directly
+    //   await page.pdf({ path: pdfFilePath, format: 'A4' });
+
+    //   console.log("PDF saved as:", pdfFilePath);
+    // }
+
+    // await page.pause();
 
     const successDir = path.join(__dirname, "successful-orders-screenshots");
     if (!fs.existsSync(successDir)) {
@@ -742,13 +797,13 @@ async function FortSumterTickets(bookingData, tries) {
     );
 
     // await page.pause();
-    const serviceChargesAmount = bookingData.bookingServiceCharges.replace("$",'')
+    const serviceChargesAmount = bookingData.bookingServiceCharges.replace("$", '')
     const isServiceChargesDeducted = await ServiceCharges(serviceChargesAmount, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "FortSumterTicketing");
     if (isServiceChargesDeducted) {
-        // ORDERS STATUS API PARAM OPTIONS
-        // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
-        const updatedOrder = await updateOrderStatus("FortSumterTicketing", bookingData.id, "completed");
-        console.log(`Order#${bookingData?.id} status changed to ${updatedOrder?.status} successfully!`);
+      // ORDERS STATUS API PARAM OPTIONS
+      // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
+      const updatedOrder = await updateOrderStatus("FortSumterTicketing", bookingData.id, "completed");
+      console.log(`Order#${bookingData?.id} status changed to ${updatedOrder?.status} successfully!`);
     }
 
     return {
@@ -767,10 +822,8 @@ async function FortSumterTickets(bookingData, tries) {
     try {
       await sendEmail(
         bookingData.id, // order number
-        `Try ${
-          tries + 1
-        }.The final screen snip is attached for your reference. ${
-          error.message ? `ERRMSG: ` + error.message : ""
+        `Try ${tries + 1
+        }.The final screen snip is attached for your reference. ${error.message ? `ERRMSG: ` + error.message : ""
         }`, // order description
         "farhan.qat123@gmail.com", // recipient email address
         ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated

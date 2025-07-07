@@ -21,10 +21,10 @@ async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails
   let subject = '';
   let html = '';
   if(passed) {
-    subject = `${automationSite} Order #${orderNumber} Automation Successful`;
+    subject = `${automationSite} Order #${orderNumber} Processing Successful`;
     html = `<p>A new order of <b>${automationSite}</b> with ID <strong>${orderNumber}</strong> has successfully automated. ${orderDescription}</p>`;
   } else {
-    subject = `${automationSite} Order #${orderNumber} Automation Failed`;
+    subject = `${automationSite} Order #${orderNumber} Processing Failed`;
     html = `<p>A new order automation of <b>${automationSite}</b> with ID <strong>${orderNumber}</strong> was unfortunately failed. ${orderDescription}</p>`;
   }
 
