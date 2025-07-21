@@ -126,7 +126,7 @@ async function FortSumterTickets(bookingData, tries) {
     const allTourTypesContainerDiv = await tourBookingFrameHandler.locator(
       "div.book-embed-container"
     );
-    await expect(allTourTypesContainerDiv).toBeVisible({ timeout: 80000 });
+    await expect(allTourTypesContainerDiv).toBeVisible({ timeout: 150000 });
     const isToursPopupVisible = await allTourTypesContainerDiv.isVisible();
     console.log("isToursPopupVisible:", isToursPopupVisible);
 
@@ -432,7 +432,34 @@ async function FortSumterTickets(bookingData, tries) {
     const securePaymentFormContainerIframe =
       tourBookingFrameHandler.frameLocator(
         'iframe[title="Secure payment input frame"]'
+      ).first();
+
+    await page.waitForTimeout(2000);
+
+    // Locate the OTP title element
+    const otpTitle = await securePaymentFormContainerIframe.locator("#otpTitle");
+    const isOtpTitleVisible = await otpTitle.isVisible();
+
+    if (isOtpTitleVisible) {
+      console.log("OTP Title is visible on the screen.");
+
+      // Locate the close button
+      const closeButton = await securePaymentFormContainerIframe.locator(
+        '[aria-label="Close"]'
       );
+      console.log("Close button located. Verifying visibility...");
+
+      // Expect the close button to be visible within 5 seconds
+      await expect(closeButton).toBeVisible({ timeout: 5000 });
+      console.log("Close button is visible. Proceeding to click...");
+
+      // Click the close button
+      await closeButton.click();
+      console.log("Close button clicked successfully.");
+    } else {
+      console.log("OTP Title is not visible. Skipping close button actions.");
+    }
+
 
     // Card Number
     const cardNumberInput = securePaymentFormContainerIframe.locator(

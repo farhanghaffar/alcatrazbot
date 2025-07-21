@@ -464,9 +464,9 @@ async function potomacTourBooking(bookingData, tries) {
     );
 
     // Card Zip
-    const cardZipInput = nestedIframe.locator(".creZipField");
-    await expect(cardZipInput).toBeVisible({ timeout: 30000 });
-    await typeWithDelay(cardZipInput, cardInfo.cardZip);
+    // const cardZipInput = nestedIframe.locator(".creZipField");
+    // await expect(cardZipInput).toBeVisible({ timeout: 30000 });
+    // await typeWithDelay(cardZipInput, cardInfo.cardZip);
 
     // Card Number
     const cardNumberInput = nestedIframe.locator(".creNumberField");

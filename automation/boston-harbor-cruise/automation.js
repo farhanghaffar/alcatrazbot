@@ -653,6 +653,21 @@ async function bostonHarborCruise(bookingData, tries) {
     console.log("Clicked Complete Button");
 
     await page.waitForTimeout(12000);
+
+     const loginSignUpPopup = await frameHandle
+    .locator("span")
+    .filter({ hasText: "Login or Sign Up" });
+  const isLoginSignupPopupVisible = await loginSignUpPopup.isVisible();
+
+  if (isLoginSignupPopupVisible) {
+    const poupCloseBtn = await frameHandle.locator(
+      "[data-bdd='modal-close-button']"
+    );
+
+    await expect(poupCloseBtn).toBeVisible({ timeout: 80000 });
+    await poupCloseBtn.click();
+  }
+
     const errorMsg = await frameHandle.getByText(
       "Oops... something went wrong."
     );
@@ -696,8 +711,9 @@ async function bostonHarborCruise(bookingData, tries) {
     );
 
     // await page.pause();
+    const serviceChargesAmount = bookingData.bookingServiceCharges.replace("$",'')
     const isServiceChargesDeducted = await ServiceCharges(
-      bookingData.bookingServiceCharges,
+      serviceChargesAmount,
       bookingData.id,
       bookingData.card.number,
       bookingData.card.expiration,

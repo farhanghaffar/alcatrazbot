@@ -502,8 +502,38 @@ async function alcatrazBookTour(bookingData, tries) {
             cardYear: cardYear,
         }
         
-        const nestedIframe = frameHandle.frameLocator('iframe[name="chaseHostedPayment"]');
-        
+        const nestedIframe = frameHandle.frameLocator(
+          'iframe[name="chaseHostedPayment"]'
+        );
+
+        const fetchResourceErrorMsg = await frameHandle.getByText(
+          "Oops... something went wrong."
+        );
+        const isFetchResourceErrorMsgVisible =
+          await fetchResourceErrorMsg.isVisible();
+
+        const fetchResourceNetworkError = await frameHandle.getByText(
+          "NetworkError when attempting to fetch resource."
+        );
+        const isFetchResourceNetworkErrorVisible =
+          await fetchResourceNetworkError.isVisible();
+
+        if (
+          isFetchResourceErrorMsgVisible &&
+          isFetchResourceNetworkErrorVisible
+        ) {
+          // throw new Error('Payment not completed');
+          console.log("NetworkError when attempting to fetch resource.");
+          const retryBtn = await nestedIframe
+            .getByRole("button")
+            .filter({ hasText: "RETRY" });
+          await expect(retryBtn).toBeVisible();
+          await retryBtn.click();
+          console.log("Clicked Retry to fetch Button");
+          await page.waitForTimeout(5000);
+        } else {
+          console.log("No NetworkError all resources fetched successfully, Proceeding...");
+        }
 
         // const cardNameInput = nestedIframe.locator('.creNameField');
         // await expect(cardNameInput).toBeVisible({timeout: 30000});

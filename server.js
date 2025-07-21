@@ -319,6 +319,29 @@ app.post('/charge', async (req, res) => {
       if (isNaN(amountInCents) || amountInCents < 50) {
         throw new Error('Invalid amount');
       }
+
+    // Extract the site name from the description (first word before space)
+    const siteNameMatch = description.match(/^([^\s]+)/);
+    const siteName = siteNameMatch ? siteNameMatch[0] : 'Alcatraz';  // Default to 'DefaultSite' if no match
+
+    // Create dynamic statement descriptor (Prefix + Suffix)
+    let statementDescriptorPrefix = siteName.toUpperCase();  
+    const maxPrefixLength = 17; 
+
+    // Truncate the prefix if it's longer than 15 characters (to leave space for "* SC")
+    if (statementDescriptorPrefix.length > maxPrefixLength) {
+      statementDescriptorPrefix = statementDescriptorPrefix.slice(0, maxPrefixLength);
+    }
+
+    const statementDescriptorSuffix = "SC"; 
+
+    // Construct the full statement descriptor
+    const statementDescriptor = `${statementDescriptorPrefix}* ${statementDescriptorSuffix}`;
+    console.log("Statement Descriptor:", statementDescriptor);
+    
+    if (statementDescriptor.length > 22) {
+      throw new Error('Statement descriptor exceeds 22 characters');
+    }
       
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountInCents,
@@ -328,6 +351,7 @@ app.post('/charge', async (req, res) => {
         payment_method_types: ['card'],
         // Include description here
         description,
+        statement_descriptor: statementDescriptor,
         confirmation_method: 'manual',
         confirm: true,
       });
@@ -934,11 +958,11 @@ app.post('/fort-sumter-ticketing-webhook', async (req, res) => {
                 let bookingResult = await FortSumterTickets(orderData, tries);
                 
                 // Retry logic
-                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
-                    tries++;
-                    console.log(`Retry attempt #${tries}...`);
-                    bookingResult = await FortSumterTickets(orderData, tries);
-                }
+                // while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
+                //     tries++;
+                //     console.log(`Retry attempt #${tries}...`);
+                //     bookingResult = await FortSumterTickets(orderData, tries);
+                // }
         
                 if (bookingResult.success) {
                     console.log('Fort Sumter Tickets: Booking automation completed successfully');
