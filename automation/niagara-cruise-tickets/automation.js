@@ -673,12 +673,12 @@ async function NiagaraCruiseTickets(bookingData, tries) {
     await page.waitForTimeout(12000);
     const errorMsg = await frameHandle.getByText(
       "Oops... something went wrong."
-    );
+    ).first();
     const errorMsgVisible = await errorMsg.isVisible();
 
     const paymentError = await frameHandle.getByText(
       "An error occurred while processing your payment."
-    );
+    ).first();
     const paymentErrorVisible = await paymentError.isVisible();
 
     if (errorMsgVisible || paymentErrorVisible) {

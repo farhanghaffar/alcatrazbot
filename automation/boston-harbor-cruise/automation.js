@@ -670,12 +670,12 @@ async function bostonHarborCruise(bookingData, tries) {
 
     const errorMsg = await frameHandle.getByText(
       "Oops... something went wrong."
-    );
+    ).first();
     const errorMsgVisible = await errorMsg.isVisible();
 
     const paymentError = await frameHandle.getByText(
       "An error occurred while processing your payment."
-    );
+    ).first();
     const paymentErrorVisible = await paymentError.isVisible();
 
     if (errorMsgVisible || paymentErrorVisible) {
