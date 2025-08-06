@@ -1,4 +1,4 @@
-const { firefox } = require("playwright");
+const { firefox, chromium } = require("playwright");
 const { expect } = require("@playwright/test");
 const {
   incrementTickets,
@@ -14,9 +14,13 @@ const {
   getRandomUserAgent,
   formatAndValidateCardExpirationDate,
   addOneHour,
+  typeWithDelayAfter,
+  clickButtonUsingJs,
+  getRandomDelayWithLimit,
 } = require("./../../helper");
 const { Solver } = require("@2captcha/captcha-solver");
 const fs = require("fs");
+const fsx = require('fs-extra');
 const path = require("path");
 const { ServiceCharges } = require("../service-charges");
 const { updateOrderStatus } = require("../wp-update-order-status/automation");
@@ -46,23 +50,115 @@ const launchOptions = {
   // },
   headless: false,
   timeout: 55000,
-  // channel: 'msedge'
+  // channel: 'chrome',
+  // channel: 'msedge',
+   args: [
+      '--start-maximized',
+      '--no-remote',
+      // '--disable-extensions',
+    ],
+    firefoxUserPrefs: {
+      'dom.webdriver.enabled': false,
+      'general.appname.override': 'Netscape',
+      'general.appversion.override': '5.0 (Windows)',
+      'general.platform.override': 'Win32',
+      'privacy.resistFingerprinting': false,
+    },
 };
+
+// Profile directory setup
+// const profileDir = path.join(__dirname, './Default');
+// const originalProfileData = process.env.PROFILE_DATA || '';
+
+// Copy profile if it doesn't exist
+// if (!fsx.existsSync(profileDir)) {
+//   try {
+//     fsx.copySync(originalProfileData, profileDir);
+//     console.log('Profile copied to', profileDir);
+//   } catch (error) {
+//     console.error('Failed to copy profile:', error.message);
+//     throw error;
+//   }
+// }
+
+// Profile directory setup
+// const FirefoxProfileDir = path.join(__dirname, './Default');
+// const originalFirefoxProfileData = process.env.FIREFOX_PROFILE_DATA || '';
+
+// // Copy profile if it doesn't exist
+// if (!fsx.existsSync(FirefoxProfileDir)) {
+//   try {
+//     fsx.copySync(originalFirefoxProfileData, FirefoxProfileDir);
+//     console.log('Profile copied to', FirefoxProfileDir);
+//   } catch (error) {
+//     console.error('Failed to copy profile:', error.message);
+//     throw error;
+//   }
+// }
+
+// Launch persistent context
+// async function launchPersistentContextBrowser(profileDir, options = {}) {
+//   try {
+//     console.log('Launching persistent context with profile:', profileDir);
+//     const context = await chromium.launchPersistentContext(profileDir, {
+//       headless: false,
+//       args: [
+//         '--disable-blink-features=AutomationControlled'
+//       ],
+//       ignoreDefaultArgs: ['--enable-automation'],
+//       chromiumSandbox: true,
+//       ...options,
+//     });
+
+//     // Add Playwright-specific script to hide automation
+//     await context.addInitScript(() => {
+//       // Overwrite the automation properties
+//       Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+//       delete Object.getPrototypeOf(navigator).webdriver;
+
+//       // Remove automation-related properties
+//       if (window.chrome) {
+//         delete window.chrome.automation;
+//       }
+//     });
+
+//     console.log('Context launched successfully with anti-detection measures');
+
+
+//     console.log('Context launched successfully');
+//     return context;
+//   } catch (error) {
+//     console.error('Error launching persistent context:', error.message);
+//     throw error;
+//   }
+// }
 
 let randomtime = 0;
 
 async function FortSumterTickets(bookingData, tries) {
   const browser = await firefox.launch(launchOptions);
+  // const browser = await chromium.launch(launchOptions);
   // const userAgent = new UserAgent({deviceCategory: 'mobile'}).toString();
   const userAgent = getRandomUserAgent();
   console.log("User Agent:", userAgent);
   const context = await browser.newContext({
-    viewport: { width: 1280, height: 720 },
+    // viewport: { width: 1280, height: 720 },
+    viewport: null,
     userAgent: userAgent,
-    // userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    // ignoreHTTPSErrors: true,
   });
+
+  // Launch persistent context with profile and options
+  // const context = await launchPersistentContextBrowser(profileDir, {
+  //   ...launchOptions,
+  //   // userAgent, // Apply user agent
+  // });
+
   const page = await context.newPage();
+  // const page = await context.pages()[0];
+
+  // await page.pause();
+
+  console.log("New Page opening...");
   await page.setDefaultTimeout(170000);
   await expect.configure({ timeout: 130000 });
 
@@ -104,7 +200,30 @@ async function FortSumterTickets(bookingData, tries) {
 
     console.log("Clicked Card expiry date validaty, waiting for calendar...");
 
-    await page.waitForTimeout(10000);
+    const randTime = await getRandomDelayWithLimit(15000);
+    await page.waitForTimeout(randTime);
+
+    // Check if the session or cookies are available (for example, you are logged in)
+    // const cookies = await context.cookies();
+    // Fetch and modify cookies after initial page load
+    let cookies = await context.cookies();
+    console.log('Initial cookies:', cookies);
+    const modifiedCookies = cookies.map(cookie => ({
+      ...cookie,
+      sameSite: 'Strict', // Set sameSite to unspecified
+    }));
+    await context.clearCookies(); // Clear existing cookies
+    await context.addCookies(modifiedCookies); // Set modified cookies
+    console.log('Modified initial cookies:', await context.cookies());
+    console.log('Cookies:', cookies);
+
+    // Verify if a specific item exists in LocalStorage (if any)
+    // const localStorageData = await page.evaluate(() => {
+    //   return window.localStorage.getItem('someKey');  // Replace with a known key if any
+    // });
+    // console.log('LocalStorage Data:', localStorageData);
+
+    await page.pause();
 
     const bookYourTourButton = await page
       .locator('a.button:has-text("Book Your Tour")')
@@ -118,6 +237,18 @@ async function FortSumterTickets(bookingData, tries) {
     }
     await bookYourTourButton.click();
     console.log("Clicked BOOK YOUR TOUR Button, waiting for calendar...");
+
+
+        let cookies2 = await context.cookies();
+    console.log('cookies:#2', cookies2);
+    const modifiedCookies2 = cookies.map(cookie => ({
+      ...cookie,
+      sameSite: 'Strict', // Set sameSite to unspecified
+    }));
+    await context.clearCookies(); // Clear existing cookies
+    await context.addCookies(modifiedCookies2); // Set modified cookies
+    console.log('Modified initial cookies:', await context.cookies());
+    console.log('Cookies:', cookies2);
 
     await page.waitForTimeout(5000);
     const tourBookingFrameHandler = await page.frameLocator(
@@ -148,7 +279,19 @@ async function FortSumterTickets(bookingData, tries) {
       await FSTFromLibertySquareName.click();
     }
 
-    await page.waitForTimeout(10000);
+    const waitForRandom = await getRandomTime();
+    await page.waitForTimeout(waitForRandom);
+
+    let cookies3 = await context.cookies();
+    console.log('cookies:#3', cookies3);
+    const modifiedCookies3 = cookies.map(cookie => ({
+      ...cookie,
+      sameSite: 'Strict', // Set sameSite to unspecified
+    }));
+    await context.clearCookies(); // Clear existing cookies
+    await context.addCookies(modifiedCookies3); // Set modified cookies
+    console.log('Modified cookies:#3', await context.cookies());
+    console.log('Cookies:', cookies3);
 
     // await page.pause();
 
@@ -303,6 +446,17 @@ async function FortSumterTickets(bookingData, tries) {
     randomtime = getRandomTime();
     await page.waitForTimeout(randomtime);
 
+    let cookies4 = await context.cookies();
+    console.log('cookies:#4', cookies4);
+    const modifiedCookies4 = cookies.map(cookie => ({
+      ...cookie,
+      sameSite: 'Strict', // Set sameSite to unspecified
+    }));
+    await context.clearCookies(); // Clear existing cookies
+    await context.addCookies(modifiedCookies4); // Set modified cookies
+    console.log('Modified cookies:#4', await context.cookies());
+    console.log('Cookies:', cookies4);
+
     // await page.pause();
 
     // const timeSlotToSelect = '9:20 AM';
@@ -336,7 +490,7 @@ async function FortSumterTickets(bookingData, tries) {
     const ticketsSelectorAdults = await tourBookingFrameHandler.locator(
       "[data-test-id='user-type-adult']"
     );
-    await expect(ticketsSelectorAdults).toBeVisible();
+    await expect(ticketsSelectorAdults).toBeVisible({ timeout: 10000});
     await ticketsSelectorAdults.selectOption(`${bookingData.adults}`);
 
     const ticketsSelectorSeniorMilitary = await tourBookingFrameHandler.locator(
@@ -362,8 +516,12 @@ async function FortSumterTickets(bookingData, tries) {
     );
 
     // await page.pause();
+    const randomDelay = getRandomTime();
 
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(randomDelay);
+
+      const cookies20 = await context.cookies();
+    console.log('Cookies20:', cookies20);
 
     console.log("Successfully reached Contact Details section!");
 
@@ -376,11 +534,19 @@ async function FortSumterTickets(bookingData, tries) {
     const fullNameInputField = await tourBookingFrameHandler.locator(
       "#id_name, input[name='contact-name']"
     );
+    const fullName = `${bookingData.billing.first_name} ${bookingData.billing.last_name}`;
     await expect(fullNameInputField).toBeVisible({ timeout: 50000 });
-    await typeWithDelay(
+    // await fullNameInputField.pressSequentially(
+    //   fullName
+    // );
+    // await typeWithDelay(
+    //   fullNameInputField,
+    //   fullName
+    // )
+    await typeWithDelayAfter(
       fullNameInputField,
-      `${bookingData.billing.first_name} ${bookingData.billing.last_name}`
-    );
+      fullName
+    )
 
     await page.waitForTimeout(500);
 
@@ -428,6 +594,18 @@ async function FortSumterTickets(bookingData, tries) {
       cardExpiration: bookingData.card.expiration,
     };
 
+    let cookies5 = await context.cookies();
+    console.log('cookies:#5', cookies5);
+    const modifiedCookies5 = cookies.map(cookie => ({
+      ...cookie,
+      sameSite: 'Strict', // Set sameSite to unspecified
+    }));
+    await context.clearCookies(); // Clear existing cookies
+    await context.addCookies(modifiedCookies5); // Set modified cookies
+    console.log('Modified cookies:#5', await context.cookies());
+    console.log('Cookies:', cookies5);
+
+    // await page.pause();
     // STRIPE Payment Form section
     const securePaymentFormContainerIframe =
       tourBookingFrameHandler.frameLocator(
@@ -456,7 +634,7 @@ async function FortSumterTickets(bookingData, tries) {
       '#Field-cvcInput, [placeholder="CVC"]'
     );
     await expect(cardCVCInput).toBeVisible({ timeout: 30000 });
-    await typeWithDelay(cardCVCInput, cardInfo.cardCVC);
+    await cardCVCInput.pressSequentially(cardInfo.cardCVC);
 
     // Country
     const paymentCountrySelect = securePaymentFormContainerIframe.locator(
@@ -493,7 +671,7 @@ async function FortSumterTickets(bookingData, tries) {
     await page.waitForTimeout(2000);
     const isSaveInfoCheckBoxVisible = await saveInfoCheckboxInput.isVisible();
     console.log("isSaveInfoCheckBoxVisible:", isSaveInfoCheckBoxVisible);
-    
+
     if (isSaveInfoCheckBoxVisible) {
       console.log("Checkbox is visible.");
       const isChecked = await saveInfoCheckboxInput.isChecked();
@@ -539,7 +717,7 @@ async function FortSumterTickets(bookingData, tries) {
       console.error("[hCaptcha] ERROR: No token received from 2Captcha");
       throw new Error("No captcha token returned");
     }
-    console.log("[hCaptcha] Successfully received token!");
+    console.log("[hCaptcha] Successfully received token!", token);
 
     // 2. Inject into response fields
     console.log(
@@ -550,7 +728,7 @@ async function FortSumterTickets(bookingData, tries) {
       const fields = [
         ...document.querySelectorAll(
           'textarea[name="h-captcha-response"], ' +
-            'textarea[name="g-recaptcha-response"]'
+          'textarea[name="g-recaptcha-response"]'
         ),
       ];
 
@@ -656,15 +834,211 @@ async function FortSumterTickets(bookingData, tries) {
 
     console.log("[hCaptcha] Process completed successfully");
 
+    /**
+ * Solve Invisible hCaptcha using SolveCaptcha API and inject into the page
+ */
+    // const API_KEY = process.env.SOLVECAPTCHA_API_KEY;
+    // const MAX_ATTEMPTS = 20;
+    // const DELAY_MS = 5000;
+
+    // console.log("[SolveCaptcha] Submitting request to SolveCaptcha...");
+
+    // const submitResponse = await fetch("https://api.solvecaptcha.com/in.php", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    //   body: new URLSearchParams({
+    //     key: API_KEY,
+    //     method: "hcaptcha",
+    //     sitekey: sitekey,
+    //     pageurl: tourURL,
+    //     invisible: "1",
+    //     json: "1"
+    //   })
+    // });
+
+    // const submitData = await submitResponse.json();
+
+    // if (submitData.status !== 1) {
+    //   throw new Error(`[SolveCaptcha] Submission failed: ${JSON.stringify(submitData)}`);
+    // }
+
+    // const requestId = submitData.request;
+    // console.log(`[SolveCaptcha] CAPTCHA submitted. Request ID: ${requestId}`);
+
+    // let solveResponse = null;
+
+    // for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    //   console.log(`[SolveCaptcha] Polling attempt ${attempt + 1}...`);
+    //   await new Promise(res => setTimeout(res, DELAY_MS));
+
+    //   const pollUrl = `https://api.solvecaptcha.com/res.php?key=${API_KEY}&action=get&id=${requestId}&json=1`;
+    //   const pollResponse = await fetch(pollUrl);
+    //   const resultData = await pollResponse.json();
+
+    //   if (resultData.status === 1) {
+    //     solveResponse = resultData;
+    //     break;
+    //   }
+
+    //   if (resultData.request !== "CAPCHA_NOT_READY") {
+    //     throw new Error(`[SolveCaptcha] Polling error: ${JSON.stringify(resultData)}`);
+    //   }
+    // }
+
+    // if (!solveResponse) {
+    //   throw new Error("[SolveCaptcha] CAPTCHA solving timed out.");
+    // }
+
+    // const captchaToken = solveResponse.request;
+    // console.log("[SolveCaptcha] Token received:", captchaToken);
+
+    // // Inject token into page
+    // console.log("[SolveCaptcha] Injecting token into DOM...");
+    // await page.evaluate((captchaToken) => {
+    //   const fields = [
+    //     ...document.querySelectorAll('textarea[name="h-captcha-response"], textarea[name="g-recaptcha-response"]'),
+    //   ];
+
+    //   fields.forEach((field) => {
+    //     field.value = captchaToken;
+    //     ["input", "change", "blur"].forEach((eventType) => {
+    //       field.dispatchEvent(new Event(eventType, { bubbles: true }));
+    //     });
+    //   });
+
+    //   if (fields.length === 0) {
+    //     const fallback = document.createElement("textarea");
+    //     fallback.name = "h-captcha-response";
+    //     fallback.style.display = "none";
+    //     fallback.value = captchaToken;
+    //     document.body.appendChild(fallback);
+    //   }
+    // }, captchaToken);
+
+    // console.log("[SolveCaptcha] Token successfully injected.");
+
     // *************************************************************************************
+
+        let cookies6 = await context.cookies();
+    console.log('cookies:#6', cookies6);
+    const modifiedCookies6 = cookies.map(cookie => ({
+      ...cookie,
+      sameSite: 'Strict', // Set sameSite to unspecified
+    }));
+    await context.clearCookies(); // Clear existing cookies
+    await context.addCookies(modifiedCookies6); // Set modified cookies
+    console.log('Modified cookies:#6', await context.cookies());
+    console.log('Cookies:', cookies6);
 
     console.log("Completed captcha! Clicking Complete...");
     // await page.pause();
 
     await completeAndPayButton.click();
+
+    // await page.evaluate(async () => {
+    //   const selector = '[data-test-id="complete-and-pay-submit-button"]';
+
+    //   // Wait for the element to appear in the DOM
+    //   const element = await document.querySelector(selector);
+
+    //   if (!element) {
+    //     console.error(`Error: Button with selector "${selector}" not found in DOM`);
+    //     // throw new Error(`Button with selector "${selector}" not found in DOM`);
+    //   }
+
+    //   console.log(`Found button with selector "${selector}"`);
+    //   console.log('Triggering click on button');
+
+    //   element.click();
+    //   console.log('Click event dispatched successfully');
+    // }).catch(error => {
+    //   console.error('Error during JavaScript click:', error.message);
+    //   throw error;
+    // });
+
+    // Locate the iframe using frameLocator
+    // const tourBookingFrameLocator = page.frameLocator("#fareharbor-lightframe-iframe");
+
+    // // Use evaluate on the iframe context to run the script inside the iframe
+    // await tourBookingFrameLocator.evaluate(() => {
+    //   const selector = '[data-test-id="complete-and-pay-submit-button"]';
+
+    //   // Wait for the element to appear in the DOM
+    //   const element = document.querySelector(selector);
+
+    //   if (!element) {
+    //     console.error(`Error: Button with selector "${selector}" not found in DOM`);
+    //     // Optionally throw an error if you need to handle it outside
+    //     throw new Error(`Button with selector "${selector}" not found in DOM`);
+    //   }
+
+    //   console.log(`Found button with selector "${selector}"`);
+
+    //   // Create and dispatch a native click event
+    //   const clickEvent = new MouseEvent('click', {
+    //     bubbles: true,
+    //     cancelable: true,
+    //     view: window,
+    //   });
+
+    //   element.dispatchEvent(clickEvent);  // Dispatch the click event
+    //   console.log('Native click event dispatched successfully');
+    // }).catch(error => {
+    //   console.error('Error during JavaScript click:', error.message);
+    //   throw error;
+    // });
+
+    // const iframeElement = await page.locator('iframe#fareharbor-lightframe-iframe');
+    // await iframeElement.waitFor();
+    // const iframe = iframeElement.contentFrame();
+    // const esrAddress = await iframe.locator('//button[normalize-space()="Complete and pay"]')
+    // const btnSelector = '[data-test-id="complete-and-pay-submit-button"]'
+    // try {
+    //   esrAddress.click();
+    // } catch {
+      // await clickButtonUsingJs(page, btnSelector)
+    // }
+
+    // const element = await iframe.locator('[data-test-id="complete-and-pay-submit-button"]');
+/////////////
+    
+      // await element.evaluate((el) => {
+      //   if ("click" in el && typeof (el).click === "function") {
+      //   (el).click();
+      // }
+      //    else {
+      //   const evt = new MouseEvent("click", {
+      //     bubbles: true,
+      //     cancelable: true,
+      //   });
+      //   el.dispatchEvent(evt);
+      //   }
+      // }, await element.elementHandle());
+    // }
+
+// Execute JavaScript inside the iframe context using evaluate
+// await page.evaluate((selector) => {
+//   const button = document.querySelector(selector);
+
+//   if (button) {
+//     console.log('Button found, dispatching click event...');
+    
+//     const event = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+//     button.dispatchEvent(event);
+    
+//     console.log('Click event dispatched successfully.');
+//   } else {
+//     console.error('Error: Button not found using selector.');
+//   }
+// }, element);
+
+// console.log("Clicked Complete and Pay Btn...");
+
+
+
     console.log("Clicked Complete and Pay Btn...");
 
-    await page.waitForTimeout(12000);
+    await page.waitForTimeout(2000);
 
     // await page.pause();
 
@@ -709,17 +1083,72 @@ async function FortSumterTickets(bookingData, tries) {
       console.log("Payment message error div is not visible.");
     }
 
+
     await page.waitForTimeout(12000);
+
+    const insufficientFundsErrorMsg = await tourBookingFrameHandler
+      .getByText("Could not process payment because the account has insufficient funds. Please call the card issuer or try another card.")
+      .first();
+    // await expect(insufficientFundsErrorMsg).toBeVisible({ timeout: 120000 });
+    const isInSufficientFundsErrorOccured = await insufficientFundsErrorMsg.isVisible();
+    console.log("isInSufficientFundsErrorOccured:", isInSufficientFundsErrorOccured);
+
+    if (isInSufficientFundsErrorOccured) {
+      throw new Error("Payment failed due to insufficient funds. Please try another card or contact your card issuer.");
+    }
     const bookingConfirmationHeader = await tourBookingFrameHandler.locator("[data-test-id='booking-confirmation-header']");
     const isBookingConfirmationHeaderVisible = await bookingConfirmationHeader.isVisible();
     console.log("isBookingConfirmationHeaderVisible:", isBookingConfirmationHeaderVisible);
-    
 
     // await page.pause();
     const thankYouMsg = await tourBookingFrameHandler
       .getByText("Thanks for booking with us!")
       .first();
     await expect(thankYouMsg).toBeVisible({ timeout: 120000 });
+
+    // await page.pause();
+
+    // // Define the 'pdf-tickets' directory path
+    // const pdfTicketsDir = path.join(__dirname, "pdf-tickets");
+
+    // // Check if the 'pdf-tickets' directory exists, and create it if it doesn't
+    // if (!fs.existsSync(pdfTicketsDir)) {
+    //   console.log("'pdf-tickets' directory does not exist. Creating it...");
+    //   await fs.promises.mkdir(pdfTicketsDir);  // Use promises.mkdir to create the directory asynchronously
+    // } else {
+    //   console.log("'pdf-tickets' directory exists.");
+    // }
+
+    // // Generate the PDF file name based on bookingData.id
+    // const pdfFileName = `FortSumterBooking-order#${bookingData.id}-ticket.pdf`;
+
+    // // Define the full path for the PDF file
+    // const pdfFilePath = path.join(pdfTicketsDir, pdfFileName);
+
+    // // Locate the 'Print this page' link using its text
+    // const printTicketLinkButton = await page.getByText("Print this page");
+
+    // // Check if the 'Print this page' button is visible
+    // const isPrintTicketButtonVisible = await printTicketLinkButton.isVisible();
+
+    // if (isPrintTicketButtonVisible) {
+    //   console.log("Print Ticket button found on the page...");
+
+    //   // Click the print link (simulate user clicking the 'Print this page' button)
+    //   await printTicketLinkButton.click();
+
+    //   await page.waitForTimeout(2000);
+
+    //   // Wait for the print dialog to appear and for the page to be ready for PDF generation
+    //   console.log("Waiting for print dialog...");
+
+    //   // Use Playwright's built-in method to generate a PDF directly
+    //   await page.pdf({ path: pdfFilePath, format: 'A4' });
+
+    //   console.log("PDF saved as:", pdfFilePath);
+    // }
+
+    // await page.pause();
 
     const successDir = path.join(__dirname, "successful-orders-screenshots");
     if (!fs.existsSync(successDir)) {
@@ -729,26 +1158,26 @@ async function FortSumterTickets(bookingData, tries) {
     const screenshotPath = path.join(successDir, screenshotFileName);
     await page.screenshot({ fullPage: true, path: screenshotPath });
 
-    await sendEmail(
-      bookingData.id, // order number
-      `Try ${tries + 1}. The final screen snip is attached for your reference.`, // order description
-      "farhan.qat123@gmail.com", // recipient email address
-      ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
-      // [],
-      screenshotPath, // path to the screenshot
-      screenshotFileName,
-      true,
-      "FortSumterTicketing"
-    );
+    // await sendEmail(
+    //   bookingData.id, // order number
+    //   `Try ${tries + 1}. The final screen snip is attached for your reference.`, // order description
+    //   "farhan.qat123@gmail.com", // recipient email address
+    //   ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
+    //   // [],
+    //   screenshotPath, // path to the screenshot
+    //   screenshotFileName,
+    //   true,
+    //   "FortSumterTicketing"
+    // );
 
     // await page.pause();
-    const serviceChargesAmount = bookingData.bookingServiceCharges.replace("$",'')
+    const serviceChargesAmount = bookingData.bookingServiceCharges.replace("$", '')
     const isServiceChargesDeducted = await ServiceCharges(serviceChargesAmount, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "FortSumterTicketing");
     if (isServiceChargesDeducted) {
-        // ORDERS STATUS API PARAM OPTIONS
-        // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
-        const updatedOrder = await updateOrderStatus("FortSumterTicketing", bookingData.id, "completed");
-        console.log(`Order#${bookingData?.id} status changed to ${updatedOrder?.status} successfully!`);
+      // ORDERS STATUS API PARAM OPTIONS
+      // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft
+      const updatedOrder = await updateOrderStatus("FortSumterTicketing", bookingData.id, "completed");
+      console.log(`Order#${bookingData?.id} status changed to ${updatedOrder?.status} successfully!`);
     }
 
     return {
@@ -764,25 +1193,23 @@ async function FortSumterTickets(bookingData, tries) {
     const screenshotPath = path.join(errorsDir, screenshotFileName);
     await page.screenshot({ path: screenshotPath, fullPage: true });
 
-    try {
-      await sendEmail(
-        bookingData.id, // order number
-        `Try ${
-          tries + 1
-        }.The final screen snip is attached for your reference. ${
-          error.message ? `ERRMSG: ` + error.message : ""
-        }`, // order description
-        "farhan.qat123@gmail.com", // recipient email address
-        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
-        // [],
-        screenshotPath, // path to the screenshot
-        screenshotFileName, // screenshot filename
-        false, // Automation Passed Status
-        "FortSumterTicketing"
-      );
-    } catch (err) {
-      console.log("Sending mail Error", err);
-    }
+    // try {
+    //   await sendEmail(
+    //     bookingData.id, // order number
+    //     `Try ${tries + 1
+    //     }.The final screen snip is attached for your reference. ${error.message ? `ERRMSG: ` + error.message : ""
+    //     }`, // order description
+    //     "farhan.qat123@gmail.com", // recipient email address
+    //     ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
+    //     // [],
+    //     screenshotPath, // path to the screenshot
+    //     screenshotFileName, // screenshot filename
+    //     false, // Automation Passed Status
+    //     "FortSumterTicketing"
+    //   );
+    // } catch (err) {
+    //   console.log("Sending mail Error", err);
+    // }
     // await page.pause();
     return {
       success: false,

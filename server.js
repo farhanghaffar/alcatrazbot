@@ -15,6 +15,17 @@ const { bostonHarborCruise } = require('./automation/boston-harbor-cruise/automa
 const { NiagaraCruiseTickets } = require('./automation/niagara-cruise-tickets/automation');
 const { FortSumterTickets } = require('./automation/fort-sumter-tickets/automation');
 const { KennedySpaceCenterTickets } = require('./automation/kennedy-space-center-tickets/automation');
+// Import MongoDB connection and schemas
+const { connectToMongoDB, getDb, closeConnection, isConnected, getPaginatedRecords, ObjectId } = require('./db/mongodb');
+const { initializeFailedOrdersSchema } = require('./db/failedOrdersSchema');
+const { initializeUsersSchema } = require('./db/usersSchema');
+
+// Import utility modules
+const { recordFailedOrder, getFailedOrderById, updateFailedOrder, getPendingFailedOrders } = require('./utils/db/failedOrders');
+const { processOrderWithRetries, processManualRetry } = require('./utils/retry/orderProcessor');
+const { initCronJobs } = require('./utils/cron');
+
+// Users schema is now imported directly in the routes files
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -39,6 +50,17 @@ app.use(bodyParser.json());
 
 // Cors middleware
 app.use(cors());
+
+// API routes
+app.use('/api', require('./api/routes'));
+
+// Security headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  next();
+});
 
 // Middleware to verify WooCommerce webhook signature
 const verifyWooCommerceWebhook = (req, res, next) => {
@@ -177,14 +199,23 @@ app.post('/webhook', async (req, res) => {
 
 // Webhook endpoint with verification | https://www.alcatrazticketing.com/
 app.post('/alcatraz-webhook', async (req, res) => {
-    console.log('Order data:', JSON.stringify(req.body));
+    console.log('🎫 Alcatraz Webhook Received - Order ID:', req.body?.id);
+    console.log('📄 Request body:', JSON.stringify(req.body, null, 2).substring(0, 500) + '...');
     
+    // Send response immediately to prevent webhook timeouts
+    res.status(200).json({
+        message: 'Webhook received. Processing in background.'
+    });
+    
+    // Store the complete original webhook payload for future retries
+    const originalWebhookPayload = JSON.parse(JSON.stringify(req.body));
     const reqBody = req.body;
 
     try {
         // Extract relevant data from WooCommerce order
         const orderData = {
             id: reqBody.id,
+            orderId: reqBody.id.toString(), // Ensure string format for DB
             tourType: reqBody?.line_items[0]?.name,
             bookingDate: '',
             bookingTime: '',
@@ -259,54 +290,64 @@ app.post('/alcatraz-webhook', async (req, res) => {
                 orderData.card.number = item.value;
             }
         });
-
-        console.log('After manipulation, data is: ', orderData);
-
-        // Send response immediately to prevent webhook timeouts
-        res.status(200).json({
-            message: 'Webhook received. Processing in background.'
-        });
-
         
-        // Run booking automation in background
-        // if(  
-        //     (Number(orderData?.adults) || 0) +
-        //     (Number(orderData?.childs) || 0) +
-        //     (Number(orderData?.juniors) || 0) +
-        //     (Number(orderData?.seniors) || 0) <= 4
-        // ) {
-            setImmediate(async () => {
-                try {
-                    console.log('Starting booking automation process...');
-                    let tries = 0;
-                    const maxRetries = 3;
-                    let bookingResult = await alcatrazBookTour(orderData, tries);
-                    
-                    // Retry logic
-                    while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
-                        tries++;
-                        console.log(`Retry attempt #${tries}...`);
-                        bookingResult = await alcatrazBookTour(orderData, tries);
-                    }
-            
-                    if (bookingResult.success) {
-                        console.log('Booking automation completed successfully');
-                    } else {
-                        console.error('Booking automation failed:', bookingResult.error);
-                    }
-                } catch (automationError) {
-                    console.error('Error in booking automation:', automationError);
-                }
-            });
-        // }
-    } catch (error) {
-        console.error('Error processing webhook:', error);
-        res.status(200).json({
-            message: 'Internal server error',
-            error: error.message
+        console.log('Extracted order data ready for processing');
+        
+        // Process booking with built-in retries using the generic function
+        const result = await processOrderWithRetries({
+            orderData,
+            originalWebhookPayload, // Pass the complete original webhook payload
+            bookingFunction: alcatrazBookTour,
+            webhookUrl: '/alcatraz-webhook',
+            websiteName: 'Alcatraz Island Tours',
+            terminalErrorPatterns: [
+                'Payment not completed',
+                'Expected format is MM/YY.',
+                'Month should be between 1 and 12.',
+                'The card has expired.'
+            ]
         });
+        
+        if (result.success) {
+            console.log('✅ Alcatraz booking completed successfully');
+        }
+        // Failed case is handled inside the processOrderWithRetries function
+        
+    } catch (error) {
+        console.error('❌ Error processing Alcatraz webhook:', error);
+        // Response already sent, so we can only log the error
     }
 });
+
+// To charge service fee for booking 
+// app.post('/charge', async (req, res) => {
+//     try {
+//       const { paymentMethodId, amount, currency, description } = req.body;
+//   
+//       // Convert dollars to cents
+//       const amountInCents = Math.round(amount * 100);
+//       
+//       if (isNaN(amountInCents) || amountInCents < 50) {
+//         throw new Error('Invalid amount');
+//       }
+//       
+//       const paymentIntent = await stripe.paymentIntents.create({
+//         amount: amountInCents,
+//         currency: currency || 'usd',
+//         payment_method: paymentMethodId,
+//         // Restrict to card only if needed
+//         payment_method_types: ['card'],
+//         // Include description here
+//         description,
+//         confirmation_method: 'manual',
+//         confirm: true,
+//       });
+//       
+//       res.status(200).json({ success: true });
+//     } catch (error) {
+//       res.status(500).json({ error: error.message });
+//     }
+// });
 
 // To charge service fee for booking 
 app.post('/charge', async (req, res) => {
@@ -319,6 +360,29 @@ app.post('/charge', async (req, res) => {
       if (isNaN(amountInCents) || amountInCents < 50) {
         throw new Error('Invalid amount');
       }
+
+    // Extract the site name from the description (first word before space)
+    const siteNameMatch = description.match(/^([^\s]+)/);
+    const siteName = siteNameMatch ? siteNameMatch[0] : 'Alcatraz';  // Default to 'DefaultSite' if no match
+
+    // Create dynamic statement descriptor (Prefix + Suffix)
+    let statementDescriptorPrefix = siteName.toUpperCase();  
+    const maxPrefixLength = 17; 
+
+    // Truncate the prefix if it's longer than 15 characters (to leave space for "* SC")
+    if (statementDescriptorPrefix.length > maxPrefixLength) {
+      statementDescriptorPrefix = statementDescriptorPrefix.slice(0, maxPrefixLength);
+    }
+
+    const statementDescriptorSuffix = "SC"; 
+
+    // Construct the full statement descriptor
+    const statementDescriptor = `${statementDescriptorPrefix}* ${statementDescriptorSuffix}`;
+    console.log("Statement Descriptor:", statementDescriptor);
+    
+    if (statementDescriptor.length > 22) {
+      throw new Error('Statement descriptor exceeds 22 characters');
+    }
       
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountInCents,
@@ -328,6 +392,7 @@ app.post('/charge', async (req, res) => {
         payment_method_types: ['card'],
         // Include description here
         description,
+        statement_descriptor: statementDescriptor,
         confirmation_method: 'manual',
         confirm: true,
       });
@@ -337,11 +402,21 @@ app.post('/charge', async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
-  
 
-// Health check endpoint
+// Enhanced health check endpoint
 app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'healthy' });
+  try {
+    const dbStatus = getDb() ? 'connected' : 'disconnected';
+    res.json({
+      status: 'healthy',
+      time: new Date().toISOString(),
+      db: dbStatus,
+      uptime: process.uptime()
+    });
+  } catch (error) {
+    console.error('Health check error:', error);
+    res.status(500).json({ status: 'error', error: error.message });
+  }
 });
 
 // Webhook endpoint with verification | http://potomacticketing.com/
@@ -1081,22 +1156,300 @@ app.post('/kennedy-space-center-ticketing-webhook', async (req, res) => {
     }
 });
 
-// Create HTTPS server with error handling
-try {
-    // const server = https.createServer(sslOptions, app);
-    const server = http.createServer(app);
-    
-    server.listen(PORT, () => {
-        console.log(`HTTPS Server is running on port ${PORT}`);
-        console.log(`Webhook endpoint: http://localhost:${PORT}/webhook`);
-        console.log(`Health check endpoint: http://localhost:${PORT}/health`);
-    });
+// === API ROUTES ===
+// API routes are already mounted at line 55
+// DO NOT mount routes twice
+// const apiRoutes = require('./api/routes');
+// app.use('/api', apiRoutes);
 
-    server.on('error', (error) => {
-        console.error('Server error:', error);
-        process.exit(1);
+// === FAILED ORDERS ENDPOINTS ===
+// These have been moved to the modular API router structure
+
+// API endpoint to manually trigger cron job for testing
+app.post('/api/trigger-cron-retry', async (req, res) => {
+  try {
+    // Check database connection
+    if (!isConnected()) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database connection unavailable'
+      });
+    }
+
+    const { runCronJobImmediately } = require('./utils/cron/failedOrderRetry');
+    await runCronJobImmediately();
+    
+    res.status(200).json({
+      success: true,
+      message: 'Cron job triggered successfully'
     });
-} catch (error) {
-    console.error('Error creating HTTPS server:', error);
+  } catch (error) {
+    console.error('❌ Error triggering cron job:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to trigger cron job',
+      error: error.message
+    });
+  }
+});
+
+// API endpoint to update a failed order - custom URL path as requested
+app.patch('/api/update-order/:id', async (req, res) => {
+  try {
+    // Check database connection first
+    if (!isConnected()) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database connection unavailable',
+        databaseStatus: 'disconnected'
+      });
+    }
+    
+    const { id } = req.params;
+    const updates = req.body;
+    
+    // Check if ID is valid ObjectId
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid order ID format'
+      });
+    }
+    
+    // Validate update data
+    if (!updates || Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No update data provided'
+      });
+    }
+    
+    // Remove _id from updates if present to prevent errors
+    if (updates._id) delete updates._id;
+    
+    // Add updatedAt timestamp
+    updates.updatedAt = new Date();
+    
+    // Only allow specific fields to be updated for security
+    const allowedFields = [
+      'status', 'failureReason', 'failureCount', 'websiteName', 
+      'updatedAt', 'webhookUrl', 'notes'
+    ];
+    
+    const sanitizedUpdates = {};
+    Object.keys(updates).forEach(key => {
+      if (allowedFields.includes(key)) {
+        // Special handling for fields with specific requirements
+        if (key === 'status') {
+          // Status must be one of these values per schema
+          const validStatuses = ['failed', 'retried', 'resolved'];
+          if (validStatuses.includes(updates[key])) {
+            sanitizedUpdates[key] = updates[key];
+          }
+        } 
+        else if (key === 'failureCount') {
+          // Convert to integer for schema validation
+          sanitizedUpdates[key] = parseInt(updates[key], 10);
+        }
+        else if (key === 'updatedAt' || key === 'deletedAt') {
+          // Convert string dates to Date objects or use current time
+          if (updates[key] === null) {
+            sanitizedUpdates[key] = null;
+          } else if (updates[key] === true || updates[key] === 'now') {
+            // Use current time when true or 'now' is passed
+            sanitizedUpdates[key] = new Date();
+          } else {
+            // Try to convert string to date
+            try {
+              sanitizedUpdates[key] = new Date(updates[key]);
+            } catch (e) {
+              console.warn(`Invalid date format for ${key}, using current time`);
+              sanitizedUpdates[key] = new Date();
+            }
+          }
+        }
+        else {
+          sanitizedUpdates[key] = updates[key];
+        }
+      }
+    });
+    
+    // If no valid fields to update
+    if (Object.keys(sanitizedUpdates).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No valid fields to update'
+      });
+    }
+    
+    // Update the order
+    const result = await getDb().collection('failed_orders').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: sanitizedUpdates }
+    );
+    
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Failed order not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Order updated successfully',
+      modifiedCount: result.modifiedCount,
+      updatedFields: Object.keys(sanitizedUpdates)
+    });
+  } catch (error) {
+    console.error('\u274c Error updating failed order:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update order',
+      error: error.message
+    });
+  }
+});
+
+// Global error handling - Must be at the top level before server initialization
+process.on('uncaughtException', (error) => {
+  console.error('❌ UNCAUGHT EXCEPTION ❌', error);
+  // Log to monitoring service if available
+  // Don't exit the process here, let it be handled by PM2
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ UNHANDLED PROMISE REJECTION ❌', { reason, promise });
+  // Log to monitoring service if available
+});
+
+// Start Server with optional MongoDB connection
+(async () => {
+  let server;
+  
+  // Start the HTTP server immediately
+  server = http.createServer(app);
+  server.listen(PORT, () => {
+    console.log(`\u2705 Server running on http://localhost:${PORT}`);
+    console.log(`\ud83d\udccc Webhook: http://localhost:${PORT}/webhook`);
+    console.log(`\ud83e\ude7a Health: http://localhost:${PORT}/health`);
+    console.log(`\ud83d\udd04 PM2 managed process`);
+  });
+
+  server.on('error', (error) => {
+    console.error('\u274c Server error:', error);
+    // Don't exit - let PM2 handle restarts
+  });
+  
+  // Implement graceful shutdown
+  setupGracefulShutdown(server);
+  
+  // Try to connect to MongoDB in the background
+  try {
+    console.log('Attempting to connect to MongoDB...');
+    // The connectToMongoDB function already has built-in retry logic from mongodb.js
+    await connectToMongoDB();
+    console.log('\u2705 MongoDB connected successfully');
+    
+    // Initialize the failed orders schema
+    try {
+      await initializeFailedOrdersSchema();
+      console.log('✅ Failed orders schema initialized successfully');
+    } catch (schemaError) {
+      console.error('❌ Failed to initialize failed orders schema:', schemaError);
+      // Continue anyway as this is not critical for server operation
+    }
+    
+    // Initialize users schema
+    try {
+      await initializeUsersSchema();
+      console.log('✅ Users schema initialized successfully');
+    } catch (schemaError) {
+      console.error('❌ Failed to initialize users schema:', schemaError);
+      // Continue anyway as this is not critical for server operation
+    }
+    
+    // Initialize cron jobs
+    try {
+      initCronJobs();
+      console.log('\u2705 Cron jobs initialized successfully');
+    } catch (cronError) {
+      console.error('\u274c Failed to initialize cron jobs:', cronError);
+      // Continue anyway as this is not critical for server operation
+    }
+    
+    // Set up monitoring for connection events
+    setupConnectionMonitoring();
+  } catch (dbError) {
+    console.error('\u274c MongoDB connection failed:', dbError);
+    console.log('\u26a0\ufe0f Server will continue running without database functionality');
+    console.log('\u26a0\ufe0f Failed order tracking will be unavailable until database connects');
+    
+    // The mongodb.js module already handles reconnection internally
+    // Just set up monitoring to update app.locals.db when connection is restored
+    setupConnectionMonitoring();
+  }
+})();
+
+/**
+ * Monitor MongoDB connection status and update app.locals.db when connection is restored
+ * Uses the isConnected and getDb functions from mongodb.js
+ */
+function setupConnectionMonitoring() {
+  const checkInterval = 30000; // Check every 30 seconds
+  console.log(`🔄 Connection monitoring active (checks every ${checkInterval/1000} seconds)`);
+  
+  const connectionMonitor = setInterval(async () => {
+    // Check if database connection is lost and attempt to reconnect
+    if (!getDb() && !isConnected()) {
+      console.log('⚠️ Database connection lost, attempting to reconnect...');
+      try {
+        await connectToMongoDB();
+        console.log('✅ MongoDB connection restored');
+        
+        // Initialize the failed orders schema
+        await initializeFailedOrdersSchema();
+        console.log('✅ Failed orders schema initialized after reconnection');
+      } catch (err) {
+        console.error('❌ Failed to reconnect to database:', err);
+      }
+    }
+  }, checkInterval);
+  
+  // Add event listeners for process termination to clean up the interval
+  process.once('SIGTERM', () => clearInterval(connectionMonitor));
+  process.once('SIGINT', () => clearInterval(connectionMonitor));
+}
+
+// Graceful shutdown function
+function setupGracefulShutdown(server) {
+  // Handle SIGTERM (from PM2 or Docker)
+  process.on('SIGTERM', () => {
+    console.log('🛑 SIGTERM received, shutting down gracefully');
+    gracefulShutdown(server);
+  });
+  
+  // Handle SIGINT (Ctrl+C)
+  process.on('SIGINT', () => {
+    console.log('🛑 SIGINT received, shutting down gracefully');
+    gracefulShutdown(server);
+  });
+}
+
+async function gracefulShutdown(server) {
+  try {
+    // Stop accepting new connections
+    server.close(() => {
+      console.log('✅ HTTP server closed');
+    });
+    
+    // Close MongoDB connection using the module
+    await closeConnection(true);
+    
+    console.log('✅ Graceful shutdown completed');
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error during graceful shutdown:', error);
     process.exit(1);
+  }
 }

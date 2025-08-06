@@ -1,0 +1,200 @@
+2025-07-23T23:44:56: ❌ MongoDB connection error (attempt 1/6): Error: querySrv EREFUSED _mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'querySrv',
+  hostname: '_mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:45:03: ❌ MongoDB connection error (attempt 2/6): Error: queryTxt EREFUSED alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'queryTxt',
+  hostname: 'alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:45:11: ❌ MongoDB connection error (attempt 3/6): Error: queryTxt EREFUSED alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'queryTxt',
+  hostname: 'alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:45:21: ❌ MongoDB connection error (attempt 4/6): Error: queryTxt EREFUSED alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'queryTxt',
+  hostname: 'alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:45:35: ❌ MongoDB connection error (attempt 5/6): Error: queryTxt EREFUSED alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'queryTxt',
+  hostname: 'alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:45:57: ❌ MongoDB connection error (attempt 6/6): Error: queryTxt EREFUSED alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'queryTxt',
+  hostname: 'alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:46:04: ❌ MongoDB connection error (attempt 1/6): Error: querySrv EREFUSED _mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'querySrv',
+  hostname: '_mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:46:11: ❌ MongoDB connection error (attempt 2/6): Error: queryTxt EREFUSED alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'queryTxt',
+  hostname: 'alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:46:19: ❌ MongoDB connection error (attempt 3/6): Error: queryTxt EREFUSED alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'queryTxt',
+  hostname: 'alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:46:29: ❌ MongoDB connection error (attempt 4/6): Error: queryTxt EREFUSED alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'queryTxt',
+  hostname: 'alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:46:43: ❌ MongoDB connection error (attempt 5/6): Error: queryTxt EREFUSED alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'queryTxt',
+  hostname: 'alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:47:05: ❌ MongoDB connection error (attempt 6/6): Error: queryTxt EREFUSED alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'queryTxt',
+  hostname: 'alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:47:13: ❌ MongoDB connection error (attempt 1/6): Error: querySrv EREFUSED _mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'querySrv',
+  hostname: '_mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:47:20: ❌ MongoDB connection error (attempt 2/6): Error: querySrv EREFUSED _mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'querySrv',
+  hostname: '_mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:47:28: ❌ MongoDB connection error (attempt 3/6): Error: querySrv EREFUSED _mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'querySrv',
+  hostname: '_mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:47:38: ❌ MongoDB connection error (attempt 4/6): Error: querySrv EREFUSED _mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net
+    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:293:17) {
+  errno: undefined,
+  code: 'EREFUSED',
+  syscall: 'querySrv',
+  hostname: '_mongodb._tcp.alcatrazmanagementclust.p4cghtd.mongodb.net'
+}
+2025-07-23T23:47:54: ❌ MongoDB connection error (attempt 5/6): MongoServerSelectionError: Server selection timed out after 5000 ms
+    at Topology.selectServer (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\sdam\topology.js:326:38)
+    at async Topology._connect (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\sdam\topology.js:200:28)
+    at async Topology.connect (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\sdam\topology.js:152:13)
+    at async topologyConnect (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\mongo_client.js:246:17)
+    at async MongoClient._connect (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\mongo_client.js:259:13)
+    at async MongoClient.connect (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\mongo_client.js:184:13)
+    at async connectWithRetry (C:\Users\codea\Desktop\cityexperiencebot\db\mongodb.js:53:5)
+    at async C:\Users\codea\Desktop\cityexperiencebot\server.js:1195:16 {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'ReplicaSetNoPrimary',
+    servers: Map(3) {
+      'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017' => [ServerDescription],
+      'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017' => [ServerDescription],
+      'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017' => [ServerDescription]
+    },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: 'atlas-l57zvx-shard-0',
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined
+}
+2025-07-23T23:48:15: ❌ MongoDB connection error (attempt 6/6): MongoServerSelectionError: Server selection timed out after 5000 ms
+    at Topology.selectServer (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\sdam\topology.js:326:38)
+    at async Topology._connect (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\sdam\topology.js:200:28)
+    at async Topology.connect (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\sdam\topology.js:152:13)
+    at async topologyConnect (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\mongo_client.js:246:17)
+    at async MongoClient._connect (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\mongo_client.js:259:13)
+    at async MongoClient.connect (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\mongo_client.js:184:13)
+    at async connectWithRetry (C:\Users\codea\Desktop\cityexperiencebot\db\mongodb.js:53:5)
+    at async C:\Users\codea\Desktop\cityexperiencebot\server.js:1195:16 {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'ReplicaSetNoPrimary',
+    servers: Map(3) {
+      'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017' => [ServerDescription],
+      'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017' => [ServerDescription],
+      'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017' => [ServerDescription]
+    },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: 'atlas-l57zvx-shard-0',
+    maxElectionId: null,
+    maxSetVersion: null,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined
+}
+2025-07-23T23:50:14: ❌ Error in insertFailedOrder: TypeError: recordFailedOrder is not a function
+    at insertFailedOrder (C:\Users\codea\Desktop\cityexperiencebot\server.js:1283:28)
+    at C:\Users\codea\Desktop\cityexperiencebot\server.js:1129:28
+    at Layer.handle [as handle_request] (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\index.js:280:10)
+    at cors (C:\Users\codea\Desktop\cityexperiencebot\node_modules\cors\lib\index.js:188:7)
+2025-07-23T23:50:14: ❌ Failed to record test webhook order: Failed to insert failed order: recordFailedOrder is not a function
+2025-07-23T23:54:02: ❌ Error in insertFailedOrder: TypeError: recordFailedOrder is not a function
+    at insertFailedOrder (C:\Users\codea\Desktop\cityexperiencebot\server.js:1283:28)
+    at C:\Users\codea\Desktop\cityexperiencebot\server.js:1129:28
+    at Layer.handle [as handle_request] (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\codea\Desktop\cityexperiencebot\node_modules\express\lib\router\index.js:280:10)
+    at cors (C:\Users\codea\Desktop\cityexperiencebot\node_modules\cors\lib\index.js:188:7)
+2025-07-23T23:54:02: ❌ Failed to record test webhook order: Failed to insert failed order: recordFailedOrder is not a function
+2025-07-24T22:34:02: Booking automation error: page.goto: Target page, context or browser has been closed
+    at FortSumterTickets (C:\Users\codea\Desktop\cityexperiencebot\automation\fort-sumter-tickets\automation.js:135:16)
+    at async Immediate.<anonymous> (C:\Users\codea\Desktop\cityexperiencebot\server.js:1041:37)
+2025-07-24T22:34:02: Fort Sumter Tickets: Error in booking automation: ReferenceError: browser is not defined
+    at FortSumterTickets (C:\Users\codea\Desktop\cityexperiencebot\automation\fort-sumter-tickets\automation.js:895:5)
+    at async Immediate.<anonymous> (C:\Users\codea\Desktop\cityexperiencebot\server.js:1041:37)

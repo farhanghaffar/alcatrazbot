@@ -69,12 +69,14 @@ async function alcatrazBookTour(bookingData, tries) {
         console.log('Starting booking automation...');
 
         let tourURL = '';
+        
+        console.log('Debug - Tour Type:', bookingData.tourType);
 
         if(bookingData.tourType === 'Alcatraz Reservation Day') {
             tourURL = 'https://www.cityexperiences.com/san-francisco/city-cruises/alcatraz/tour-options/alcatraz-day-tour/';
         } else if(bookingData.tourType === 'Alcatraz Reservation Night') {
             tourURL = 'https://www.cityexperiences.com/san-francisco/city-cruises/alcatraz/tour-options/alcatraz-night-tour/';
-        } 
+        }
         await page.goto(tourURL, {
             timeout: 300000,
             waitUntil: 'domcontentloaded'
@@ -502,8 +504,38 @@ async function alcatrazBookTour(bookingData, tries) {
             cardYear: cardYear,
         }
         
-        const nestedIframe = frameHandle.frameLocator('iframe[name="chaseHostedPayment"]');
-        
+        const nestedIframe = frameHandle.frameLocator(
+          'iframe[name="chaseHostedPayment"]'
+        );
+
+        const fetchResourceErrorMsg = await frameHandle.getByText(
+          "Oops... something went wrong."
+        ).first();
+        const isFetchResourceErrorMsgVisible =
+          await fetchResourceErrorMsg.isVisible();
+
+        const fetchResourceNetworkError = await frameHandle.getByText(
+          "NetworkError when attempting to fetch resource."
+        ).first();
+        const isFetchResourceNetworkErrorVisible =
+          await fetchResourceNetworkError.isVisible();
+
+        if (
+          isFetchResourceErrorMsgVisible &&
+          isFetchResourceNetworkErrorVisible
+        ) {
+          // throw new Error('Payment not completed');
+          console.log("NetworkError when attempting to fetch resource.");
+          const retryBtn = await nestedIframe
+            .getByRole("button")
+            .filter({ hasText: "Retry" });
+          await expect(retryBtn).toBeVisible();
+          await retryBtn.click();
+          console.log("Clicked Retry to fetch Button");
+          await page.waitForTimeout(5000);
+        } else {
+          console.log("No NetworkError all resources fetched successfully, Proceeding...");
+        }
 
         // const cardNameInput = nestedIframe.locator('.creNameField');
         // await expect(cardNameInput).toBeVisible({timeout: 30000});
@@ -629,20 +661,25 @@ async function alcatrazBookTour(bookingData, tries) {
         // await page.pause();
         await page.waitForTimeout(5000);
 
+        // throw new Error('Site loading error occured');
+
         const completeBtn = await nestedIframe.getByRole('button').filter({hasText: 'Complete'});
         await expect(completeBtn).toBeVisible();
         await completeBtn.click(); 
         console.log('Clicked Complete Button');
 
         await page.waitForTimeout(12000);
-        const errorMsg = await frameHandle.getByText('Oops... something went wrong.');
+        const errorMsg = await frameHandle.getByText('Oops... something went wrong.').first();
         const errorMsgVisible = await errorMsg.isVisible()
 
-        const paymentError = await frameHandle.getByText('An error occurred while processing your payment.');
+        const paymentError = await frameHandle.getByText('An error occurred while processing your payment.').first();
         const paymentErrorVisible = await paymentError.isVisible();
 
-        if(errorMsgVisible || paymentErrorVisible) {
-            throw new Error('Payment not completed');
+        const creditCardInvalidError = await frameHandle.getByText('Credit card number you entered is invalid.').first();
+        const creditCardInvalidErrorVisible = await creditCardInvalidError.isVisible();
+
+        if(errorMsgVisible || paymentErrorVisible || creditCardInvalidErrorVisible) {
+            throw new Error('Payment not completed'); 
         }
 
         await page.waitForTimeout(12000);
@@ -714,6 +751,13 @@ async function alcatrazBookTour(bookingData, tries) {
             error: error.message,
             errorScreenshot: bookingData.id + 'error-screenshot.png'
         };
+
+        // Temporary code to force failures for testing
+        // return {
+        // success: false,
+        // error: "Simulated failure for testing",
+        // };
+
     } finally {
         await browser.close();
     }

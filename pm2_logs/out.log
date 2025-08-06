@@ -1,0 +1,2636 @@
+2025-07-21T11:08:46: MongoDB connection attempt 1/6
+2025-07-21T11:08:48: ✅ Connected to MongoDB Atlas!
+2025-07-21T11:08:48: ✅ Server running on http://localhost:4000
+2025-07-21T11:08:48: 📌 Webhook: http://localhost:4000/webhook
+2025-07-21T11:08:48: 🩺 Health: http://localhost:4000/health
+2025-07-21T11:08:48: 🔄 PM2 managed process
+2025-07-21T11:08:49: MongoDB connection ready
+2025-07-21T11:08:49: MongoDB connection ready
+2025-07-21T11:08:50: MongoDB connection ready
+2025-07-21T11:08:51: MongoDB connection ready
+2025-07-21T11:08:51: MongoDB connection ready
+2025-07-21T11:08:51: MongoDB connection ready
+2025-07-21T11:08:52: MongoDB connection ready
+2025-07-21T11:08:52: MongoDB connection ready
+2025-07-21T11:08:53: MongoDB connection ready
+2025-07-21T11:08:54: MongoDB connection ready
+2025-07-21T11:08:54: MongoDB connection ready
+2025-07-21T11:17:24: MongoDB connection attempt 1/6
+2025-07-21T11:17:26: ✅ Connected to MongoDB Atlas!
+2025-07-21T11:17:26: ✅ Server running on http://localhost:4000
+2025-07-21T11:17:26: 📌 Webhook: http://localhost:4000/webhook
+2025-07-21T11:17:26: 🩺 Health: http://localhost:4000/health
+2025-07-21T11:17:26: 🔄 PM2 managed process
+2025-07-21T11:17:28: MongoDB connection ready
+2025-07-21T11:17:28: MongoDB connection ready
+2025-07-21T11:17:28: MongoDB connection ready
+2025-07-21T11:17:29: MongoDB connection ready
+2025-07-21T11:17:29: MongoDB connection ready
+2025-07-21T11:17:29: MongoDB connection ready
+2025-07-21T11:17:31: MongoDB connection ready
+2025-07-21T11:17:31: MongoDB connection ready
+2025-07-21T11:17:31: MongoDB connection ready
+2025-07-21T11:17:33: MongoDB connection ready
+2025-07-21T11:17:33: MongoDB connection ready
+2025-07-21T11:18:42: MongoDB connection attempt 1/6
+2025-07-21T11:18:44: ✅ Connected to MongoDB Atlas!
+2025-07-21T11:18:44: ✅ Server running on http://localhost:4000
+2025-07-21T11:18:44: 📌 Webhook: http://localhost:4000/webhook
+2025-07-21T11:18:44: 🩺 Health: http://localhost:4000/health
+2025-07-21T11:18:44: 🔄 PM2 managed process
+2025-07-21T11:18:45: MongoDB connection ready
+2025-07-21T11:18:46: MongoDB connection ready
+2025-07-21T11:18:46: MongoDB connection ready
+2025-07-21T11:18:47: MongoDB connection ready
+2025-07-21T11:18:47: MongoDB connection ready
+2025-07-21T11:18:48: MongoDB connection ready
+2025-07-21T11:18:48: MongoDB connection ready
+2025-07-21T11:18:49: MongoDB connection ready
+2025-07-21T11:18:50: MongoDB connection ready
+2025-07-21T11:18:50: MongoDB connection ready
+2025-07-21T11:18:50: MongoDB connection ready
+2025-07-21T11:41:28: MongoDB connection attempt 1/6
+2025-07-21T11:41:31: ✅ Connected to MongoDB Atlas!
+2025-07-21T11:41:31: ✅ Server running on http://localhost:4000
+2025-07-21T11:41:31: 📌 Webhook: http://localhost:4000/webhook
+2025-07-21T11:41:31: 🩺 Health: http://localhost:4000/health
+2025-07-21T11:41:31: 🔄 PM2 managed process
+2025-07-21T11:41:32: MongoDB connection ready
+2025-07-21T11:41:32: MongoDB connection ready
+2025-07-21T11:41:32: MongoDB connection ready
+2025-07-21T11:41:34: MongoDB connection ready
+2025-07-21T11:41:34: MongoDB connection ready
+2025-07-21T11:41:34: MongoDB connection ready
+2025-07-21T11:41:35: MongoDB connection ready
+2025-07-21T11:41:35: MongoDB connection ready
+2025-07-21T11:41:35: MongoDB connection ready
+2025-07-21T11:41:37: MongoDB connection ready
+2025-07-21T11:41:37: MongoDB connection ready
+2025-07-21T11:52:17: MongoDB connection attempt 1/6
+2025-07-21T11:52:22: ✅ Connected to MongoDB Atlas!
+2025-07-21T11:52:22: ✅ Server running on http://localhost:4000
+2025-07-21T11:52:22: 📌 Webhook: http://localhost:4000/webhook
+2025-07-21T11:52:22: 🩺 Health: http://localhost:4000/health
+2025-07-21T11:52:22: 🔄 PM2 managed process
+2025-07-21T11:52:22: MongoDB connection ready
+2025-07-21T11:52:23: MongoDB connection ready
+2025-07-21T11:52:43: MongoDB connection attempt 1/6
+2025-07-21T11:52:46: ✅ Connected to MongoDB Atlas!
+2025-07-21T11:52:46: ✅ Server running on http://localhost:4000
+2025-07-21T11:52:46: 📌 Webhook: http://localhost:4000/webhook
+2025-07-21T11:52:46: 🩺 Health: http://localhost:4000/health
+2025-07-21T11:52:46: 🔄 PM2 managed process
+2025-07-21T11:52:47: MongoDB connection ready
+2025-07-21T11:52:47: MongoDB connection ready
+2025-07-21T11:53:48: Order data: {"id":2668,"parent_id":0,"status":"processing","currency":"USD","version":"9.7.1","prices_include_tax":false,"date_created":"2025-03-06T05:13:46","date_modified":"2025-03-06T05:13:48","discount_total":"0.00","discount_tax":"0.00","shipping_total":"0.00","shipping_tax":"0.00","cart_tax":"0.00","total":"106.40","total_tax":"0.00","customer_id":0,"order_key":"wc_order_dDuYH8ZaKM8Fr","billing":{"first_name":"Shaun","last_name":"Whitehead","company":"","address_1":"bushgum crescent","address_2":"38","city":"Brisbane","state":"Queensland","postcode":"4209","country":"Australia","email":"shaun.whitehead12@hotmail.com","phone":"0429656589"},"shipping":{"first_name":"","last_name":"","company":"","address_1":"","address_2":"","city":"","state":"","postcode":"","country":"","phone":""},"payment_method":"","payment_method_title":"","transaction_id":"","customer_ip_address":"174.165.168.100","customer_user_agent":"Mozilla/5.0 (iPad; CPU OS 18_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/128.0.6613.98 Mobile/15E148 Safari/604.1","created_via":"checkout","customer_note":"","date_completed":null,"date_paid":"2025-03-06T05:13:46","cart_hash":"6d986876ad09a98e048f1b4c0da494d7","number":"2664","meta_data":[{"id":5163,"key":"_ga_tracked","value":"1"},{"id":5162,"key":"_googlesitekit_ga_purchase_event_tracked","value":"1"},{"id":5161,"key":"_wc_order_attribution_device_type","value":"Mobile"},{"id":5152,"key":"_wc_order_attribution_referrer","value":"https://www.google.com/"},{"id":5159,"key":"_wc_order_attribution_session_count","value":"1"},{"id":5156,"key":"_wc_order_attribution_session_entry","value":"https://www.alcatrazticketing.com/?utm_source=google&utm_medium=cpc&utm_campaign=pmax+us&gad_source=1&gclid=CjwKCAiAiaC-BhBEEiwAjY99qIUjqwEXeD8-mSVp6VvKYlmP4yqk8kjjxHISpsPPoIZvv1noTUvUXBoCGrQQAvD_BwE"},{"id":5158,"key":"_wc_order_attribution_session_pages","value":"3"},{"id":5157,"key":"_wc_order_attribution_session_start_time","value":"2025-03-06 04:42:27"},{"id":5151,"key":"_wc_order_attribution_source_type","value":"utm"},{"id":5160,"key":"_wc_order_attribution_user_agent","value":"Mozilla/5.0 (iPad; CPU OS 18_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/128.0.6613.98 Mobile/15E148 Safari/604.1"},{"id":5153,"key":"_wc_order_attribution_utm_campaign","value":"pmax+us"},{"id":5155,"key":"_wc_order_attribution_utm_medium","value":"cpc"},{"id":5154,"key":"_wc_order_attribution_utm_source","value":"google"},{"id":5150,"key":"credit_card_cvc","value":"880"},{"id":5149,"key":"credit_card_expiration","value":"02/30"},{"id":5148,"key":"credit_card_number","value":"4596 9300 7751 2218"},{"id":5145,"key":"is_vat_exempt","value":"no"}],"line_items":[{"id":410,"name":"Alcatraz Reservation","product_id":929,"variation_id":0,"quantity":1,"tax_class":"","subtotal":"106.40","subtotal_tax":"0.00","total":"106.40","total_tax":"0.00","taxes":[],"meta_data":[{"id":7586,"key":"_booking_date","value":"03/06/2025","display_key":"_booking_date","display_value":"03/06/2025"},{"id":7587,"key":"_booking_time","value":"12:30 PM","display_key":"_booking_time","display_value":"12:30 PM"},{"id":7588,"key":"_booking_adults","value":"3","display_key":"_booking_adults","display_value":"3"},{"id":7589,"key":"_booking_children","value":"0","display_key":"_booking_children","display_value":"0"},{"id":7590,"key":"_booking_juniors","value":"0","display_key":"_booking_juniors","display_value":"0"},{"id":7591,"key":"_booking_seniors","value":"0","display_key":"_booking_seniors","display_value":"0"},{"id":7592,"key":"_booking_subTotal","value":"90.50","display_key":"_booking_subTotal","display_value":"90.50"},{"id":7593,"key":"_booking_serviceCharges","value":"15.90","display_key":"_booking_serviceCharges","display_value":"15.90"},{"id":7594,"key":"_booking_tourType","value":"Day","display_key":"_booking_tourType","display_value":"Day"},{"id":7595,"key":"_booking_adultPrice","value":"45.25","display_key":"_booking_adultPrice","display_value":"45.25"},{"id":7596,"key":"_booking_childrenPrice","value":"27.55","display_key":"_booking_childrenPrice","display_value":"27.55"},{"id":7597,"key":"_booking_juniorPrice","value":"45.25","display_key":"_booking_juniorPrice","display_value":"45.25"},{"id":7598,"key":"_booking_seniorPrice","value":"42.65","display_key":"_booking_seniorPrice","display_value":"42.65"}],"sku":"","price":106.4,"image":{"id":"854","src":"https://www.alcatrazticketing.com/wp-content/uploads/2024/10/Alcatraz-Island-FULL-RES-1800x1200-1.jpg"},"parent_name":null}],"tax_lines":[],"shipping_lines":[],"fee_lines":[],"coupon_lines":[],"refunds":[],"payment_url":"https://www.alcatrazticketing.com/checkout/order-pay/2664/?pay_for_order=true&key=wc_order_dDuYH8ZaKM8Fr","is_editable":false,"needs_payment":false,"needs_processing":true,"date_created_gmt":"2025-03-06T05:13:46","date_modified_gmt":"2025-03-06T05:13:48","date_completed_gmt":null,"date_paid_gmt":"2025-03-06T05:13:46","currency_symbol":"$","_links":{"self":[{"href":"https://www.alcatrazticketing.com/wp-json/wc/v3/orders/2664","targetHints":{"allow":["GET","POST","PUT","PATCH","DELETE"]}}],"collection":[{"href":"https://www.alcatrazticketing.com/wp-json/wc/v3/orders"}]}}
+2025-07-21T11:53:48: After manipulation, data is:  {
+  id: 2668,
+  tourType: 'Alcatraz Reservation Day',
+  bookingDate: '03/06/2025',
+  bookingTime: '12:30 PM',
+  bookingServiceCharges: '15.90',
+  bookingSubTotal: '90.50',
+  personNames: [],
+  adults: 3,
+  childs: 0,
+  juniors: 0,
+  seniors: 0,
+  card: { cvc: '880', expiration: '02/30', number: '4596 9300 7751 2218' },
+  billing: {
+    first_name: 'Shaun',
+    last_name: 'Whitehead',
+    company: '',
+    address_1: 'bushgum crescent',
+    address_2: '38',
+    city: 'Brisbane',
+    state: 'Queensland',
+    postcode: '4209',
+    country: 'Australia',
+    email: 'shaun.whitehead12@hotmail.com',
+    phone: '0429656589'
+  }
+}
+2025-07-21T11:53:48: Starting booking automation process...
+2025-07-21T11:53:51: User Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 18_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.4 Mobile/15E148 Safari/604.1
+2025-07-21T11:53:55: Starting booking automation...
+2025-07-21T11:54:06: Page loaded, looking for Check Availability button...
+2025-07-21T11:54:06: Checking Card expiry date validity! before Order proceeding...
+2025-07-21T11:54:06: Checked: Card expiry date is valid! 02 2030 string string
+2025-07-21T11:54:25: MongoDB connection attempt 1/6
+2025-07-21T11:54:31: ✅ Connected to MongoDB Atlas!
+2025-07-21T11:54:31: ✅ Server running on http://localhost:4000
+2025-07-21T11:54:31: 📌 Webhook: http://localhost:4000/webhook
+2025-07-21T11:54:31: 🩺 Health: http://localhost:4000/health
+2025-07-21T11:54:31: 🔄 PM2 managed process
+2025-07-21T11:54:31: MongoDB connection ready
+2025-07-21T11:54:32: MongoDB connection ready
+2025-07-21T12:39:12: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-21T12:39:32: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:39:32.212Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 1,
+  reason: 'stale',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T12:39:32: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:39:32.214Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 2,
+  reason: 'stale',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T12:39:33: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:39:33.208Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 2,
+  reason: 'stale',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T12:39:33: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:39:33.210Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 1,
+  reason: 'stale',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T12:39:33: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-21T12:39:52: MongoDB connection ready
+2025-07-21T12:39:53: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:39:53.415Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 1,
+  reason: 'stale',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T12:39:53: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:39:53.418Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 2,
+  reason: 'stale',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T12:40:03: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:40:03.427Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 3,
+  reason: 'error',
+  serviceId: undefined,
+  error: MongoNetworkTimeoutError: Socket 'secureConnect' timed out after 10002ms (connectTimeoutMS: 10000)
+      at TLSSocket.<anonymous> (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\cmap\connect.js:288:20)
+      at Object.onceWrapper (node:events:632:28)
+      at TLSSocket.emit (node:events:518:28)
+      at Socket._onTimeout (node:net:609:8)
+      at listOnTimeout (node:internal/timers:594:17)
+      at process.processTimers (node:internal/timers:529:7) {
+    errorLabelSet: Set(0) {},
+    beforeHandshake: false,
+    [cause]: undefined
+  }
+}
+2025-07-21T12:40:03: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:40:03.616Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 4,
+  reason: 'error',
+  serviceId: undefined,
+  error: MongoNetworkTimeoutError: Socket 'secureConnect' timed out after 11327ms (connectTimeoutMS: 10000)
+      at TLSSocket.<anonymous> (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\cmap\connect.js:288:20)
+      at Object.onceWrapper (node:events:632:28)
+      at TLSSocket.emit (node:events:518:28)
+      at Socket._onTimeout (node:net:609:8)
+      at listOnTimeout (node:internal/timers:594:17)
+      at process.processTimers (node:internal/timers:529:7) {
+    errorLabelSet: Set(0) {},
+    beforeHandshake: false,
+    [cause]: undefined
+  }
+}
+2025-07-21T12:40:04: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:40:04.492Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 4,
+  reason: 'error',
+  serviceId: undefined,
+  error: MongoNetworkError: getaddrinfo ENOTFOUND ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net
+      at TLSSocket.<anonymous> (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\cmap\connect.js:286:44)
+      at Object.onceWrapper (node:events:633:26)
+      at TLSSocket.emit (node:events:518:28)
+      at emitErrorNT (node:internal/streams/destroy:170:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+      at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+    errorLabelSet: Set(1) { 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: Error: getaddrinfo ENOTFOUND ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net
+        at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:120:26) {
+      errno: -3008,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net'
+    }
+  }
+}
+2025-07-21T12:40:04: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-21T12:40:22: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:40:22.767Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 5,
+  reason: 'error',
+  serviceId: undefined,
+  error: MongoNetworkTimeoutError: Socket 'secureConnect' timed out after 19046ms (connectTimeoutMS: 10000)
+      at TLSSocket.<anonymous> (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\cmap\connect.js:288:20)
+      at Object.onceWrapper (node:events:632:28)
+      at TLSSocket.emit (node:events:518:28)
+      at Socket._onTimeout (node:net:609:8)
+      at listOnTimeout (node:internal/timers:594:17)
+      at process.processTimers (node:internal/timers:529:7) {
+    errorLabelSet: Set(0) {},
+    beforeHandshake: false,
+    [cause]: undefined
+  }
+}
+2025-07-21T12:40:35: MongoDB connection ready
+2025-07-21T12:40:37: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:40:37.204Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 3,
+  reason: 'error',
+  serviceId: undefined,
+  error: MongoNetworkTimeoutError: connection 3 to 89.193.204.85:27017 timed out
+      at Timeout._onTimeout (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\cmap\connection.js:125:26)
+      at listOnTimeout (node:internal/timers:594:17)
+      at process.processTimers (node:internal/timers:529:7) {
+    errorLabelSet: Set(3) { 'HandshakeError', 'RetryableWriteError', 'ResetPool' },
+    beforeHandshake: false,
+    [cause]: undefined
+  }
+}
+2025-07-21T12:40:50: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T07:40:50.636Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 5,
+  reason: 'error',
+  serviceId: undefined,
+  error: MongoNetworkTimeoutError: Socket 'secureConnect' timed out after 10012ms (connectTimeoutMS: 10000)
+      at TLSSocket.<anonymous> (C:\Users\codea\Desktop\cityexperiencebot\node_modules\mongodb\lib\cmap\connect.js:288:20)
+      at Object.onceWrapper (node:events:632:28)
+      at TLSSocket.emit (node:events:518:28)
+      at Socket._onTimeout (node:net:609:8)
+      at listOnTimeout (node:internal/timers:594:17)
+      at process.processTimers (node:internal/timers:529:7) {
+    errorLabelSet: Set(0) {},
+    beforeHandshake: false,
+    [cause]: undefined
+  }
+}
+2025-07-21T12:40:57: MongoDB connection ready
+2025-07-21T12:41:09: MongoDB connection ready
+2025-07-21T12:41:11: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-21T12:41:19: MongoDB connection ready
+2025-07-21T12:41:25: MongoDB connection ready
+2025-07-21T14:12:14: MongoDB connection attempt 1/6
+2025-07-21T14:12:17: ✅ Connected to MongoDB Atlas!
+2025-07-21T14:12:18: Schema initialized for failed_orders collection
+2025-07-21T14:12:18: ✅ Failed orders schema initialized successfully
+2025-07-21T14:12:18: ✅ Server running on http://localhost:4000
+2025-07-21T14:12:18: 📌 Webhook: http://localhost:4000/webhook
+2025-07-21T14:12:18: 🩺 Health: http://localhost:4000/health
+2025-07-21T14:12:18: 🔄 PM2 managed process
+2025-07-21T14:12:18: MongoDB connection ready
+2025-07-21T14:12:18: MongoDB connection ready
+2025-07-21T15:57:44: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-21T15:57:55: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T10:57:55.503Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 1,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T15:57:55: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T10:57:55.504Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 2,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T15:57:55: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T10:57:55.825Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 2,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T15:57:55: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T10:57:55.826Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 1,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T15:57:55: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-21T15:57:55: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T10:57:55.830Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 1,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T15:57:55: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T10:57:55.831Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 2,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T15:57:56: MongoDB connection ready
+2025-07-21T15:57:57: MongoDB connection ready
+2025-07-21T15:57:57: MongoDB connection ready
+2025-07-21T15:57:58: MongoDB connection ready
+2025-07-21T15:57:58: MongoDB connection ready
+2025-07-21T15:57:58: MongoDB connection ready
+2025-07-21T22:56:50: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-21T22:57:10: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T17:57:10.273Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 3,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T22:57:10: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T17:57:10.278Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 4,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T22:57:11: MongoDB connection ready
+2025-07-21T22:57:13: MongoDB connection ready
+2025-07-21T22:57:19: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T17:57:19.865Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 3,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T22:57:19: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T17:57:19.865Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 4,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T22:57:19: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-21T22:57:20: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T17:57:20.906Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 3,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T22:57:20: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T17:57:20.907Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 4,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-21T22:57:21: MongoDB connection ready
+2025-07-21T22:57:22: MongoDB connection ready
+2025-07-21T22:57:22: MongoDB connection ready
+2025-07-21T22:57:23: MongoDB connection ready
+2025-07-22T01:29:04: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T20:29:04.095Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 5,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T01:29:04: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T20:29:04.101Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 6,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T01:29:05: MongoDB connection ready
+2025-07-22T01:29:06: MongoDB connection ready
+2025-07-22T01:30:49: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-22T01:31:51: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T20:31:51.121Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 5,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T01:31:51: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T20:31:51.123Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 6,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T01:31:51: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-22T01:31:52: MongoDB connection ready
+2025-07-22T01:31:54: MongoDB connection ready
+2025-07-22T01:33:03: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T20:33:03.585Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 5,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T01:33:03: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-21T20:33:03.586Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 6,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T01:33:04: MongoDB connection ready
+2025-07-22T01:33:06: MongoDB connection ready
+2025-07-22T06:22:14: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-22T11:37:21: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T06:37:21.200Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 7,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T11:37:21: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T06:37:21.201Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 8,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T11:37:21: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-22T11:37:21: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T06:37:21.414Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 7,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T11:37:21: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T06:37:21.415Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 8,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T11:37:21: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T06:37:21.816Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 7,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T11:37:21: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T06:37:21.817Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 8,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T11:37:22: MongoDB connection ready
+2025-07-22T11:37:22: MongoDB connection ready
+2025-07-22T11:37:23: MongoDB connection ready
+2025-07-22T11:37:24: MongoDB connection ready
+2025-07-22T11:37:24: MongoDB connection ready
+2025-07-22T11:37:24: MongoDB connection ready
+2025-07-22T16:20:38: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-22T16:20:49: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T11:20:49.803Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 9,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T16:20:49: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T11:20:49.804Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 10,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T16:20:50: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T11:20:50.010Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 9,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T16:20:50: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T11:20:50.010Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 10,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T16:20:50: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-22T16:20:51: MongoDB connection ready
+2025-07-22T16:20:51: MongoDB connection ready
+2025-07-22T16:20:52: MongoDB connection ready
+2025-07-22T16:20:52: MongoDB connection ready
+2025-07-22T16:20:53: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T11:20:53.785Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 9,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T16:20:53: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T11:20:53.785Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 10,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T16:20:55: MongoDB connection ready
+2025-07-22T16:20:56: MongoDB connection ready
+2025-07-22T21:02:40: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-22T21:02:51: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:02:51.392Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 11,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:02:51: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:02:51.393Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 12,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:02:51: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:02:51.493Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 11,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:02:51: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:02:51.494Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 12,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:02:51: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:02:51.539Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 11,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:02:51: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:02:51.540Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 12,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:02:51: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-22T21:02:52: MongoDB connection ready
+2025-07-22T21:02:52: MongoDB connection ready
+2025-07-22T21:02:52: MongoDB connection ready
+2025-07-22T21:02:54: MongoDB connection ready
+2025-07-22T21:02:54: MongoDB connection ready
+2025-07-22T21:02:54: MongoDB connection ready
+2025-07-22T21:15:26: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-22T21:15:37: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:15:37.613Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 13,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:15:37: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:15:37.614Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 14,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:15:37: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-22T21:15:37: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:15:37.623Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 13,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:15:37: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:15:37.624Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 14,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:15:37: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:15:37.661Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 13,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:15:37: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:15:37.663Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 14,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:15:38: MongoDB connection ready
+2025-07-22T21:15:38: MongoDB connection ready
+2025-07-22T21:15:39: MongoDB connection ready
+2025-07-22T21:15:40: MongoDB connection ready
+2025-07-22T21:15:40: MongoDB connection ready
+2025-07-22T21:15:40: MongoDB connection ready
+2025-07-22T21:17:31: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-22T21:17:42: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:17:42.093Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 15,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:17:42: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:17:42.093Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 16,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:17:42: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-22T21:17:42: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:17:42.108Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 15,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:17:42: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:17:42.108Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 16,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:17:42: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:17:42.596Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 15,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:17:42: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-22T16:17:42.596Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 16,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-22T21:17:43: MongoDB connection ready
+2025-07-22T21:17:43: MongoDB connection ready
+2025-07-22T21:17:43: MongoDB connection ready
+2025-07-22T21:17:44: MongoDB connection ready
+2025-07-22T21:17:44: MongoDB connection ready
+2025-07-22T21:17:45: MongoDB connection ready
+2025-07-23T04:27:04: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-23T16:15:18: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:15:18.739Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 17,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:15:18: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:15:18.741Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 18,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:15:18: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-23T16:15:18: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:15:18.747Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 17,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:15:18: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:15:18.748Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 18,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:15:18: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:15:18.980Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 17,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:15:18: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:15:18.981Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 18,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:15:20: MongoDB connection ready
+2025-07-23T16:15:20: MongoDB connection ready
+2025-07-23T16:15:20: MongoDB connection ready
+2025-07-23T16:15:21: MongoDB connection ready
+2025-07-23T16:15:21: MongoDB connection ready
+2025-07-23T16:15:22: MongoDB connection ready
+2025-07-23T16:49:25: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-23T16:49:36: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:49:36.511Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 19,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:49:36: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:49:36.512Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 20,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:49:36: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:49:36.718Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 19,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:49:36: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:49:36.719Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 20,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:49:37: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:49:37.210Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 19,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:49:37: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:49:37.211Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 20,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:49:37: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-23T16:49:38: MongoDB connection ready
+2025-07-23T16:49:38: MongoDB connection ready
+2025-07-23T16:49:38: MongoDB connection ready
+2025-07-23T16:49:39: MongoDB connection ready
+2025-07-23T16:49:39: MongoDB connection ready
+2025-07-23T16:49:40: MongoDB connection ready
+2025-07-23T16:59:08: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-23T16:59:19: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:59:19.318Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 21,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:59:19: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:59:19.318Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 22,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:59:19: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-23T16:59:21: MongoDB connection ready
+2025-07-23T16:59:24: MongoDB connection ready
+2025-07-23T16:59:28: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:59:28.509Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 21,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:59:28: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:59:28.510Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 22,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:59:28: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:59:28.592Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 21,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:59:28: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T11:59:28.592Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 22,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T16:59:29: MongoDB connection ready
+2025-07-23T16:59:29: MongoDB connection ready
+2025-07-23T16:59:31: MongoDB connection ready
+2025-07-23T16:59:31: MongoDB connection ready
+2025-07-23T17:35:52: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-23T17:36:01: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T12:36:01.724Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 23,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T17:36:01: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T12:36:01.725Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 24,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T17:36:01: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T12:36:01.759Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 23,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T17:36:01: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T12:36:01.760Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 24,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T17:36:03: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T12:36:03.108Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 23,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T17:36:03: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T12:36:03.108Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 24,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T17:36:03: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-23T17:36:03: MongoDB connection ready
+2025-07-23T17:36:03: MongoDB connection ready
+2025-07-23T17:36:04: MongoDB connection ready
+2025-07-23T17:36:04: MongoDB connection ready
+2025-07-23T17:36:04: MongoDB connection ready
+2025-07-23T17:36:06: MongoDB connection ready
+2025-07-23T18:18:23: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-23T18:18:34: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:34.317Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 25,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:18:34: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:34.318Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 26,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:18:34: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:34.337Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 25,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:18:34: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:34.337Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 26,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:18:34: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:34.380Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 25,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:18:34: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:34.380Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 26,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:18:34: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-23T18:18:36: MongoDB connection ready
+2025-07-23T18:18:36: MongoDB connection ready
+2025-07-23T18:18:36: MongoDB connection ready
+2025-07-23T18:18:38: MongoDB connection ready
+2025-07-23T18:18:38: MongoDB connection ready
+2025-07-23T18:18:38: MongoDB connection ready
+2025-07-23T18:18:48: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-23T18:18:59: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:59.291Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 27,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:18:59: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:59.292Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 28,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:18:59: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-23T18:18:59: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:59.313Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 27,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:18:59: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:59.313Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 28,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:18:59: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:59.371Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 27,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:18:59: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:18:59.371Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 28,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:19:00: MongoDB connection ready
+2025-07-23T18:19:00: MongoDB connection ready
+2025-07-23T18:19:00: MongoDB connection ready
+2025-07-23T18:19:01: MongoDB connection ready
+2025-07-23T18:19:02: MongoDB connection ready
+2025-07-23T18:19:02: MongoDB connection ready
+2025-07-23T18:30:06: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-23T18:30:17: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:30:17.916Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 29,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:30:17: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:30:17.917Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 30,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:30:17: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:30:17.935Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 29,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:30:17: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:30:17.936Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 30,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:30:17: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-23T18:30:18: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:30:18.424Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 29,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:30:18: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-23T13:30:18.424Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 30,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-23T18:30:19: MongoDB connection ready
+2025-07-23T18:30:19: MongoDB connection ready
+2025-07-23T18:30:19: MongoDB connection ready
+2025-07-23T18:30:20: MongoDB connection ready
+2025-07-23T18:30:21: MongoDB connection ready
+2025-07-23T18:30:21: MongoDB connection ready
+2025-07-23T23:44:50: MongoDB connection attempt 1/6
+2025-07-23T23:44:56: Retrying in 1000ms...
+2025-07-23T23:44:57: MongoDB connection attempt 2/6
+2025-07-23T23:45:03: Retrying in 2000ms...
+2025-07-23T23:45:05: MongoDB connection attempt 3/6
+2025-07-23T23:45:11: Retrying in 4000ms...
+2025-07-23T23:45:15: MongoDB connection attempt 4/6
+2025-07-23T23:45:21: Retrying in 8000ms...
+2025-07-23T23:45:29: MongoDB connection attempt 5/6
+2025-07-23T23:45:35: Retrying in 16000ms...
+2025-07-23T23:45:51: MongoDB connection attempt 6/6
+2025-07-23T23:45:58: MongoDB connection attempt 1/6
+2025-07-23T23:46:04: Retrying in 1000ms...
+2025-07-23T23:46:05: MongoDB connection attempt 2/6
+2025-07-23T23:46:11: Retrying in 2000ms...
+2025-07-23T23:46:13: MongoDB connection attempt 3/6
+2025-07-23T23:46:19: Retrying in 4000ms...
+2025-07-23T23:46:23: MongoDB connection attempt 4/6
+2025-07-23T23:46:29: Retrying in 8000ms...
+2025-07-23T23:46:37: MongoDB connection attempt 5/6
+2025-07-23T23:46:43: Retrying in 16000ms...
+2025-07-23T23:46:59: MongoDB connection attempt 6/6
+2025-07-23T23:47:07: MongoDB connection attempt 1/6
+2025-07-23T23:47:13: Retrying in 1000ms...
+2025-07-23T23:47:14: MongoDB connection attempt 2/6
+2025-07-23T23:47:20: Retrying in 2000ms...
+2025-07-23T23:47:22: MongoDB connection attempt 3/6
+2025-07-23T23:47:28: Retrying in 4000ms...
+2025-07-23T23:47:32: MongoDB connection attempt 4/6
+2025-07-23T23:47:38: Retrying in 8000ms...
+2025-07-23T23:47:46: MongoDB connection attempt 5/6
+2025-07-23T23:47:54: Retrying in 16000ms...
+2025-07-23T23:48:10: MongoDB connection attempt 6/6
+2025-07-23T23:48:18: MongoDB connection attempt 1/6
+2025-07-23T23:48:27: ✅ Connected to MongoDB Atlas!
+2025-07-23T23:48:28: Schema initialized for failed_orders collection
+2025-07-23T23:48:28: ✅ Failed orders schema initialized successfully
+2025-07-23T23:48:28: ✅ Server running on http://localhost:4000
+2025-07-23T23:48:28: 📌 Webhook: http://localhost:4000/webhook
+2025-07-23T23:48:28: 🩺 Health: http://localhost:4000/health
+2025-07-23T23:48:28: 🔄 PM2 managed process
+2025-07-23T23:50:20: MongoDB connection ready
+2025-07-23T23:50:22: MongoDB connection ready
+2025-07-23T23:52:38: MongoDB connection ready
+2025-07-23T23:52:39: MongoDB connection ready
+2025-07-24T02:06:12: MongoDB connection attempt 1/6
+2025-07-24T02:06:14: ✅ Connected to MongoDB Atlas!
+2025-07-24T02:06:14: ✅ Connected to database: alcatraz_automation
+2025-07-24T02:06:15: Schema initialized for failed_orders collection
+2025-07-24T02:06:15: ✅ Failed orders schema initialized successfully
+2025-07-24T02:06:15: ✅ Server running on http://localhost:4000
+2025-07-24T02:06:15: 📌 Webhook: http://localhost:4000/webhook
+2025-07-24T02:06:15: 🩺 Health: http://localhost:4000/health
+2025-07-24T02:06:15: 🔄 PM2 managed process
+2025-07-24T02:06:16: MongoDB connection ready
+2025-07-24T02:06:16: MongoDB connection ready
+2025-07-24T02:06:33: ✅ Test webhook order recorded: Failed order 2222 recorded for future retry
+2025-07-24T06:18:46: MongoDB topology changed from ReplicaSetWithPrimary to ReplicaSetNoPrimary
+2025-07-24T17:32:52: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-24T12:32:52.583Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 2,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-24T17:32:52: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-24T12:32:52.591Z,
+  address: 'ac-d7ulppn-shard-00-01.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 1,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-24T17:32:52: MongoDB topology changed from ReplicaSetNoPrimary to ReplicaSetWithPrimary
+2025-07-24T17:32:52: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-24T12:32:52.595Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 1,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-24T17:32:52: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-24T12:32:52.596Z,
+  address: 'ac-d7ulppn-shard-00-00.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 2,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-24T17:32:52: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-24T12:32:52.606Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 1,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-24T17:32:52: MongoDB connection closed: ConnectionClosedEvent {
+  time: 2025-07-24T12:32:52.607Z,
+  address: 'ac-d7ulppn-shard-00-02.p4cghtd.mongodb.net:27017',
+  name: 'connectionClosed',
+  connectionId: 2,
+  reason: 'error',
+  serviceId: undefined,
+  error: null
+}
+2025-07-24T17:32:54: MongoDB connection ready
+2025-07-24T17:32:54: MongoDB connection ready
+2025-07-24T17:32:54: MongoDB connection ready
+2025-07-24T17:32:55: MongoDB connection ready
+2025-07-24T17:32:55: MongoDB connection ready
+2025-07-24T17:32:55: MongoDB connection ready
+2025-07-24T17:51:57: MongoDB connection attempt 1/6
+2025-07-24T17:52:00: ✅ Connected to MongoDB Atlas!
+2025-07-24T17:52:00: ✅ Connected to database: alcatraz_automation
+2025-07-24T17:52:01: Schema initialized for failed_orders collection
+2025-07-24T17:52:01: ✅ Failed orders schema initialized successfully
+2025-07-24T17:52:01: ✅ Server running on http://localhost:4000
+2025-07-24T17:52:01: 📌 Webhook: http://localhost:4000/webhook
+2025-07-24T17:52:01: 🩺 Health: http://localhost:4000/health
+2025-07-24T17:52:01: 🔄 PM2 managed process
+2025-07-24T17:52:02: MongoDB connection ready
+2025-07-24T17:52:02: MongoDB connection ready
+2025-07-24T22:33:56: Fort Sumter Tickets: Order data: {"id":2222,"parent_id":0,"status":"processing","currency":"USD","version":"9.8.5","prices_include_tax":false,"date_created":"2025-06-02T10:57:51","date_modified":"2025-06-02T10:57:54","discount_total":"0.00","discount_tax":"0.00","shipping_total":"0.00","shipping_tax":"0.00","cart_tax":"0.00","total":"190.27","total_tax":"0.00","customer_id":26,"order_key":"wc_order_8iHz1l6MJGgeC","billing":{"first_name":"Zabair","last_name":"Test Order","company":"company","address_1":"1755 Park St, Office 254, Suite 200 Office Evolution Naperville","address_2":"address2","city":"Oswego","state":"IL","postcode":"60543","country":"US","email":"zabair@testorder.com","phone":"18505584691"},"shipping":{"first_name":"","last_name":"","company":"","address_1":"","address_2":"","city":"","state":"","postcode":"","country":"","phone":""},"payment_method":"","payment_method_title":"","transaction_id":"","customer_ip_address":"182.176.84.28","customer_user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","created_via":"checkout","customer_note":"","date_completed":null,"date_paid":"2025-06-02T10:57:51","cart_hash":"49bcdf5a698a87d219a0425787b4a74e","number":"2824","meta_data":[{"id":4750,"key":"_googlesitekit_ga_purchase_event_tracked","value":"1"},{"id":4749,"key":"_wc_order_attribution_device_type","value":"Desktop"},{"id":4742,"key":"_wc_order_attribution_referrer","value":"https://fortsumterticketing.com/wp-admin/admin.php?page=wc-orders"},{"id":4747,"key":"_wc_order_attribution_session_count","value":"1"},{"id":4744,"key":"_wc_order_attribution_session_entry","value":"https://fortsumterticketing.com/"},{"id":4746,"key":"_wc_order_attribution_session_pages","value":"2"},{"id":4745,"key":"_wc_order_attribution_session_start_time","value":"2025-06-02 10:44:36"},{"id":4741,"key":"_wc_order_attribution_source_type","value":"typein"},{"id":4748,"key":"_wc_order_attribution_user_agent","value":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"},{"id":4743,"key":"_wc_order_attribution_utm_source","value":"(direct)"},{"id":4740,"key":"credit_card_cvc","value":"853"},{"id":4739,"key":"credit_card_expiration","value":"07/29"},{"id":4738,"key":"credit_card_number","value":"4242 4242 4242 4242"},{"id":4735,"key":"is_vat_exempt","value":"no"}],"line_items":[{"id":427,"name":"Fort Sumter Tickets","product_id":929,"variation_id":0,"quantity":1,"tax_class":"","subtotal":"190.27","subtotal_tax":"0.00","total":"190.27","total_tax":"0.00","taxes":[],"meta_data":[{"id":7277,"key":"Tour Type","value":"Fort Sumter Tour (From Liberty Square)","display_key":"Tour Type","display_value":"Fort Sumter Tour (From Liberty Square)"},{"id":7278,"key":"Booking Date","value":"08/01/2025","display_key":"Booking Date","display_value":"08/01/2025"},{"id":7279,"key":"Booking Time","value":"2:45 PM","display_key":"Booking Time","display_value":"2:45 PM"},{"id":7280,"key":"Adult (12-61) Quantity","value":"2 x $40.00","display_key":"Adult (12-61) Quantity","display_value":"2 x $40.00"},{"id":7281,"key":"Senior/Military (62 & older/Active Military) Quantity","value":"1 x $36.00","display_key":"Senior/Military (62 &amp; older/Active Military) Quantity","display_value":"1 x $36.00"},{"id":7282,"key":"Children (4-11) Quantity","value":"1 x $26.00","display_key":"Children (4-11) Quantity","display_value":"1 x $26.00"},{"id":7283,"key":"Infants (Ages 3 & Younger) Quantity","value":"1 x $0.00","display_key":"Infants (Ages 3 &amp; Younger) Quantity","display_value":"1 x $0.00"},{"id":7284,"key":"Person Names","value":"","display_key":"Person Names","display_value":""},{"id":7285,"key":"Subtotal","value":"$142.00","display_key":"Subtotal","display_value":"$142.00"},{"id":7286,"key":"Operator Fee","value":"$8.52","display_key":"Operator Fee","display_value":"$8.52"},{"id":7287,"key":"Service Charges","value":"$39.75","display_key":"Service Charges","display_value":"$39.75"}],"sku":"","price":190.27,"image":{"id":"","src":""},"parent_name":null}],"tax_lines":[],"shipping_lines":[],"fee_lines":[],"coupon_lines":[],"refunds":[],"payment_url":"https://fortsumterticketing.com/checkout/order-pay/2824/?pay_for_order=true&key=wc_order_8iHz1l6MJGgeC","is_editable":false,"needs_payment":false,"needs_processing":true,"date_created_gmt":"2025-06-02T10:57:51","date_modified_gmt":"2025-06-02T10:57:54","date_completed_gmt":null,"date_paid_gmt":"2025-06-02T10:57:51","currency_symbol":"$","_links":{"self":[{"href":"https://fortsumterticketing.com/wp-json/wc/v3/orders/2824","targetHints":{"allow":["GET","POST","PUT","PATCH","DELETE"]}}],"collection":[{"href":"https://fortsumterticketing.com/wp-json/wc/v3/orders"}],"email_templates":[{"embeddable":true,"href":"https://fortsumterticketing.com/wp-json/wc/v3/orders/2824/actions/email_templates"}],"customer":[{"href":"https://fortsumterticketing.com/wp-json/wc/v3/customers/26"}]}}
+2025-07-24T22:33:56: Fort Sumter Tickets: After manipulation, data is:  {
+  id: 2222,
+  tourType: 'Fort Sumter Tour (From Liberty Square)',
+  bookingDate: '08/01/2025',
+  bookingTime: '2:45 PM',
+  bookingServiceCharges: '$39.75',
+  bookingSubTotal: '$142.00',
+  personNames: [],
+  ticketQuantity: 0,
+  adults: 2,
+  childs: 1,
+  senior_military: 1,
+  infants_under_three: 1,
+  card: { cvc: '853', expiration: '07/29', number: '4242 4242 4242 4242' },
+  billing: {
+    first_name: 'Zabair',
+    last_name: 'Test Order',
+    company: 'company',
+    address_1: '1755 Park St, Office 254, Suite 200 Office Evolution Naperville',
+    address_2: 'address2',
+    city: 'Oswego',
+    state: 'IL',
+    postcode: '60543',
+    country: 'US',
+    email: 'zabair@testorder.com',
+    phone: '18505584691'
+  }
+}
+2025-07-24T22:33:56: Starting booking automation process...
+2025-07-24T22:33:56: User Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 18_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1
+2025-07-24T22:33:56: Launching persistent context with profile: C:\Users\codea\Desktop\cityexperiencebot\automation\fort-sumter-tickets\Default
+2025-07-24T22:33:57: Context launched successfully
+2025-07-24T22:33:57: Pages here: <ref *1> Page {
+  _events: [Object: null prototype] {
+    close: [Function: bound _handle] { listener: [Function (anonymous)] },
+    crash: [Function: bound _handle] { listener: [Function (anonymous)] }
+  },
+  _eventsCount: 2,
+  _maxListeners: 0,
+  _pendingHandlers: Map(0) {},
+  _platform: {
+    name: 'node',
+    boxedStackPrefixes: [Function: boxedStackPrefixes],
+    calculateSha1: [Function: calculateSha1],
+    colors: {
+      themes: {},
+      styles: [Object],
+      supportsColor: [Function: wa],
+      enabled: true,
+      enable: [Function (anonymous)],
+      disable: [Function (anonymous)],
+      strip: [Function (anonymous)],
+      stripColors: [Function (anonymous)],
+      stylize: [Function (anonymous)],
+      setTheme: [Function (anonymous)],
+      trap: [Function (anonymous)],
+      zalgo: [Function (anonymous)],
+      maps: [Object],
+      america: [Function (anonymous)],
+      zebra: [Function (anonymous)],
+      rainbow: [Function (anonymous)],
+      random: [Function (anonymous)]
+    },
+    coreDir: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\node_modules\\playwright-core',
+    createGuid: [Function: createGuid],
+    defaultMaxListeners: [Function: defaultMaxListeners],
+    fs: [Function: fs],
+    env: {
+      ALCATRAZ_WC_REST_API_CONSUMER_KEY: 'ck_1a5ec6ebf993dc2e2ae5e20fbfaba5ef41a4cbe2',
+      ALCATRAZ_WC_REST_API_CONSUMER_SECRET: 'cs_cb14267ca4f1c5d49044259ac6df28f13f2d98a5',
+      ALCATRAZ_WP_ORDERS_URL: 'https://www.alcatrazticketing.com/wp-admin/admin.php?page=wc-orders',
+      ALCATRAZ_WP_SITE_URL: 'https://www.alcatrazticketing.com',
+      ALLUSERSPROFILE: 'C:\\ProgramData',
+      ANDROID_HOME: 'C:\\Users\\codea\\AppData\\Local\\Android\\Sdk',
+      APPDATA: 'C:\\Users\\codea\\AppData\\Roaming',
+      automation: 'true',
+      autorestart: 'true',
+      autostart: 'true',
+      axm_actions: '',
+      axm_dynamic: '[object Object]',
+      axm_monitor: '[object Object]',
+      axm_options: '[object Object]',
+      BAY_CRUISE_TICKETING_SITE_KEY: '463b917e-e264-403f-ad34-34af0ee10294',
+      BAY_CRUISE_TICKETING_WC_REST_API_CONSUMER_KEY: 'ck_e718ec7cda3fa4593a0de6920471902f53159663',
+      BAY_CRUISE_TICKETING_WC_REST_API_CONSUMER_SECRET: 'cs_c7479df0a9acacd12527b4b575299d59299cbc6f',
+      BAY_CRUISE_TICKETING_WP_ORDERS_URL: 'https://www.baycruisetickets.com/wp-admin/admin.php?page=wc-orders',
+      BAY_CRUISE_TICKETING_WP_SITE_URL: 'https://www.baycruisetickets.com',
+      'booking-service': '{}',
+      BOSTON_HARBOR_CRUISE_TICKETING_WC_REST_API_CONSUMER_KEY: 'ck_5d9fad177e091c0e9d780a5e8d72085340cec94f',
+      BOSTON_HARBOR_CRUISE_TICKETING_WC_REST_API_CONSUMER_SECRET: 'cs_546f8e271837e53ec6d02802e47e99d4748a8ed7',
+      BOSTON_HARBOR_CRUISE_TICKETING_WP_ORDERS_URL: 'https://bostoncruisetickets.com/wp-admin/admin.php?page=wc-orders',
+      BOSTON_HARBOR_CRUISE_TICKETING_WP_SITE_URL: 'https://bostoncruisetickets.com',
+      CAPTCHA_API_KEY: '9a6941172c5fefa1253e3c39d3496ecb',
+      CHROME_CRASHPAD_PIPE_NAME: '\\\\.\\pipe\\crashpad_17436_TCIABSYVLGGMWYST',
+      COLORTERM: 'truecolor',
+      CommonProgramFiles: 'C:\\Program Files\\Common Files',
+      'CommonProgramFiles(x86)': 'C:\\Program Files (x86)\\Common Files',
+      CommonProgramW6432: 'C:\\Program Files\\Common Files',
+      COMPUTERNAME: 'DESKTOP-AMN8J53',
+      ComSpec: 'C:\\WINDOWS\\system32\\cmd.exe',
+      created_at: '1753361512914',
+      DriverData: 'C:\\Windows\\System32\\Drivers\\DriverData',
+      EFC_1340_1262719628: '1',
+      EFC_1340_1592913036: '1',
+      EFC_1340_2283032206: '1',
+      EFC_1340_2775293581: '1',
+      EFC_1340_3789132940: '1',
+      env: '[object Object]',
+      env_production: '[object Object]',
+      error_file: './pm2_logs/err.log',
+      exec_interpreter: 'node',
+      exec_mode: 'cluster_mode',
+      exit_code: '1',
+      filter_env: '',
+      FORT_SUMTER_TICKETING_WC_REST_API_CONSUMER_KEY: 'ck_7f7b13db06a58fe6f674605621538683d94ad068',
+      FORT_SUMTER_TICKETING_WC_REST_API_CONSUMER_SECRET: 'cs_226df5fc1046313c8f99e0ecc7d70397a4cab7ac',
+      FORT_SUMTER_TICKETING_WP_ORDERS_URL: 'https://fortsumterticketing.com/wp-admin/admin.php?page=wc-orders',
+      FORT_SUMTER_TICKETING_WP_SITE_URL: 'https://fortsumterticketing.com',
+      FPS_BROWSER_APP_PROFILE_STRING: 'Internet Explorer',
+      FPS_BROWSER_USER_PROFILE_STRING: 'Default',
+      GIT_ASKPASS: 'c:\\Users\\codea\\AppData\\Local\\Programs\\Windsurf\\resources\\app\\extensions\\git\\dist\\askpass.sh',
+      HOMEDRIVE: 'C:',
+      HOMEPATH: '\\Users\\codea',
+      instances: '1',
+      instance_var: 'NODE_APP_INSTANCE',
+      JAVA_HOME: 'C:\\Program Files\\Java\\jdk-21',
+      KENNEDY_SPACE_CENTER_TICKETING_WC_REST_API_CONSUMER_KEY: 'ck_7f7b13db06a58fe6f674605621538683d94ad068',
+      KENNEDY_SPACE_CENTER_TICKETING_WC_REST_API_CONSUMER_SECRET: 'cs_226df5fc1046313c8f99e0ecc7d70397a4cab7ac',
+      KENNEDY_SPACE_CENTER_TICKETING_WP_ORDERS_URL: 'https://kennedyspacecenterticketing.com/wp-admin/admin.php?page=wc-orders',
+      KENNEDY_SPACE_CENTER_TICKETING_WP_SITE_URL: 'https://kennedyspacecenterticketing.com',
+      kill_retry_time: '100',
+      km_link: 'false',
+      LANG: 'en_US.UTF-8',
+      LOCALAPPDATA: 'C:\\Users\\codea\\AppData\\Local',
+      LOGONSERVER: '\\\\DESKTOP-AMN8J53',
+      log_date_format: 'YYYY-MM-DDTHH:mm:ss',
+      log_file: './pm2_logs/combined.log',
+      MAVEN_HOME: 'C:\\Program Files\\apache-maven-3.9.9-bin\\apache-maven-3.9.9',
+      max_memory_restart: '1073741824',
+      merge_logs: 'true',
+      MONGODB_DB_NAME: 'alcatraz_automation',
+      MONGODB_URI: 'mongodb+srv://admin:alcatraz6543@alcatrazmanagementclust.p4cghtd.mongodb.net/?retryWrites=true&w=majority&appName=AlcatrazManagementCluster',
+      name: 'booking-service',
+      namespace: 'default',
+      NIAGARA_CRUISE_TICKETING_WC_REST_API_CONSUMER_KEY: 'ck_e87054251a8748df98889beb5d71ccab28511d03',
+      NIAGARA_CRUISE_TICKETING_WC_REST_API_CONSUMER_SECRET: 'cs_9d3a1692aa5c55e59e411a5a9d772bfc833ee695',
+      NIAGARA_CRUISE_TICKETING_WP_ORDERS_URL: 'https://niagaracruisetickets.com/wp-admin/admin.php?page=wc-orders',
+      NIAGARA_CRUISE_TICKETING_WP_SITE_URL: 'https://niagaracruisetickets.com',
+      NODE_APP_INSTANCE: '0',
+      node_args: '',
+      NODE_ENV: 'development',
+      node_version: '22.14.0',
+      NUMBER_OF_PROCESSORS: '8',
+      OneDrive: 'C:\\Users\\codea\\OneDrive',
+      ORIGINAL_XDG_CURRENT_DESKTOP: 'undefined',
+      OS: 'Windows_NT',
+      out_file: './pm2_logs/out.log',
+      Path: 'C:\\Program Files\\Common Files\\Oracle\\Java\\javapath;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\nodejs\\;C:\\Program Files\\Java\\jdk-21\\bin;C:\\Program Files\\apache-maven-3.9.9-bin\\apache-maven-3.9.9\\bin;C:\\Program Files\\Git\\cmd;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;C:\\Program Files\\dotnet\\;C:\\Program Files\\ngrok;C:\\Users\\codea\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\;C:\\Users\\codea\\AppData\\Local\\Programs\\Python\\Python313\\;C:\\Users\\codea\\AppData\\Local\\Programs\\Python\\Launcher\\;C:\\Users\\codea\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\codea\\AppData\\Roaming\\npm;C:\\Users\\codea\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Program Files\\JetBrains\\PyCharm 2024.3.4\\bin;;C:\\Program Files\\JetBrains\\PyCharm Community Edition 2024.3.4\\bin;;C:\\Users\\codea\\AppData\\Local\\Programs\\Windsurf\\bin',
+      PATHEXT: '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL',
+      PM2_HOME: 'C:\\Users\\codea\\.pm2',
+      PM2_INTERACTOR_PROCESSING: 'true',
+      PM2_JSON_PROCESSING: 'true',
+      PM2_USAGE: 'CLI',
+      pmx: 'true',
+      pm_cwd: 'C:\\Users\\codea\\Desktop\\cityexperiencebot',
+      pm_err_log_path: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\pm2_logs\\err.log',
+      pm_exec_path: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\server.js',
+      pm_id: '0',
+      pm_log_path: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\pm2_logs\\combined.log',
+      pm_out_log_path: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\pm2_logs\\out.log',
+      pm_pid_path: 'C:\\Users\\codea\\.pm2\\pids\\booking-service-0.pid',
+      pm_uptime: '1753361513337',
+      POTOMAC_WC_REST_API_CONSUMER_KEY: 'ck_6950b02033691995ed6326a65450cafea9770d1f',
+      POTOMAC_WC_REST_API_CONSUMER_SECRET: 'cs_940092bd2d1209fa6946a76ed695ae8c1ba31b6d',
+      POTOMAC_WP_ORDERS_URL: 'https://potomacticketing.com/wp-admin/admin.php?page=wc-orders',
+      POTOMAC_WP_SITE_URL: 'https://www.potomacticketing.com',
+      prev_restart_delay: '0',
+      PROCESSOR_ARCHITECTURE: 'AMD64',
+      PROCESSOR_IDENTIFIER: 'Intel64 Family 6 Model 142 Stepping 12, GenuineIntel',
+      PROCESSOR_LEVEL: '6',
+      PROCESSOR_REVISION: '8e0c',
+      PROFILE_DATA: 'C:\\Users\\codea\\AppData\\Local\\Google\\Chrome\\User Data\\Default',
+      ProgramData: 'C:\\ProgramData',
+      ProgramFiles: 'C:\\Program Files',
+      'ProgramFiles(x86)': 'C:\\Program Files (x86)',
+      ProgramW6432: 'C:\\Program Files',
+      PSModulePath: 'C:\\Users\\codea\\Documents\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsPowerShell\\Modules;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules',
+      PUBLIC: 'C:\\Users\\Public',
+      PyCharm: 'C:\\Program Files\\JetBrains\\PyCharm 2024.3.4\\bin;',
+      'PyCharm Community Edition': 'C:\\Program Files\\JetBrains\\PyCharm Community Edition 2024.3.4\\bin;',
+      restart_time: '73',
+      SCRAPEOPS_API_KEY: '21729cb2-2903-4ed0-b2f8-0eea01714a24',
+      SCRAPEOPS_PROXY_URL: 'proxy.scrapeops.io:5353',
+      script: 'server.js',
+      SENDER_EMAIL: 'farhan.qat321@gmail.com',
+      SENDER_EMAIL_PSWD: 'tedj tjzy oaso rgsd',
+      SERVICE_CHARGES_URL: 'http://localhost:3000/',
+      SESSIONNAME: 'Console',
+      SILENT: 'true',
+      STATUE_WC_REST_API_CONSUMER_KEY: 'ck_cbba34f57a3c47a6670988fa95ab182fac66b2af',
+      STATUE_WC_REST_API_CONSUMER_SECRET: 'cs_61092021788f78c07f0b32dd326bcda431b66898',
+      STATUE_WP_ORDERS_URL: 'https://www.statueticketing.com/wp-admin/admin.php?page=wc-orders',
+      STATUE_WP_SITE_URL: 'https://www.statueticketing.com',
+      status: 'launching',
+      STRIPE_SECRET_KEY: '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',
+      SystemDrive: 'C:',
+      SystemRoot: 'C:\\WINDOWS',
+      TEMP: 'C:\\Users\\codea\\AppData\\Local\\Temp',
+      TERM_PROGRAM: 'vscode',
+      TERM_PROGRAM_VERSION: '1.99.3',
+      time: 'true',
+      TMP: 'C:\\Users\\codea\\AppData\\Local\\Temp',
+      treekill: 'true',
+      unique_id: '6beb4d3d-7191-4d53-8201-78c442e32b21',
+      unstable_restarts: '0',
+      USERDOMAIN: 'DESKTOP-AMN8J53',
+      USERDOMAIN_ROAMINGPROFILE: 'DESKTOP-AMN8J53',
+      USERNAME: 'codea',
+      USERPROFILE: 'C:\\Users\\codea',
+      version: '1.0.0',
+      vizion: 'true',
+      vizion_running: 'false',
+      VSCODE_GIT_ASKPASS_EXTRA_ARGS: '',
+      VSCODE_GIT_ASKPASS_MAIN: 'c:\\Users\\codea\\AppData\\Local\\Programs\\Windsurf\\resources\\app\\extensions\\git\\dist\\askpass-main.js',
+      VSCODE_GIT_ASKPASS_NODE: 'C:\\Users\\codea\\AppData\\Local\\Programs\\Windsurf\\Windsurf.exe',
+      VSCODE_GIT_IPC_HANDLE: '\\\\.\\pipe\\vscode-git-8b04ed4021-sock',
+      VSCODE_INJECTION: '1',
+      watch: 'false',
+      windir: 'C:\\WINDOWS',
+      windowsHide: 'true',
+      ZES_ENABLE_SYSMAN: '1',
+      _pm2_version: '6.0.8'
+    },
+    inspectCustom: Symbol(nodejs.util.inspect.custom),
+    isDebugMode: [Function: isDebugMode],
+    isJSDebuggerAttached: [Function: isJSDebuggerAttached],
+    isLogEnabled: [Function: isLogEnabled],
+    isUnderTest: [Function: isUnderTest],
+    log: [Function: log],
+    path: [Function: path],
+    pathSeparator: '\\',
+    showInternalStackFrames: [Function: showInternalStackFrames],
+    streamFile: [AsyncFunction: streamFile],
+    streamReadable: [Function: streamReadable],
+    streamWritable: [Function: streamWritable],
+    zones: { current: [Function: current], empty: [NodeZone] }
+  },
+  on: [Function: addListener],
+  off: [Function: removeListener],
+  _objects: Map(1) {
+    'frame@3b1df9578f23d60d87bbb6a644321788' => Frame {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: Map(0) {},
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: false,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'Frame',
+      _guid: 'frame@3b1df9578f23d60d87bbb6a644321788',
+      _parent: [Circular *1],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: [Object],
+      _parentFrame: null,
+      _url: 'about:blank',
+      _name: '',
+      _detached: false,
+      _childFrames: Set(0) {},
+      _eventEmitter: [EventEmitter],
+      _loadStates: [Set],
+      _page: [Circular *1]
+    }
+  },
+  _eventToSubscriptionMapping: Map(7) {
+    'console' => 'console',
+    'dialog' => 'dialog',
+    'request' => 'request',
+    'response' => 'response',
+    'requestfinished' => 'requestFinished',
+    'requestfailed' => 'requestFailed',
+    'filechooser' => 'fileChooser'
+  },
+  _isInternalType: false,
+  _wasCollected: false,
+  _connection: <ref *2> Connection {
+    _events: [Object: null prototype] { close: [Function (anonymous)] },
+    _eventsCount: 1,
+    _maxListeners: undefined,
+    _pendingHandlers: Map(0) {},
+    _platform: {
+      name: 'node',
+      boxedStackPrefixes: [Function: boxedStackPrefixes],
+      calculateSha1: [Function: calculateSha1],
+      colors: [Object],
+      coreDir: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\node_modules\\playwright-core',
+      createGuid: [Function: createGuid],
+      defaultMaxListeners: [Function: defaultMaxListeners],
+      fs: [Function: fs],
+      env: [Object],
+      inspectCustom: Symbol(nodejs.util.inspect.custom),
+      isDebugMode: [Function: isDebugMode],
+      isJSDebuggerAttached: [Function: isJSDebuggerAttached],
+      isLogEnabled: [Function: isLogEnabled],
+      isUnderTest: [Function: isUnderTest],
+      log: [Function: log],
+      path: [Function: path],
+      pathSeparator: '\\',
+      showInternalStackFrames: [Function: showInternalStackFrames],
+      streamFile: [AsyncFunction: streamFile],
+      streamReadable: [Function: streamReadable],
+      streamWritable: [Function: streamWritable],
+      zones: [Object]
+    },
+    on: [Function: addListener],
+    off: [Function: removeListener],
+    _objects: Map(16) {
+      '' => [Root],
+      'android@06ec1b2fd64141b68d6b096cdddfb3a9' => [Android],
+      'browser-type@611e09190d8a2c83a686c3eb2f685d7e' => [BrowserType],
+      'browser-type@d3a2ba6b969266fa1303eea5ccc29209' => [BrowserType],
+      'browser-type@9032101346e4bb07586f2d12c35f6f6f' => [BrowserType],
+      'browser-type@a273939286a548be1ef10bb00b67c780' => [BrowserType],
+      'browser-type@a6554c05483b509e6c6a3b2922375e7b' => [BrowserType],
+      'electron@9b8de9bd5e3edf8b9affa8bbf256b826' => [Electron],
+      'localUtils' => [LocalUtils],
+      'selectors@26860c3a9c287dd0b36afc8f8afff99a' => [SelectorsOwner],
+      'Playwright' => [Playwright],
+      'tracing@d591515e3aef572ff1c96930dd4f50e1' => [Tracing],
+      'request-context@5ea1c1bf0ed4f8538534b2fb613e64d4' => [APIRequestContext],
+      'browser-context@4132f2ed75cc8a49289f548f862974c3' => [BrowserContext],
+      'frame@3b1df9578f23d60d87bbb6a644321788' => [Frame],
+      'page@55ecf816068ba6372626a9bd25a9946a' => [Circular *1]
+    },
+    onmessage: [Function (anonymous)],
+    _lastId: 1,
+    _callbacks: Map(0) {},
+    _isRemote: false,
+    _rawBuffers: true,
+    _tracingCount: 0,
+    _instrumentation: {},
+    _localUtils: LocalUtils {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: Map(0) {},
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: true,
+      _wasCollected: false,
+      _connection: [Circular *2],
+      _type: 'LocalUtils',
+      _guid: 'localUtils',
+      _parent: [Root],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: [Object],
+      devices: [Object]
+    },
+    _rootObject: Root {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: [Map],
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: false,
+      _wasCollected: false,
+      _connection: [Circular *2],
+      _type: 'Root',
+      _guid: '',
+      _parent: undefined,
+      _instrumentation: {},
+      _channel: [EventEmitter],
+      _initializer: {}
+    },
+    headers: [],
+    toImpl: [Function (anonymous)]
+  },
+  _type: 'Page',
+  _guid: 'page@55ecf816068ba6372626a9bd25a9946a',
+  _parent: <ref *3> BrowserContext {
+    _events: [Object: null prototype] { close: [Function] },
+    _eventsCount: 1,
+    _maxListeners: 0,
+    _pendingHandlers: Map(0) {},
+    _platform: {
+      name: 'node',
+      boxedStackPrefixes: [Function: boxedStackPrefixes],
+      calculateSha1: [Function: calculateSha1],
+      colors: [Object],
+      coreDir: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\node_modules\\playwright-core',
+      createGuid: [Function: createGuid],
+      defaultMaxListeners: [Function: defaultMaxListeners],
+      fs: [Function: fs],
+      env: [Object],
+      inspectCustom: Symbol(nodejs.util.inspect.custom),
+      isDebugMode: [Function: isDebugMode],
+      isJSDebuggerAttached: [Function: isJSDebuggerAttached],
+      isLogEnabled: [Function: isLogEnabled],
+      isUnderTest: [Function: isUnderTest],
+      log: [Function: log],
+      path: [Function: path],
+      pathSeparator: '\\',
+      showInternalStackFrames: [Function: showInternalStackFrames],
+      streamFile: [AsyncFunction: streamFile],
+      streamReadable: [Function: streamReadable],
+      streamWritable: [Function: streamWritable],
+      zones: [Object]
+    },
+    on: [Function: addListener],
+    off: [Function: removeListener],
+    _objects: Map(3) {
+      'request-context@5ea1c1bf0ed4f8538534b2fb613e64d4' => [APIRequestContext],
+      'tracing@d591515e3aef572ff1c96930dd4f50e1' => [Tracing],
+      'page@55ecf816068ba6372626a9bd25a9946a' => [Circular *1]
+    },
+    _eventToSubscriptionMapping: Map(6) {
+      'console' => 'console',
+      'dialog' => 'dialog',
+      'request' => 'request',
+      'response' => 'response',
+      'requestfinished' => 'requestFinished',
+      'requestfailed' => 'requestFailed'
+    },
+    _isInternalType: false,
+    _wasCollected: false,
+    _connection: <ref *2> Connection {
+      _events: [Object: null prototype],
+      _eventsCount: 1,
+      _maxListeners: undefined,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: [Map],
+      onmessage: [Function (anonymous)],
+      _lastId: 1,
+      _callbacks: Map(0) {},
+      _isRemote: false,
+      _rawBuffers: true,
+      _tracingCount: 0,
+      _instrumentation: {},
+      _localUtils: [LocalUtils],
+      _rootObject: [Root],
+      headers: [],
+      toImpl: [Function (anonymous)]
+    },
+    _type: 'BrowserContext',
+    _guid: 'browser-context@4132f2ed75cc8a49289f548f862974c3',
+    _parent: BrowserType {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: [Map],
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: false,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'BrowserType',
+      _guid: 'browser-type@611e09190d8a2c83a686c3eb2f685d7e',
+      _parent: [Root],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: [Object],
+      _contexts: [Set],
+      _playwright: [Playwright],
+      _serverLauncher: [BrowserServerLauncherImpl]
+    },
+    _instrumentation: {},
+    _logger: undefined,
+    _channel: EventEmitter {
+      _events: [Object: null prototype],
+      _eventsCount: 14,
+      _maxListeners: undefined,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _object: [Circular *3]
+    },
+    _initializer: {
+      isChromium: true,
+      requestContext: [EventEmitter],
+      tracing: [EventEmitter]
+    },
+    _pages: Set(1) { [Circular *1] },
+    _routes: [],
+    _webSocketRoutes: [],
+    _browser: null,
+    _bindings: Map(0) {},
+    _options: {
+      headless: false,
+      timeout: 55000,
+      channel: 'chrome',
+      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1',
+      viewport: undefined,
+      noDefaultViewport: false,
+      extraHTTPHeaders: undefined,
+      storageState: undefined,
+      serviceWorkers: undefined,
+      recordHar: undefined,
+      colorScheme: undefined,
+      reducedMotion: undefined,
+      forcedColors: undefined,
+      contrast: undefined,
+      acceptDownloads: undefined,
+      clientCertificates: undefined
+    },
+    _backgroundPages: Set(0) {},
+    _serviceWorkers: Set(0) {},
+    _harRecorders: Map(0) {},
+    _closeWasCalled: false,
+    _harRouters: [],
+    _timeoutSettings: TimeoutSettings { _parent: undefined, _platform: [Object] },
+    _isChromium: false,
+    tracing: Tracing {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: Map(0) {},
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: true,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'Tracing',
+      _guid: 'tracing@d591515e3aef572ff1c96930dd4f50e1',
+      _parent: [Circular *3],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: {},
+      _includeSources: false,
+      _isTracing: false,
+      _tracesDir: undefined
+    },
+    request: APIRequestContext {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: Map(0) {},
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: false,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'APIRequestContext',
+      _guid: 'request-context@5ea1c1bf0ed4f8538534b2fb613e64d4',
+      _parent: [Circular *3],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: [Object],
+      _tracing: [Tracing]
+    },
+    clock: Clock { _browserContext: [Circular *3] },
+    _closedPromise: Promise {
+      <pending>,
+      [Symbol(async_id_symbol)]: 530717,
+      [Symbol(trigger_async_id_symbol)]: 530700,
+      [Symbol(kResourceStore)]: [Zone]
+    },
+    _browserType: BrowserType {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: [Map],
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: false,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'BrowserType',
+      _guid: 'browser-type@611e09190d8a2c83a686c3eb2f685d7e',
+      _parent: [Root],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: [Object],
+      _contexts: [Set],
+      _playwright: [Playwright],
+      _serverLauncher: [BrowserServerLauncherImpl]
+    }
+  },
+  _instrumentation: {},
+  _logger: undefined,
+  _channel: EventEmitter {
+    _events: [Object: null prototype] {
+      bindingCall: [Function (anonymous)],
+      close: [Function (anonymous)],
+      crash: [Function (anonymous)],
+      download: [Function (anonymous)],
+      fileChooser: [Function (anonymous)],
+      frameAttached: [Function (anonymous)],
+      frameDetached: [Function (anonymous)],
+      locatorHandlerTriggered: [Function (anonymous)],
+      route: [Function (anonymous)],
+      webSocketRoute: [Function (anonymous)],
+      video: [Function (anonymous)],
+      webSocket: [Function (anonymous)],
+      worker: [Function (anonymous)]
+    },
+    _eventsCount: 13,
+    _maxListeners: undefined,
+    _pendingHandlers: Map(0) {},
+    _platform: {
+      name: 'node',
+      boxedStackPrefixes: [Function: boxedStackPrefixes],
+      calculateSha1: [Function: calculateSha1],
+      colors: [Object],
+      coreDir: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\node_modules\\playwright-core',
+      createGuid: [Function: createGuid],
+      defaultMaxListeners: [Function: defaultMaxListeners],
+      fs: [Function: fs],
+      env: [Object],
+      inspectCustom: Symbol(nodejs.util.inspect.custom),
+      isDebugMode: [Function: isDebugMode],
+      isJSDebuggerAttached: [Function: isJSDebuggerAttached],
+      isLogEnabled: [Function: isLogEnabled],
+      isUnderTest: [Function: isUnderTest],
+      log: [Function: log],
+      path: [Function: path],
+      pathSeparator: '\\',
+      showInternalStackFrames: [Function: showInternalStackFrames],
+      streamFile: [AsyncFunction: streamFile],
+      streamReadable: [Function: streamReadable],
+      streamWritable: [Function: streamWritable],
+      zones: [Object]
+    },
+    on: [Function: addListener],
+    off: [Function: removeListener],
+    _object: [Circular *1]
+  },
+  _initializer: {
+    mainFrame: EventEmitter {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _object: [Frame]
+    },
+    viewportSize: { width: 1280, height: 720 },
+    isClosed: false
+  },
+  _frames: Set(1) {
+    Frame {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: Map(0) {},
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: false,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'Frame',
+      _guid: 'frame@3b1df9578f23d60d87bbb6a644321788',
+      _parent: [Circular *1],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: [Object],
+      _parentFrame: null,
+      _url: 'about:blank',
+      _name: '',
+      _detached: false,
+      _childFrames: Set(0) {},
+      _eventEmitter: [EventEmitter],
+      _loadStates: [Set],
+      _page: [Circular *1]
+    }
+  },
+  _workers: Set(0) {},
+  _closed: false,
+  _closedOrCrashedScope: LongStandingScope { _terminatePromises: Map(0) {}, _isClosed: false },
+  _routes: [],
+  _webSocketRoutes: [],
+  _bindings: Map(0) {},
+  _video: null,
+  _closeWasCalled: false,
+  _harRouters: [],
+  _locatorHandlers: Map(0) {},
+  _browserContext: <ref *3> BrowserContext {
+    _events: [Object: null prototype] { close: [Function] },
+    _eventsCount: 1,
+    _maxListeners: 0,
+    _pendingHandlers: Map(0) {},
+    _platform: {
+      name: 'node',
+      boxedStackPrefixes: [Function: boxedStackPrefixes],
+      calculateSha1: [Function: calculateSha1],
+      colors: [Object],
+      coreDir: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\node_modules\\playwright-core',
+      createGuid: [Function: createGuid],
+      defaultMaxListeners: [Function: defaultMaxListeners],
+      fs: [Function: fs],
+      env: [Object],
+      inspectCustom: Symbol(nodejs.util.inspect.custom),
+      isDebugMode: [Function: isDebugMode],
+      isJSDebuggerAttached: [Function: isJSDebuggerAttached],
+      isLogEnabled: [Function: isLogEnabled],
+      isUnderTest: [Function: isUnderTest],
+      log: [Function: log],
+      path: [Function: path],
+      pathSeparator: '\\',
+      showInternalStackFrames: [Function: showInternalStackFrames],
+      streamFile: [AsyncFunction: streamFile],
+      streamReadable: [Function: streamReadable],
+      streamWritable: [Function: streamWritable],
+      zones: [Object]
+    },
+    on: [Function: addListener],
+    off: [Function: removeListener],
+    _objects: Map(3) {
+      'request-context@5ea1c1bf0ed4f8538534b2fb613e64d4' => [APIRequestContext],
+      'tracing@d591515e3aef572ff1c96930dd4f50e1' => [Tracing],
+      'page@55ecf816068ba6372626a9bd25a9946a' => [Circular *1]
+    },
+    _eventToSubscriptionMapping: Map(6) {
+      'console' => 'console',
+      'dialog' => 'dialog',
+      'request' => 'request',
+      'response' => 'response',
+      'requestfinished' => 'requestFinished',
+      'requestfailed' => 'requestFailed'
+    },
+    _isInternalType: false,
+    _wasCollected: false,
+    _connection: <ref *2> Connection {
+      _events: [Object: null prototype],
+      _eventsCount: 1,
+      _maxListeners: undefined,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: [Map],
+      onmessage: [Function (anonymous)],
+      _lastId: 1,
+      _callbacks: Map(0) {},
+      _isRemote: false,
+      _rawBuffers: true,
+      _tracingCount: 0,
+      _instrumentation: {},
+      _localUtils: [LocalUtils],
+      _rootObject: [Root],
+      headers: [],
+      toImpl: [Function (anonymous)]
+    },
+    _type: 'BrowserContext',
+    _guid: 'browser-context@4132f2ed75cc8a49289f548f862974c3',
+    _parent: BrowserType {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: [Map],
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: false,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'BrowserType',
+      _guid: 'browser-type@611e09190d8a2c83a686c3eb2f685d7e',
+      _parent: [Root],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: [Object],
+      _contexts: [Set],
+      _playwright: [Playwright],
+      _serverLauncher: [BrowserServerLauncherImpl]
+    },
+    _instrumentation: {},
+    _logger: undefined,
+    _channel: EventEmitter {
+      _events: [Object: null prototype],
+      _eventsCount: 14,
+      _maxListeners: undefined,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _object: [Circular *3]
+    },
+    _initializer: {
+      isChromium: true,
+      requestContext: [EventEmitter],
+      tracing: [EventEmitter]
+    },
+    _pages: Set(1) { [Circular *1] },
+    _routes: [],
+    _webSocketRoutes: [],
+    _browser: null,
+    _bindings: Map(0) {},
+    _options: {
+      headless: false,
+      timeout: 55000,
+      channel: 'chrome',
+      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1',
+      viewport: undefined,
+      noDefaultViewport: false,
+      extraHTTPHeaders: undefined,
+      storageState: undefined,
+      serviceWorkers: undefined,
+      recordHar: undefined,
+      colorScheme: undefined,
+      reducedMotion: undefined,
+      forcedColors: undefined,
+      contrast: undefined,
+      acceptDownloads: undefined,
+      clientCertificates: undefined
+    },
+    _backgroundPages: Set(0) {},
+    _serviceWorkers: Set(0) {},
+    _harRecorders: Map(0) {},
+    _closeWasCalled: false,
+    _harRouters: [],
+    _timeoutSettings: TimeoutSettings { _parent: undefined, _platform: [Object] },
+    _isChromium: false,
+    tracing: Tracing {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: Map(0) {},
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: true,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'Tracing',
+      _guid: 'tracing@d591515e3aef572ff1c96930dd4f50e1',
+      _parent: [Circular *3],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: {},
+      _includeSources: false,
+      _isTracing: false,
+      _tracesDir: undefined
+    },
+    request: APIRequestContext {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: Map(0) {},
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: false,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'APIRequestContext',
+      _guid: 'request-context@5ea1c1bf0ed4f8538534b2fb613e64d4',
+      _parent: [Circular *3],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: [Object],
+      _tracing: [Tracing]
+    },
+    clock: Clock { _browserContext: [Circular *3] },
+    _closedPromise: Promise {
+      <pending>,
+      [Symbol(async_id_symbol)]: 530717,
+      [Symbol(trigger_async_id_symbol)]: 530700,
+      [Symbol(kResourceStore)]: [Zone]
+    },
+    _browserType: BrowserType {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: [Map],
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: false,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'BrowserType',
+      _guid: 'browser-type@611e09190d8a2c83a686c3eb2f685d7e',
+      _parent: [Root],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: [Object],
+      _contexts: [Set],
+      _playwright: [Playwright],
+      _serverLauncher: [BrowserServerLauncherImpl]
+    }
+  },
+  _timeoutSettings: TimeoutSettings {
+    _parent: TimeoutSettings { _parent: undefined, _platform: [Object] },
+    _platform: {
+      name: 'node',
+      boxedStackPrefixes: [Function: boxedStackPrefixes],
+      calculateSha1: [Function: calculateSha1],
+      colors: [Object],
+      coreDir: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\node_modules\\playwright-core',
+      createGuid: [Function: createGuid],
+      defaultMaxListeners: [Function: defaultMaxListeners],
+      fs: [Function: fs],
+      env: [Object],
+      inspectCustom: Symbol(nodejs.util.inspect.custom),
+      isDebugMode: [Function: isDebugMode],
+      isJSDebuggerAttached: [Function: isJSDebuggerAttached],
+      isLogEnabled: [Function: isLogEnabled],
+      isUnderTest: [Function: isUnderTest],
+      log: [Function: log],
+      path: [Function: path],
+      pathSeparator: '\\',
+      showInternalStackFrames: [Function: showInternalStackFrames],
+      streamFile: [AsyncFunction: streamFile],
+      streamReadable: [Function: streamReadable],
+      streamWritable: [Function: streamWritable],
+      zones: [Object]
+    }
+  },
+  accessibility: Accessibility {
+    _channel: EventEmitter {
+      _events: [Object: null prototype],
+      _eventsCount: 13,
+      _maxListeners: undefined,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _object: [Circular *1]
+    }
+  },
+  keyboard: Keyboard { _page: [Circular *1] },
+  mouse: Mouse { _page: [Circular *1] },
+  request: <ref *4> APIRequestContext {
+    _events: [Object: null prototype] {},
+    _eventsCount: 0,
+    _maxListeners: 0,
+    _pendingHandlers: Map(0) {},
+    _platform: {
+      name: 'node',
+      boxedStackPrefixes: [Function: boxedStackPrefixes],
+      calculateSha1: [Function: calculateSha1],
+      colors: [Object],
+      coreDir: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\node_modules\\playwright-core',
+      createGuid: [Function: createGuid],
+      defaultMaxListeners: [Function: defaultMaxListeners],
+      fs: [Function: fs],
+      env: [Object],
+      inspectCustom: Symbol(nodejs.util.inspect.custom),
+      isDebugMode: [Function: isDebugMode],
+      isJSDebuggerAttached: [Function: isJSDebuggerAttached],
+      isLogEnabled: [Function: isLogEnabled],
+      isUnderTest: [Function: isUnderTest],
+      log: [Function: log],
+      path: [Function: path],
+      pathSeparator: '\\',
+      showInternalStackFrames: [Function: showInternalStackFrames],
+      streamFile: [AsyncFunction: streamFile],
+      streamReadable: [Function: streamReadable],
+      streamWritable: [Function: streamWritable],
+      zones: [Object]
+    },
+    on: [Function: addListener],
+    off: [Function: removeListener],
+    _objects: Map(0) {},
+    _eventToSubscriptionMapping: Map(0) {},
+    _isInternalType: false,
+    _wasCollected: false,
+    _connection: <ref *2> Connection {
+      _events: [Object: null prototype],
+      _eventsCount: 1,
+      _maxListeners: undefined,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: [Map],
+      onmessage: [Function (anonymous)],
+      _lastId: 1,
+      _callbacks: Map(0) {},
+      _isRemote: false,
+      _rawBuffers: true,
+      _tracingCount: 0,
+      _instrumentation: {},
+      _localUtils: [LocalUtils],
+      _rootObject: [Root],
+      headers: [],
+      toImpl: [Function (anonymous)]
+    },
+    _type: 'APIRequestContext',
+    _guid: 'request-context@5ea1c1bf0ed4f8538534b2fb613e64d4',
+    _parent: <ref *3> BrowserContext {
+      _events: [Object: null prototype],
+      _eventsCount: 1,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: [Map],
+      _eventToSubscriptionMapping: [Map],
+      _isInternalType: false,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'BrowserContext',
+      _guid: 'browser-context@4132f2ed75cc8a49289f548f862974c3',
+      _parent: [BrowserType],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: [Object],
+      _pages: [Set],
+      _routes: [],
+      _webSocketRoutes: [],
+      _browser: null,
+      _bindings: Map(0) {},
+      _options: [Object],
+      _backgroundPages: Set(0) {},
+      _serviceWorkers: Set(0) {},
+      _harRecorders: Map(0) {},
+      _closeWasCalled: false,
+      _harRouters: [],
+      _timeoutSettings: [TimeoutSettings],
+      _isChromium: false,
+      tracing: [Tracing],
+      request: [Circular *4],
+      clock: [Clock],
+      _closedPromise: [Promise],
+      _browserType: [BrowserType]
+    },
+    _instrumentation: {},
+    _logger: undefined,
+    _channel: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: undefined,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _object: [Circular *4]
+    },
+    _initializer: { tracing: [EventEmitter] },
+    _tracing: Tracing {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: Map(0) {},
+      _eventToSubscriptionMapping: Map(0) {},
+      _isInternalType: true,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'Tracing',
+      _guid: 'tracing@d591515e3aef572ff1c96930dd4f50e1',
+      _parent: [BrowserContext],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: {},
+      _includeSources: false,
+      _isTracing: false,
+      _tracesDir: undefined
+    }
+  },
+  touchscreen: Touchscreen { _page: [Circular *1] },
+  clock: <ref *5> Clock {
+    _browserContext: <ref *3> BrowserContext {
+      _events: [Object: null prototype],
+      _eventsCount: 1,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: [Map],
+      _eventToSubscriptionMapping: [Map],
+      _isInternalType: false,
+      _wasCollected: false,
+      _connection: [Connection],
+      _type: 'BrowserContext',
+      _guid: 'browser-context@4132f2ed75cc8a49289f548f862974c3',
+      _parent: [BrowserType],
+      _instrumentation: {},
+      _logger: undefined,
+      _channel: [EventEmitter],
+      _initializer: [Object],
+      _pages: [Set],
+      _routes: [],
+      _webSocketRoutes: [],
+      _browser: null,
+      _bindings: Map(0) {},
+      _options: [Object],
+      _backgroundPages: Set(0) {},
+      _serviceWorkers: Set(0) {},
+      _harRecorders: Map(0) {},
+      _closeWasCalled: false,
+      _harRouters: [],
+      _timeoutSettings: [TimeoutSettings],
+      _isChromium: false,
+      tracing: [Tracing],
+      request: [APIRequestContext],
+      clock: [Circular *5],
+      _closedPromise: [Promise],
+      _browserType: [BrowserType]
+    }
+  },
+  _mainFrame: <ref *6> Frame {
+    _events: [Object: null prototype] {},
+    _eventsCount: 0,
+    _maxListeners: 0,
+    _pendingHandlers: Map(0) {},
+    _platform: {
+      name: 'node',
+      boxedStackPrefixes: [Function: boxedStackPrefixes],
+      calculateSha1: [Function: calculateSha1],
+      colors: [Object],
+      coreDir: 'C:\\Users\\codea\\Desktop\\cityexperiencebot\\node_modules\\playwright-core',
+      createGuid: [Function: createGuid],
+      defaultMaxListeners: [Function: defaultMaxListeners],
+      fs: [Function: fs],
+      env: [Object],
+      inspectCustom: Symbol(nodejs.util.inspect.custom),
+      isDebugMode: [Function: isDebugMode],
+      isJSDebuggerAttached: [Function: isJSDebuggerAttached],
+      isLogEnabled: [Function: isLogEnabled],
+      isUnderTest: [Function: isUnderTest],
+      log: [Function: log],
+      path: [Function: path],
+      pathSeparator: '\\',
+      showInternalStackFrames: [Function: showInternalStackFrames],
+      streamFile: [AsyncFunction: streamFile],
+      streamReadable: [Function: streamReadable],
+      streamWritable: [Function: streamWritable],
+      zones: [Object]
+    },
+    on: [Function: addListener],
+    off: [Function: removeListener],
+    _objects: Map(0) {},
+    _eventToSubscriptionMapping: Map(0) {},
+    _isInternalType: false,
+    _wasCollected: false,
+    _connection: <ref *2> Connection {
+      _events: [Object: null prototype],
+      _eventsCount: 1,
+      _maxListeners: undefined,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _objects: [Map],
+      onmessage: [Function (anonymous)],
+      _lastId: 1,
+      _callbacks: Map(0) {},
+      _isRemote: false,
+      _rawBuffers: true,
+      _tracingCount: 0,
+      _instrumentation: {},
+      _localUtils: [LocalUtils],
+      _rootObject: [Root],
+      headers: [],
+      toImpl: [Function (anonymous)]
+    },
+    _type: 'Frame',
+    _guid: 'frame@3b1df9578f23d60d87bbb6a644321788',
+    _parent: [Circular *1],
+    _instrumentation: {},
+    _logger: undefined,
+    _channel: EventEmitter {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _object: [Circular *6]
+    },
+    _initializer: { url: 'about:blank', name: '', loadStates: [Array] },
+    _parentFrame: null,
+    _url: 'about:blank',
+    _name: '',
+    _detached: false,
+    _childFrames: Set(0) {},
+    _eventEmitter: EventEmitter {
+      _events: [Object: null prototype] {},
+      _eventsCount: 0,
+      _maxListeners: 0,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener]
+    },
+    _loadStates: Set(3) { 'commit', 'domcontentloaded', 'load' },
+    _page: [Circular *1]
+  },
+  _viewportSize: { width: 1280, height: 720 },
+  _opener: null,
+  coverage: Coverage {
+    _channel: EventEmitter {
+      _events: [Object: null prototype],
+      _eventsCount: 13,
+      _maxListeners: undefined,
+      _pendingHandlers: Map(0) {},
+      _platform: [Object],
+      on: [Function: addListener],
+      off: [Function: removeListener],
+      _object: [Circular *1]
+    }
+  }
+}
+2025-07-24T22:34:02: New Page opening...
+2025-07-24T22:34:02: Starting booking automation...
