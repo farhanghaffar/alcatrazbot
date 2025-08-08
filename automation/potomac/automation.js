@@ -462,11 +462,16 @@ async function potomacTourBooking(bookingData, tries) {
     const nestedIframe = frameHandle.frameLocator(
       'iframe[name="chaseHostedPayment"]'
     );
-
+    
     // Card Zip
     const cardZipInput = nestedIframe.locator(".creZipField");
-    await expect(cardZipInput).toBeVisible({ timeout: 30000 });
+    const isCardZipCodeInputVisible = await cardZipInput.isVisible();
+    if (isCardZipCodeInputVisible) {
+    // await expect(cardZipInput).toBeVisible({ timeout: 30000 });
     await typeWithDelay(cardZipInput, cardInfo.cardZip);
+    } else {
+      console.log('Card Zipcode field not visible');
+    }
 
     // Card Number
     const cardNumberInput = nestedIframe.locator(".creNumberField");
