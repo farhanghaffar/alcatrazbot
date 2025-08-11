@@ -285,9 +285,9 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         await page.waitForTimeout(randomtime);
 
         const checkoutNowBtn = await frameHandle.locator('[data-bdd="checkout-now-button"]').filter({hasText: 'Checkout Now'});
-        await page.waitForTimeout(5000);
+        await page.waitForTimeout(15000);
         const checkoutNowBtnVisible = await checkoutNowBtn.isVisible();
-        await page.waitForTimeout(6000);
+        await page.waitForTimeout(15000);
         if(addToCartBtnVisible) {
             await addToCartBtn.click();
             await page.waitForSelector('iframe.zoid-component-frame', { timeout: 120000 });
