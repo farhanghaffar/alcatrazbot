@@ -1,20 +1,24 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { statueTicketingBookTour } = require('./statueticketing-booking');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { alcatrazBookTour } = require('./alcatraz-booking');
 const cors = require('cors');
 const { ServiceCharges } = require('./automation/service-charges');
 require('dotenv').config();
+const { alcatrazBookTour } = require('./alcatraz-booking');
+const { statueTicketingBookTour } = require('./statueticketing-booking');
 const { potomacTourBooking } = require('./automation/potomac/automation');
 const { BayCruiseTickets } = require('./automation/bay-cruise-tickets/automation');
 const { bostonHarborCruise } = require('./automation/boston-harbor-cruise/automation');
 const { NiagaraCruiseTickets } = require('./automation/niagara-cruise-tickets/automation');
 const { FortSumterTickets } = require('./automation/fort-sumter-tickets/automation');
 const { KennedySpaceCenterTickets } = require('./automation/kennedy-space-center-tickets/automation');
+const mongoose = require('mongoose');
+const authRoutes = require('./api/routes/authRoutes');
+const orderRoutes = require('./api/routes/orderRoutes');
+const webhookRoutes = require('./api/routes/webhookRoutes');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -39,7 +43,17 @@ app.use(bodyParser.json());
 
 // Cors middleware
 app.use(cors());
+app.use(express.json());
 
+// DB Connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log('MongoDB Connection Error ==>', err));
+
+// Routes
+app.use('/api', authRoutes);  // Authentication routes
+app.use('/api', orderRoutes); // Order and machine routes
+app.use('/api', webhookRoutes);
 // Middleware to verify WooCommerce webhook signature
 const verifyWooCommerceWebhook = (req, res, next) => {
     const signature = req.headers['x-wc-webhook-signature'];
@@ -280,13 +294,13 @@ app.post('/alcatraz-webhook', async (req, res) => {
                     console.log('Starting booking automation process...');
                     let tries = 0;
                     const maxRetries = 3;
-                    let bookingResult = await alcatrazBookTour(orderData, tries);
+                    let bookingResult = await alcatrazBookTour(orderData, tries, reqBody);
                     
                     // Retry logic
                     while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
                         tries++;
                         console.log(`Retry attempt #${tries}...`);
-                        bookingResult = await alcatrazBookTour(orderData, tries);
+                        bookingResult = await alcatrazBookTour(orderData, tries, reqBody);
                     }
             
                     if (bookingResult.success) {
@@ -857,7 +871,6 @@ app.post('/niagara-cruise-tickets-webhook', async (req, res) => {
         });
     }
 });
-
 
 // Webhook endpoint with verification | https://fortsumterticketing.com/
 app.post('/fort-sumter-ticketing-webhook', async (req, res) => {

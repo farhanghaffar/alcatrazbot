@@ -2,10 +2,49 @@ const { expect } = require('@playwright/test');
 const nodemailer = require('nodemailer');
 const path = require('path');
 const UserAgent = require('user-agents');
+const Order = require('./api/models/order'); // Assuming your Order model is imported here
 require("dotenv").config();
+
 
 const senderEmailAddress = process.env.SENDER_EMAIL;
 const senderEmailPassword = process.env.SENDER_EMAIL_PSWD;
+
+async function addOrUpdateOrder(bookingData, websiteName, webhookEndpoint, payload) {
+  try {
+    // Check if the order exists using the orderId and websiteName
+    const existingOrder = await Order.findOne({
+      orderId: bookingData?.id,
+      websiteName: websiteName, // Use the passed websiteName
+    });
+
+    if (existingOrder) {
+      // If the order exists, update it
+      await Order.findOneAndUpdate(
+        { orderId: bookingData?.id, websiteName: websiteName }, // Match by both orderId and websiteName
+        { status: 'Executed' }, // Update the status field to 'Executed'
+        { new: true } // Return the updated document
+      );
+      console.log('Order updated successfully.');
+    } else {
+      // If the order doesn't exist, add a new one
+      const newOrder = new Order({
+        orderId: bookingData?.id,
+        websiteName: websiteName, // Use the passed websiteName
+        webhookEndpoint: webhookEndpoint,
+        payload: payload,
+        status: 'Executed', // Set the initial status as Executed (or any default value)
+        failureReason: null, // Set the failure reason as null (or any default value)
+        triggerable: true, // Set triggerable to true (or any default value)
+        // You can add other fields from bookingData if needed
+      });
+
+      await newOrder.save();
+      console.log('New order added successfully.');
+    }
+  } catch (error) {
+    console.error('Error adding or updating the order:', error);
+  }
+}
 
 // Function to send email
 async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails, screenshotPath, screenshotFileName, passed = false, automationSite = '') {
@@ -27,7 +66,7 @@ async function sendEmail(orderNumber, orderDescription, recipientEmail, ccEmails
     subject = `${automationSite} Order #${orderNumber} Processing Failed`;
     html = `<p>A new order automation of <b>${automationSite}</b> with ID <strong>${orderNumber}</strong> was unfortunately failed. ${orderDescription}</p>`;
   }
-
+  
   // Prepare the email content
   let mailOptions = {
     from: 'farhan.qat321@gmail.com',  // Sender address
@@ -447,4 +486,4 @@ function addOneHour(timeSlot) {
   return `${start} - ${newEnd}`;
 }
 
-module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, sendEmailForDeclinedServiceChargesCardPayments, sendEmailForDeclinedCardPayments, addOneHour };
+module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, sendEmailForDeclinedServiceChargesCardPayments, sendEmailForDeclinedCardPayments, addOneHour, addOrUpdateOrder };

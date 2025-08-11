@@ -1,7 +1,8 @@
 const { chromium, firefox } = require('playwright');
 const { expect } = require('@playwright/test');
-const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate } = require('./helper');
+const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, addOrUpdateOrder } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
+const Order = require('./api/models/order');
 const fs = require('fs');  
 const path  = require('path');
 const { ServiceCharges } = require('./automation/service-charges');
@@ -37,7 +38,7 @@ const launchOptions = {
 
 let randomtime = 0;
 
-async function alcatrazBookTour(bookingData, tries) {
+async function alcatrazBookTour(bookingData, tries, payload) {
     const browser = await firefox.launch(launchOptions);
     // const userAgent = new UserAgent({deviceCategory: 'mobile'}).toString();
     const userAgent = getRandomUserAgent();
@@ -70,6 +71,8 @@ async function alcatrazBookTour(bookingData, tries) {
 
         let tourURL = '';
 
+        await addOrUpdateOrder(bookingData, 'Alcatraz Ticketing', '/alcatraz-webhook', payload);
+          
         if(bookingData.tourType === 'Alcatraz Reservation Day') {
             tourURL = 'https://www.cityexperiences.com/san-francisco/city-cruises/alcatraz/tour-options/alcatraz-day-tour/';
         } else if(bookingData.tourType === 'Alcatraz Reservation Night') {
@@ -681,6 +684,12 @@ async function alcatrazBookTour(bookingData, tries) {
         const thankYouMsg = await frameHandle.getByText('Thank you for your purchase!').first();
         await expect(thankYouMsg).toBeVisible({timeout: 120000});
 
+        await Order.findOneAndUpdate(
+            { orderId: bookingData.id, websiteName: 'Alcatraz Ticketing' },  // Match by both orderId and websiteName
+            { status: 'Passed', failureReason: null },  // Update the status field to 'Failed'
+            { new: true }  // Return the updated document
+          );
+
         const successDir = path.join(__dirname, 'successfulOrders');
         if (!fs.existsSync(successDir)) {
             await fs.promises.mkdir(successDir);
@@ -715,6 +724,13 @@ async function alcatrazBookTour(bookingData, tries) {
         }
     } catch (error) {
         console.error('Booking automation error:', error);
+        
+        await Order.findOneAndUpdate(
+            { orderId: bookingData.id, websiteName: 'Alcatraz Ticketing' },  // Match by both orderId and websiteName
+            { status: 'Failed', failureReason: error?.message || error },  // Update the status field to 'Failed'
+            { new: true }  // Return the updated document
+          );
+
         const errorsDir = path.join(__dirname, 'errors');
         if (!fs.existsSync(errorsDir)) {
             await fs.promises.mkdir(errorsDir);
