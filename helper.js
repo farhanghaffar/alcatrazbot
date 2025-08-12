@@ -2,7 +2,7 @@ const { expect } = require('@playwright/test');
 const nodemailer = require('nodemailer');
 const path = require('path');
 const UserAgent = require('user-agents');
-const Order = require('./api/models/order'); // Assuming your Order model is imported here
+const Order = require(path.resolve(__dirname, 'api/models/Order')); // Assuming your Order model is imported here
 require("dotenv").config();
 
 
