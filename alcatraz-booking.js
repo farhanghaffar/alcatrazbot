@@ -674,8 +674,24 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         const paymentError = await frameHandle.getByText('An error occurred while processing your payment.').first();
         const paymentErrorVisible = await paymentError.isVisible();
 
-        if(errorMsgVisible || paymentErrorVisible) {
+        const paymentDeclinedError = await frameHandle.getByText('Unfortunately the payment was declined.').first();
+        const paymentDeclinedErrorVisible = await paymentDeclinedError.isVisible();
+
+        const creditFloorError = await frameHandle.getByText('error:a0:89:Credit Floor.').first();
+        const creditFloorErrorVisible = await creditFloorError.isVisible();
+
+        const creditCardNumberError = await frameHandle.getByText('Credit card number you entered is invalid.').first();
+        const creditCardNumberErrorVisible = await creditCardNumberError.isVisible();
+
+        const orderRejectedError = await frameHandle.getByText('REJECTED').first();
+        const orderRejectedErrorVisible = await orderRejectedError.isVisible();
+
+        if((errorMsgVisible && paymentErrorVisible) || (errorMsgVisible && paymentDeclinedErrorVisible) || (errorMsgVisible && creditFloorErrorVisible) || (errorMsgVisible && creditCardNumberErrorVisible)) {
             throw new Error('Payment not completed');
+        }
+
+        if(errorMsgVisible && orderRejectedErrorVisible) {
+            throw new Error('Order Rejected');
         }
 
         await page.waitForTimeout(12000);
