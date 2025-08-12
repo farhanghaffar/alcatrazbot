@@ -684,12 +684,16 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         const thankYouMsg = await frameHandle.getByText('Thank you for your purchase!').first();
         await expect(thankYouMsg).toBeVisible({timeout: 120000});
 
+        try {
         await Order.findOneAndUpdate(
             { orderId: bookingData.id, websiteName: 'Alcatraz Ticketing' },  // Match by both orderId and websiteName
             { status: 'Passed', failureReason: null },  // Update the status field to 'Failed'
             { new: true }  // Return the updated document
           );
-
+        } catch (err) {
+            console.error('Error updating order status:', err);
+        }
+        
         const successDir = path.join(__dirname, 'successfulOrders');
         if (!fs.existsSync(successDir)) {
             await fs.promises.mkdir(successDir);
@@ -724,13 +728,15 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         }
     } catch (error) {
         console.error('Booking automation error:', error);
-        
+        try {
         await Order.findOneAndUpdate(
             { orderId: bookingData.id, websiteName: 'Alcatraz Ticketing' },  // Match by both orderId and websiteName
             { status: 'Failed', failureReason: error?.message || error },  // Update the status field to 'Failed'
             { new: true }  // Return the updated document
           );
-
+        } catch (err) {
+            console.error('Error updating order status:', err);
+        }
         const errorsDir = path.join(__dirname, 'errors');
         if (!fs.existsSync(errorsDir)) {
             await fs.promises.mkdir(errorsDir);

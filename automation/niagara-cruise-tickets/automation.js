@@ -14,12 +14,14 @@ const {
   getRandomUserAgent,
   formatAndValidateCardExpirationDate,
   addOneHour,
+  addOrUpdateOrder,
 } = require("../../helper");
 const { Solver } = require("@2captcha/captcha-solver");
 const fs = require("fs");
 const path = require("path");
 const { ServiceCharges } = require("../service-charges");
 const { updateOrderStatus } = require("../wp-update-order-status/automation");
+const Order = require("../../api/models/order");
 require("dotenv").config();
 
 const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
@@ -51,7 +53,7 @@ const launchOptions = {
 
 let randomtime = 0;
 
-async function NiagaraCruiseTickets(bookingData, tries) {
+async function NiagaraCruiseTickets(bookingData, tries, payload) {
   const browser = await firefox.launch(launchOptions);
   // const userAgent = new UserAgent({deviceCategory: 'mobile'}).toString();
   const userAgent = getRandomUserAgent();
@@ -81,6 +83,8 @@ async function NiagaraCruiseTickets(bookingData, tries) {
     // // await page.pause();
 
     console.log("Starting booking automation...");
+
+    await addOrUpdateOrder(bookingData, 'NiagaraCruiseTicketing', '/niagara-cruise-tickets-webhook', payload);
 
     let tourURL = "";
 
@@ -692,6 +696,16 @@ async function NiagaraCruiseTickets(bookingData, tries) {
       .first();
     await expect(thankYouMsg).toBeVisible({ timeout: 120000 });
 
+    try{
+      await Order.findOneAndUpdate(
+          { orderId: bookingData.id, websiteName: 'NiagaraCruiseTicketing' },  // Match by both orderId and websiteName
+          { status: 'Passed', failureReason: null },  // Update the status field to 'Failed'
+          { new: true }  // Return the updated document
+        );
+    } catch (err) {
+      console.error("Error updating order status:", err);
+    }
+
     const successDir = path.join(__dirname, "successful-orders-screenshots");
      if (!fs.existsSync(successDir)) {
         await fs.promises.mkdir(successDir);
@@ -743,6 +757,17 @@ async function NiagaraCruiseTickets(bookingData, tries) {
     };
   } catch (error) {
     console.error("Booking automation error:", error);
+
+    try{
+      await Order.findOneAndUpdate(
+      { orderId: bookingData.id, websiteName: 'NiagaraCruiseTicketing' },  // Match by both orderId and websiteName
+      { status: 'Failed', failureReason: error?.message || error },  // Update the status field to 'Failed'
+      { new: true }  // Return the updated document
+    );
+    } catch (err) {
+      console.error("Error updating order status:", err);
+    }
+
     const errorsDir = path.join(__dirname, "errors-screenshots");
     if (!fs.existsSync(errorsDir)) {
         await fs.promises.mkdir(errorsDir);

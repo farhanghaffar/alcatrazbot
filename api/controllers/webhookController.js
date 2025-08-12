@@ -193,7 +193,7 @@ const handleNiagaraCruiseTicketsWebhook = async (req, res) => {
             orderId: orderData.id,
             payload: orderData,
             webhookEndpoint: "/niagara-cruise-tickets-webhook",
-            websiteName: "NiagaraCruise Tickets",
+            websiteName: "NiagaraCruiseTicketing",
             status: "Not Triggered",
             failureReason: null,
             triggerable: true,
