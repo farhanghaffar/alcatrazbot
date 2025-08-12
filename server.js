@@ -1137,3 +1137,5 @@ try {
     console.error('Error creating HTTPS server:', error);
     process.exit(1);
 }
+
+module.exports = app;
