@@ -12,6 +12,7 @@ const {
   removeSpaces,
   getRandomUserAgent,
   formatAndValidateCardExpirationDate,
+  addOrUpdateOrder,
 } = require("../../helper");
 const { Solver } = require("@2captcha/captcha-solver");
 const fs = require("fs");
@@ -19,8 +20,9 @@ const path = require("path");
 require("dotenv").config();
 const {ServiceCharges} = require("../service-charges");
 const { updateOrderStatus } = require("../wp-update-order-status/automation");
+const Order = require("../../api/models/order");
 
-async function potomacTourBooking(bookingData, tries) {
+async function potomacTourBooking(bookingData, tries, payload) {
   const browser = await firefox.launch({ headless: false });
   const userAgent = getRandomUserAgent();
   console.log("User Agent:", userAgent);
@@ -36,6 +38,9 @@ async function potomacTourBooking(bookingData, tries) {
 
   try {
     console.log("Starting potomac booking automation...");
+
+    await addOrUpdateOrder(bookingData, 'PotomacTicketing', '/potomac-webhook', payload);
+    
 
     let tourURL = "";
 
@@ -604,6 +609,16 @@ async function potomacTourBooking(bookingData, tries) {
       .first();
     await expect(thankYouMsg).toBeVisible({ timeout: 120000 });
 
+    try {
+      await Order.findOneAndUpdate(
+        { orderId: bookingData.id, websiteName: 'PotomacTicketing' },  // Match by both orderId and websiteName
+        { status: 'Passed', failureReason: null },  // Update the status field to 'Failed'
+        { new: true }  // Return the updated document
+      );
+    } catch (err) {
+      console.error("Error updating order status:", err);
+    }
+
     const successDir = path.join(__dirname, "successful-orders-screenshots");
     if (!fs.existsSync(successDir)) {
         await fs.promises.mkdir(successDir);
@@ -648,6 +663,17 @@ async function potomacTourBooking(bookingData, tries) {
     };
   } catch (error) {
     console.error("Booking automation error:", error);
+
+    try {
+      await Order.findOneAndUpdate(
+        { orderId: bookingData.id, websiteName: 'PotomacTicketing' },  // Match by both orderId and websiteName
+        { status: 'Failed', failureReason: error?.message || error },  // Update the status field to 'Failed'
+        { new: true }  // Return the updated document
+      );
+    } catch (err) {
+      console.error("Error updating order status:", err);
+    }
+
     const errorsDir = path.join(__dirname, "errors-screenshots");
     if (!fs.existsSync(errorsDir)) {
       await fs.promises.mkdir(errorsDir);      

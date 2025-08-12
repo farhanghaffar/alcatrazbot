@@ -468,13 +468,13 @@ app.post('/potomac-webhook', async (req, res) => {
                 console.log('Starting booking automation process...');
                 let tries = 0;
                 const maxRetries = 3;
-                let bookingResult = await potomacTourBooking(orderData, tries);
+                let bookingResult = await potomacTourBooking(orderData, tries, reqBody);
                 
                 // Retry logic
                 while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
                     tries++;
                     console.log(`Retry attempt #${tries}...`);
-                    bookingResult = await potomacTourBooking(orderData, tries);
+                    bookingResult = await potomacTourBooking(orderData, tries, reqBody);
                 }
         
                 if (bookingResult.success) {

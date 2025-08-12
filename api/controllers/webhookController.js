@@ -85,7 +85,7 @@ const handlePotomacWebhook = async (req, res) => {
             orderId: orderData.id,
             payload: orderData,
             webhookEndpoint: "/potomac-webhook",
-            websiteName: "Potomac Ticketing",
+            websiteName: "PotomacTicketing",
             status: "Not Triggered",
             failureReason: null,
             triggerable: true,
