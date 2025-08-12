@@ -1119,23 +1119,41 @@ app.post('/kennedy-space-center-ticketing-webhook', async (req, res) => {
 });
 
 // Create HTTPS server with error handling
-try {
-    // const server = https.createServer(sslOptions, app);
-    const server = http.createServer(app);
+// try {
+//     // const server = https.createServer(sslOptions, app);
+//     const server = http.createServer(app);
     
-    server.listen(PORT, () => {
-        console.log(`HTTPS Server is running on port ${PORT}`);
+//     server.listen(PORT, () => {
+//         console.log(`HTTPS Server is running on port ${PORT}`);
+//         console.log(`Webhook endpoint: http://localhost:${PORT}/webhook`);
+//         console.log(`Health check endpoint: http://localhost:${PORT}/health`);
+//     });
+
+//     server.on('error', (error) => {
+//         console.error('Server error:', error);
+//         process.exit(1);
+//     });
+// } catch (error) {
+//     console.error('Error creating HTTPS server:', error);
+//     process.exit(1);
+// }
+
+try {
+    const PORT = process.env.PORT || 4000; // Make sure the port is defined, default to 4000
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
         console.log(`Webhook endpoint: http://localhost:${PORT}/webhook`);
         console.log(`Health check endpoint: http://localhost:${PORT}/health`);
     });
 
-    server.on('error', (error) => {
+    app.on('error', (error) => {
         console.error('Server error:', error);
         process.exit(1);
     });
 } catch (error) {
-    console.error('Error creating HTTPS server:', error);
+    console.error('Error starting the server:', error);
     process.exit(1);
 }
+
 
 module.exports = app;
