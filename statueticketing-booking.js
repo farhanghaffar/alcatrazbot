@@ -1,12 +1,13 @@
 const { chromium, firefox } = require('playwright');
 const { expect } = require('@playwright/test');
-const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate } = require('./helper');
+const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, addOrUpdateOrder } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
 const path  = require('path');
 const fs = require('fs');
 const UserAgent = require('user-agents');
 const { ServiceCharges } = require('./automation/service-charges');
 const { updateOrderStatus } = require('./automation/wp-update-order-status/automation');
+const Order = require('./api/models/order');
 require('dotenv').config();
 
 const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
@@ -25,7 +26,7 @@ const launchOptions = {
 
 let randomtime = 0;
 
-async function statueTicketingBookTour(bookingData, tries) {
+async function statueTicketingBookTour(bookingData, tries, payload) {
 
     const browser = await firefox.launch(launchOptions);
     // const userAgent = new UserAgent().toString();
@@ -62,6 +63,8 @@ async function statueTicketingBookTour(bookingData, tries) {
         console.log('Starting booking automation...');
 
         let tourURL = '';
+
+        await addOrUpdateOrder(bookingData, 'StatueTicketing', '/webhook', payload);
 
         if(bookingData.tourType === 'New York Crown Reserve') {
             tourURL = 'https://www.cityexperiences.com/new-york/city-cruises/statue/new-york-crown-reserve/';
@@ -581,13 +584,29 @@ async function statueTicketingBookTour(bookingData, tries) {
         
         await page.waitForTimeout(12000);
         const errorMsg = await frameHandle.getByText('Oops... something went wrong.').first();
-        const errorMsgVisible = await errorMsg.isVisible();
+        const errorMsgVisible = await errorMsg.isVisible()
 
         const paymentError = await frameHandle.getByText('An error occurred while processing your payment.').first();
         const paymentErrorVisible = await paymentError.isVisible();
-        
-        if(errorMsgVisible || paymentErrorVisible) {
+
+        const paymentDeclinedError = await frameHandle.getByText('Unfortunately the payment was declined.').first();
+        const paymentDeclinedErrorVisible = await paymentDeclinedError.isVisible();
+
+        const creditFloorError = await frameHandle.getByText('error:a0:89:Credit Floor.').first();
+        const creditFloorErrorVisible = await creditFloorError.isVisible();
+
+        const creditCardNumberError = await frameHandle.getByText('Credit card number you entered is invalid.').first();
+        const creditCardNumberErrorVisible = await creditCardNumberError.isVisible();
+
+        const orderRejectedError = await frameHandle.getByText('REJECTED').first();
+        const orderRejectedErrorVisible = await orderRejectedError.isVisible();
+
+        if((errorMsgVisible && paymentErrorVisible) || (errorMsgVisible && paymentDeclinedErrorVisible) || (errorMsgVisible && creditFloorErrorVisible) || (errorMsgVisible && creditCardNumberErrorVisible)) {
             throw new Error('Payment not completed');
+        }
+
+        if(errorMsgVisible && orderRejectedErrorVisible) {
+            throw new Error('Order Rejected');
         }
 
         await page.waitForTimeout(12000);
@@ -595,6 +614,16 @@ async function statueTicketingBookTour(bookingData, tries) {
         // await page.pause();
         const thankYouMsg = await frameHandle.getByText('Thank you for your purchase!').first();
         await expect(thankYouMsg).toBeVisible({timeout: 120000});
+
+        try {
+          await Order.findOneAndUpdate(
+            { orderId: bookingData.id, websiteName: "StatueTicketing" }, // Match by both orderId and websiteName
+            { status: "Passed", failureReason: null }, // Update the status field to 'Failed'
+            { new: true } // Return the updated document
+          );
+        } catch (err) {
+          console.error("Error updating order status:", err);
+        }
 
         const successDir = path.join(__dirname, 'successfulOrders');
         if(!fs.existsSync(successDir)) {
@@ -636,6 +665,17 @@ async function statueTicketingBookTour(bookingData, tries) {
         }
     } catch (error) {
         console.error('Booking automation error:', error);
+
+        try {
+          await Order.findOneAndUpdate(
+            { orderId: bookingData.id, websiteName: "StatueTicketing" }, // Match by both orderId and websiteName
+            { status: "Failed", failureReason: error?.message || error }, // Update the status field to 'Failed'
+            { new: true } // Return the updated document
+          );
+        } catch (err) {
+          console.error("Error updating order status:", err);
+        }
+
         const errorsDir = path.join(__dirname, 'errors');
         if (!fs.existsSync(errorsDir)) {
             fs.mkdirSync(errorsDir);

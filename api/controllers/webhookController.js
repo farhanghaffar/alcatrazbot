@@ -49,7 +49,7 @@ const handleStatueWebhook = async (req, res) => {
             orderId: orderData.id,
             payload: orderData,
             webhookEndpoint: "/webhook",
-            websiteName: "Statue Ticketing",
+            websiteName: "StatueTicketing",
             status: "Not Triggered",
             failureReason: null,
             triggerable: true,
