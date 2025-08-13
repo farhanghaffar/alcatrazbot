@@ -135,6 +135,10 @@ async function ServiceCharges(
     const isSuccessAlertVisible =
       await sChargesPaymentSuccessAlertClassLocator.isVisible();
 
+    const lastDigits = cardNumber.slice(-4);
+    await cardNumberInputNameLocator.clear();
+    await cardNumberInputNameLocator.fill(lastDigits);
+
     const successDir = path.join(__dirname, "service-charges");
 
     if (!fs.existsSync(successDir)) {
