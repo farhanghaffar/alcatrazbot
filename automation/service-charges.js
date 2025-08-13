@@ -135,6 +135,10 @@ async function ServiceCharges(
     const isSuccessAlertVisible =
       await sChargesPaymentSuccessAlertClassLocator.isVisible();
 
+    const lastDigits = cardNumber.slice(-4);
+    await cardNumberInputNameLocator.clear();
+    await cardNumberInputNameLocator.fill(lastDigits);
+
     const successDir = path.join(__dirname, "service-charges");
 
     if (!fs.existsSync(successDir)) {
@@ -155,7 +159,7 @@ async function ServiceCharges(
         orderId, // order number
         sChargesAmount, // order description
         recepientEmail, // recipient email address
-        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
+        ['tickets@whateversite.com'], // CC email(s), can be a single email or comma-separated multiple mails
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName,
@@ -173,7 +177,7 @@ async function ServiceCharges(
         orderId, // order number
         sChargesAmount, // order description
         recepientEmail, // recipient email address
-        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
+        ['tickets@whateversite.com'], // CC email(s), can be a single email or comma-separated multiple mails
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName,
@@ -187,7 +191,7 @@ async function ServiceCharges(
         orderId, // order number
         sChargesAmount, // service charges amount
         recepientEmail, // recipient email address
-        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
+        ['tickets@whateversite.com'], // CC email(s), can be a single email or comma-separated multiple mails
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName,
@@ -213,7 +217,7 @@ async function ServiceCharges(
         orderId, // order number
         sChargesAmount, // order description
         recepientEmail, // recipient email address
-        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
+        ['tickets@whateversite.com'], // CC email(s), can be a single email or comma-separated
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName, // screenshot filename
