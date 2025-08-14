@@ -1,4 +1,4 @@
-const Order = require('../models/order'); // Import the existing Order model
+const Order = require('../models/Order'); // Import the existing Order model
 
 const handleAlcatrazWebhook = async (req, res) => {
     try {
