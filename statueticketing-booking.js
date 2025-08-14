@@ -7,7 +7,7 @@ const fs = require('fs');
 const UserAgent = require('user-agents');
 const { ServiceCharges } = require('./automation/service-charges');
 const { updateOrderStatus } = require('./automation/wp-update-order-status/automation');
-const Order = require('./api/models/order');
+const Order = require('./api/models/Order');
 require('dotenv').config();
 
 const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;

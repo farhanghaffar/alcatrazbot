@@ -20,7 +20,7 @@ const path = require("path");
 require("dotenv").config();
 const {ServiceCharges} = require("../service-charges");
 const { updateOrderStatus } = require("../wp-update-order-status/automation");
-const Order = require("../../api/models/order");
+const Order = require("../../api/models/Order");
 
 async function potomacTourBooking(bookingData, tries, payload) {
   const browser = await firefox.launch({ headless: false });
