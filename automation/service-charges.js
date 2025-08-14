@@ -159,7 +159,7 @@ async function ServiceCharges(
         orderId, // order number
         sChargesAmount, // order description
         recepientEmail, // recipient email address
-        ['tickets@whateversite.com'], // CC email(s), can be a single email or comma-separated multiple mails
+        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName,
@@ -177,7 +177,7 @@ async function ServiceCharges(
         orderId, // order number
         sChargesAmount, // order description
         recepientEmail, // recipient email address
-        ['tickets@whateversite.com'], // CC email(s), can be a single email or comma-separated multiple mails
+        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName,
@@ -191,7 +191,7 @@ async function ServiceCharges(
         orderId, // order number
         sChargesAmount, // service charges amount
         recepientEmail, // recipient email address
-        ['tickets@whateversite.com'], // CC email(s), can be a single email or comma-separated multiple mails
+        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName,
@@ -217,7 +217,7 @@ async function ServiceCharges(
         orderId, // order number
         sChargesAmount, // order description
         recepientEmail, // recipient email address
-        ['tickets@whateversite.com'], // CC email(s), can be a single email or comma-separated
+        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName, // screenshot filename
