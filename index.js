@@ -382,6 +382,10 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'healthy' });
 });
 
+app.get('/', (req, res) => {
+    res.status(200).json({ status: 'healthy' });
+});
+
 // Webhook endpoint with verification | http://potomacticketing.com/
 app.post('/potomac-webhook', async (req, res) => {
     console.log('Order data:', JSON.stringify(req.body));
