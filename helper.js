@@ -451,39 +451,48 @@ async function sendEmailForDeclinedCardPayments(
     html: html, // HTML body
   };
 
-  // Send the email
-  return transporter.sendMail(mailOptions); // Return the promise to handle errors outside
+// Send the email
+return transporter.sendMail(mailOptions); // Return the promise to handle errors outside
 }
 
 function addOneHour(timeSlot) {
-  // Split the time slot into start and end times
-  const [start, end] = timeSlot.split(' - ');
+// Split the time slot into start and end times
+const [start, end] = timeSlot.split(' - ');
 
-  // Helper function to increase time by 1 hour
-  function increaseByOneHour(time) {
-    let [hours, minutes] = time.split(':');
-    let period = minutes.includes('AM') ? 'AM' : 'PM';
-    
-    hours = parseInt(hours);
-    minutes = minutes.split(' ')[0]; // Remove AM/PM for minutes part
+// Helper function to increase time by 1 hour
+function increaseByOneHour(time) {
+let [hours, minutes] = time.split(':');
+let period = minutes.includes('AM') ? 'AM' : 'PM';
+  
+hours = parseInt(hours);
+minutes = minutes.split(' ')[0]; // Remove AM/PM for minutes part
 
-    // Add 1 hour to the start time
-    hours += 1;
-    if (hours === 12 && period === 'AM') {
-      period = 'PM'; // Convert 12:00 AM to 12:00 PM
-    }
-    if (hours > 12) {
-      hours = 1; // After 12:00 PM, start again from 1:00 PM
-      if (period === 'PM') period = 'AM'; // Toggle between AM and PM
-    }
-
-    return `${hours}:${minutes} ${period}`;
-  }
-
-  // Increase the end time by 1 hour
-  const newEnd = increaseByOneHour(start);
-
-  return `${start} - ${newEnd}`;
+// Add 1 hour to the start time
+hours += 1;
+if (hours === 12 && period === 'AM') {
+period = 'PM'; // Convert 12:00 AM to 12:00 PM
+}
+if (hours > 12) {
+hours = 1; // After 12:00 PM, start again from 1:00 PM
+if (period === 'PM') period = 'AM'; // Toggle between AM and PM
 }
 
-module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, sendEmailForDeclinedServiceChargesCardPayments, sendEmailForDeclinedCardPayments, addOneHour, addOrUpdateOrder };
+return `${hours}:${minutes} ${period}`;
+}
+
+// Increase the end time by 1 hour
+const newEnd = increaseByOneHour(start);
+
+return `${start} - ${newEnd}`;
+}
+
+/**
+* Returns a random delay in milliseconds between 0 and the provided limit
+* @param {number} limit - Maximum delay in milliseconds (default: 20000)
+* @returns {number} - Random delay value between 0 and limit
+*/
+function getRandomDelayWithLimit(limit = 20000) {
+return Math.floor(Math.random() * limit);
+}
+
+module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, sendEmailForDeclinedServiceChargesCardPayments, sendEmailForDeclinedCardPayments, addOneHour, addOrUpdateOrder, getRandomDelayWithLimit };

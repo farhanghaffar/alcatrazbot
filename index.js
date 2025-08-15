@@ -172,7 +172,7 @@ app.post('/webhook', async (req, res) => {
         let bookingResult = await statueTicketingBookTour(orderData, tries, reqBody);
 
         // Retry logic
-        while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected')) {
+        while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected') && !bookingResult?.error?.includes('Tickets are not available for the date you selected.')) {
             tries++;
             console.log(`Retry attempt #${tries}...`);
             bookingResult = await statueTicketingBookTour(orderData, tries, reqBody);
@@ -297,7 +297,7 @@ app.post('/alcatraz-webhook', async (req, res) => {
                     let bookingResult = await alcatrazBookTour(orderData, tries, reqBody);
                     
                     // Retry logic
-                    while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected')) {
+                    while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected') && !bookingResult?.error?.includes('Tickets are not available for the date you selected.')) {
                         tries++;
                         console.log(`Retry attempt #${tries}...`);
                         bookingResult = await alcatrazBookTour(orderData, tries, reqBody);
@@ -475,7 +475,7 @@ app.post('/potomac-webhook', async (req, res) => {
                 let bookingResult = await potomacTourBooking(orderData, tries, reqBody);
                 
                 // Retry logic
-                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
+                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected') && !bookingResult?.error?.includes('Tickets are not available for the date you selected.')) {
                     tries++;
                     console.log(`Retry attempt #${tries}...`);
                     bookingResult = await potomacTourBooking(orderData, tries, reqBody);
@@ -850,7 +850,7 @@ app.post('/niagara-cruise-tickets-webhook', async (req, res) => {
                 let bookingResult = await NiagaraCruiseTickets(orderData, tries, reqBody);
                 
                 // Retry logic
-                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
+                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected') && !bookingResult?.error?.includes('Tickets are not available for the date you selected.')) {
                     tries++;
                     console.log(`Retry attempt #${tries}...`);
                     bookingResult = await NiagaraCruiseTickets(orderData, tries, reqBody);

@@ -13,6 +13,7 @@ const {
   getRandomUserAgent,
   formatAndValidateCardExpirationDate,
   addOrUpdateOrder,
+  getRandomDelayWithLimit,
 } = require("../../helper");
 const { Solver } = require("@2captcha/captcha-solver");
 const fs = require("fs");
@@ -124,6 +125,28 @@ async function potomacTourBooking(bookingData, tries, payload) {
 
       await expect(dateCell).toBeVisible({ timeout: 5000 });
       console.log(`Successfully selected date ${targetDay}`);
+
+      const randomTimeHere = await getRandomDelayWithLimit(10000);
+      await page.waitForTimeout(randomTimeHere);
+      
+      const noTicketsAvailableMessage = frameHandle.locator("span").filter({
+        hasText:
+          "Tickets are not available for the date you selected. Check out these other dates which are still available:",
+      });
+      const isNoTicketsMessageVisible =
+        await noTicketsAvailableMessage.isVisible({
+          timeout: 5000,
+        });
+      console.log(
+        `Visibility of "no tickets available" message: ${isNoTicketsMessageVisible}`
+      );
+      if (isNoTicketsMessageVisible) {
+        console.error(
+          "Tickets are not available for the selected date. Throwing an error."
+        );
+        throw new Error("Tickets are not available for the date you selected.");
+      }
+
     } else {
       console.log("Different month or year, calculating months to navigate");
       const monthsDiff =
@@ -184,6 +207,29 @@ async function potomacTourBooking(bookingData, tries, payload) {
       await dateCell.click();
 
       console.log(`Successfully selected date ${targetDay}`);
+
+          
+      const randomTimeHere = await getRandomDelayWithLimit(10000);
+      await page.waitForTimeout(randomTimeHere);
+
+      const noTicketsAvailableMessage = frameHandle.locator("span").filter({
+        hasText:
+          "Tickets are not available for the date you selected. Check out these other dates which are still available:",
+      });
+      const isNoTicketsMessageVisible =
+        await noTicketsAvailableMessage.isVisible({
+          timeout: 5000,
+        });
+      console.log(
+        `Visibility of "no tickets available" message: ${isNoTicketsMessageVisible}`
+      );
+      if (isNoTicketsMessageVisible) {
+        console.error(
+          "Tickets are not available for the selected date. Throwing an error."
+        );
+        throw new Error("Tickets are not available for the date you selected.");
+      }
+            
     }
     // const showMoreTimesButton = frameHandle.getByRole('button').filter({ hasText: 'Show more times' }).first();
     // await page.waitForTimeout(6000);
@@ -587,21 +633,48 @@ async function potomacTourBooking(bookingData, tries, payload) {
     await poupCloseBtn.click();
   }
 
-    const errorMsg = await frameHandle.getByText(
-      "Oops... something went wrong."
-    ).first();
-    const errorMsgVisible = await errorMsg.isVisible();
+  const errorMsg = await frameHandle
+    .getByText("Oops... something went wrong.")
+    .first();
+  const errorMsgVisible = await errorMsg.isVisible();
 
-    const paymentError = await frameHandle.getByText(
-      "An error occurred while processing your payment."
-    ).first();
-    const paymentErrorVisible = await paymentError.isVisible();
+  const paymentError = await frameHandle
+    .getByText("An error occurred while processing your payment.")
+    .first();
+  const paymentErrorVisible = await paymentError.isVisible();
 
-    if (errorMsgVisible || paymentErrorVisible) {
-      throw new Error("Payment not completed");
-    }
+  const paymentDeclinedError = await frameHandle
+    .getByText("Unfortunately the payment was declined.")
+    .first();
+  const paymentDeclinedErrorVisible = await paymentDeclinedError.isVisible();
 
-    await page.waitForTimeout(12000);
+  const creditFloorError = await frameHandle
+    .getByText("error:a0:89:Credit Floor.")
+    .first();
+  const creditFloorErrorVisible = await creditFloorError.isVisible();
+
+  const creditCardNumberError = await frameHandle
+    .getByText("Credit card number you entered is invalid.")
+    .first();
+  const creditCardNumberErrorVisible = await creditCardNumberError.isVisible();
+
+  const orderRejectedError = await frameHandle.getByText("REJECTED").first();
+  const orderRejectedErrorVisible = await orderRejectedError.isVisible();
+
+  if (
+    (errorMsgVisible && paymentErrorVisible) ||
+    (errorMsgVisible && paymentDeclinedErrorVisible) ||
+    (errorMsgVisible && creditFloorErrorVisible) ||
+    (errorMsgVisible && creditCardNumberErrorVisible)
+  ) {
+    throw new Error("Payment not completed");
+  }
+
+  if (errorMsgVisible && orderRejectedErrorVisible) {
+    throw new Error("Order Rejected");
+  }
+
+  await page.waitForTimeout(12000);
 
 
     const thankYouMsg = await frameHandle

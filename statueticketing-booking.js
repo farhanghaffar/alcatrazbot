@@ -1,6 +1,6 @@
 const { chromium, firefox } = require('playwright');
 const { expect } = require('@playwright/test');
-const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, addOrUpdateOrder } = require('./helper');
+const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, addOrUpdateOrder, getRandomDelayWithLimit } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
 const path  = require('path');
 const fs = require('fs');
@@ -140,6 +140,31 @@ async function statueTicketingBookTour(bookingData, tries, payload) {
             await expect(dateCell)
                 .toBeVisible({ timeout: 5000 });
             console.log(`Successfully selected date ${targetDay}`);
+
+            const randomTimeHere = await getRandomDelayWithLimit(10000);
+            await page.waitForTimeout(randomTimeHere);
+
+            const noTicketsAvailableMessage = frameHandle
+              .locator("span")
+              .filter({
+                hasText:
+                  "Tickets are not available for the date you selected. Check out these other dates which are still available:",
+              });
+            const isNoTicketsMessageVisible =
+              await noTicketsAvailableMessage.isVisible({
+                timeout: 5000,
+              });
+            console.log(
+              `Visibility of "no tickets available" message: ${isNoTicketsMessageVisible}`
+            );
+            if (isNoTicketsMessageVisible) {
+              console.error(
+                "Tickets are not available for the selected date. Throwing an error."
+              );
+              throw new Error(
+                "Tickets are not available for the date you selected."
+              );
+            }
         } else {
             console.log('Different month or year, calculating months to navigate');
             const monthsDiff = (targetYear - currentYear) * 12 + (dateObject.getMonth() - new Date().getMonth());
@@ -189,6 +214,31 @@ async function statueTicketingBookTour(bookingData, tries, payload) {
             await expect(frameHandle.getByRole('presentation').locator(`td.CalendarDay__selected:has(span:text("${targetDay}"))`))
                 .toBeVisible();
             console.log(`Successfully selected date ${targetDay}`);
+
+            const randomTimeHere = await getRandomDelayWithLimit(10000);
+            await page.waitForTimeout(randomTimeHere);
+
+            const noTicketsAvailableMessage = frameHandle
+              .locator("span")
+              .filter({
+                hasText:
+                  "Tickets are not available for the date you selected. Check out these other dates which are still available:",
+              });
+            const isNoTicketsMessageVisible =
+              await noTicketsAvailableMessage.isVisible({
+                timeout: 5000,
+              });
+            console.log(
+              `Visibility of "no tickets available" message: ${isNoTicketsMessageVisible}`
+            );
+            if (isNoTicketsMessageVisible) {
+              console.error(
+                "Tickets are not available for the selected date. Throwing an error."
+              );
+              throw new Error(
+                "Tickets are not available for the date you selected."
+              );
+            }
         }
         const showMoreTimesButton = frameHandle.getByRole('button').filter({ hasText: 'Show more times' }).first();
         
