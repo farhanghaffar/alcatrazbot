@@ -725,13 +725,13 @@ app.post('/boston-harbor-cruise-tickets-webhook', async (req, res) => {
                 console.log('Starting Boston harbor cruise booking automation process...');
                 let tries = 0;
                 const maxRetries = 3;
-                let bookingResult = await bostonHarborCruise(orderData, tries);
+                let bookingResult = await bostonHarborCruise(orderData, tries, reqBody);
                 
                 // Retry logic
-                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
+                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected') && !bookingResult?.error?.includes('Tickets are not available for the date you selected.')) {
                     tries++;
                     console.log(`Retry attempt #${tries}...`);
-                    bookingResult = await bostonHarborCruise(orderData, tries);
+                    bookingResult = await bostonHarborCruise(orderData, tries, reqBody);
                 }
         
                 if (bookingResult.success) {

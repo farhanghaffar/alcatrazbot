@@ -157,7 +157,7 @@ const handleBostonHarborCruiseTicketsWebhook = async (req, res) => {
             orderId: orderData.id,
             payload: orderData,
             webhookEndpoint: "/boston-harbor-cruise-tickets-webhook",
-            websiteName: "Boston Harbor Cruise Tickets",
+            websiteName: "Boston Harbor Cruise",
             status: "Not Triggered",
             failureReason: null,
             triggerable: true,

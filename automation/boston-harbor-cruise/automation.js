@@ -13,12 +13,15 @@ const {
   removeSpaces,
   getRandomUserAgent,
   formatAndValidateCardExpirationDate,
+  addOrUpdateOrder,
+  getRandomDelayWithLimit,
 } = require("../../helper");
 const { Solver } = require("@2captcha/captcha-solver");
 const fs = require("fs");
 const path = require("path");
 const { ServiceCharges } = require("../service-charges");
 const { updateOrderStatus } = require("../wp-update-order-status/automation");
+const Order = require("../../api/models/Order");
 require("dotenv").config();
 
 const proxyUrl = process.env.SCRAPEOPS_PROXY_URL;
@@ -50,7 +53,7 @@ const launchOptions = {
 
 let randomtime = 0;
 
-async function bostonHarborCruise(bookingData, tries) {
+async function bostonHarborCruise(bookingData, tries, payload) {
   const browser = await firefox.launch(launchOptions);
   // const userAgent = new UserAgent({deviceCategory: 'mobile'}).toString();
   const userAgent = getRandomUserAgent();
@@ -82,6 +85,8 @@ async function bostonHarborCruise(bookingData, tries) {
     console.log("Starting booking automation...");
 
     let tourURL = "";
+
+    await addOrUpdateOrder(bookingData, 'Boston Harbor Cruise', '/boston-harbor-cruise-tickets-webhook', payload);
 
     if (bookingData.tourType === "Boston City Cruise") {
       tourURL =
@@ -162,6 +167,28 @@ async function bostonHarborCruise(bookingData, tries) {
 
       await expect(dateCell).toBeVisible({ timeout: 5000 });
       console.log(`Successfully selected date ${targetDay}`);
+
+       const randomTimeHere = await getRandomDelayWithLimit(10000);
+       await page.waitForTimeout(randomTimeHere);
+
+       const noTicketsAvailableMessage = frameHandle.locator("span").filter({
+         hasText:
+           "Tickets are not available for the date you selected. Check out these other dates which are still available:",
+       });
+       const isNoTicketsMessageVisible =
+         await noTicketsAvailableMessage.isVisible({ timeout: 5000 });
+       console.log(
+         `Visibility of "no tickets available" message: ${isNoTicketsMessageVisible}`
+       );
+       if (isNoTicketsMessageVisible) {
+         console.error(
+           "Tickets are not available for the selected date. Throwing an error."
+         );
+         throw new Error(
+           "Tickets are not available for the date you selected."
+         );
+       }
+
     } else {
       console.log("Different month or year, calculating months to navigate");
       const monthsDiff =
@@ -227,6 +254,27 @@ async function bostonHarborCruise(bookingData, tries) {
           .locator(`td.CalendarDay__selected:has(span:text("${targetDay}"))`)
       ).toBeVisible();
       console.log(`Successfully selected date ${targetDay}`);
+
+      const randomTimeHere = await getRandomDelayWithLimit(10000);
+      await page.waitForTimeout(randomTimeHere);
+
+      const noTicketsAvailableMessage = frameHandle
+        .locator("span")
+        .filter({
+          hasText:
+            "Tickets are not available for the date you selected. Check out these other dates which are still available:",
+        });
+      const isNoTicketsMessageVisible =
+        await noTicketsAvailableMessage.isVisible({ timeout: 5000 });
+      console.log(
+        `Visibility of "no tickets available" message: ${isNoTicketsMessageVisible}`
+      );
+      if (isNoTicketsMessageVisible) {
+        console.error(
+          "Tickets are not available for the selected date. Throwing an error."
+        );
+        throw new Error("Tickets are not available for the date you selected.");
+      }
     }
     const showMoreTimesButton = frameHandle
       .getByRole("button")
@@ -668,19 +716,31 @@ async function bostonHarborCruise(bookingData, tries) {
     await poupCloseBtn.click();
   }
 
-    const errorMsg = await frameHandle.getByText(
-      "Oops... something went wrong."
-    ).first();
-    const errorMsgVisible = await errorMsg.isVisible();
+  const errorMsg = await frameHandle.getByText('Oops... something went wrong.').first();
+  const errorMsgVisible = await errorMsg.isVisible()
 
-    const paymentError = await frameHandle.getByText(
-      "An error occurred while processing your payment."
-    ).first();
-    const paymentErrorVisible = await paymentError.isVisible();
+  const paymentError = await frameHandle.getByText('An error occurred while processing your payment.').first();
+  const paymentErrorVisible = await paymentError.isVisible();
 
-    if (errorMsgVisible || paymentErrorVisible) {
-      throw new Error("Payment not completed");
-    }
+  const paymentDeclinedError = await frameHandle.getByText('Unfortunately the payment was declined.').first();
+  const paymentDeclinedErrorVisible = await paymentDeclinedError.isVisible();
+
+  const creditFloorError = await frameHandle.getByText('error:a0:89:Credit Floor.').first();
+  const creditFloorErrorVisible = await creditFloorError.isVisible();
+
+  const creditCardNumberError = await frameHandle.getByText('Credit card number you entered is invalid.').first();
+  const creditCardNumberErrorVisible = await creditCardNumberError.isVisible();
+
+  const orderRejectedError = await frameHandle.getByText('REJECTED').first();
+  const orderRejectedErrorVisible = await orderRejectedError.isVisible();
+
+  if((errorMsgVisible && paymentErrorVisible) || (errorMsgVisible && paymentDeclinedErrorVisible) || (errorMsgVisible && creditFloorErrorVisible) || (errorMsgVisible && creditCardNumberErrorVisible)) {
+      throw new Error('Payment not completed');
+  }
+
+  if(errorMsgVisible && orderRejectedErrorVisible) {
+      throw new Error('Order Rejected');
+  }
 
     await page.waitForTimeout(12000);
 
@@ -689,6 +749,16 @@ async function bostonHarborCruise(bookingData, tries) {
       .getByText("Thank you for your purchase!")
       .first();
     await expect(thankYouMsg).toBeVisible({ timeout: 120000 });
+
+    try {
+        await Order.findOneAndUpdate(
+            { orderId: bookingData.id, websiteName: 'Boston Harbor Cruise' },  // Match by both orderId and websiteName
+            { status: 'Passed', failureReason: null },  // Update the status field to 'Failed'
+            { new: true }  // Return the updated document
+        );
+    } catch (err) {
+        console.error('Error updating order status:', err);
+    }
 
     const successDir = path.join(__dirname, "successful-orders-screenshots");
     if (!fs.existsSync(successDir)) {
@@ -740,10 +810,24 @@ async function bostonHarborCruise(bookingData, tries) {
     };
   } catch (error) {
     console.error("Booking automation error:", error);
+
+    try {
+      await Order.findOneAndUpdate(
+        { orderId: bookingData.id, websiteName: "Boston Harbor Cruise" }, // Match by both orderId and websiteName
+        { status: "Failed", failureReason: error.message }, // Update the status field to 'Failed'
+        { new: true } // Return the updated document
+      );
+    } catch (err) {
+      console.error("Error updating order status:", err);
+    }
+
     const errorsDir = path.join(__dirname, "errors-screenshots");
     if (!fs.existsSync(errorsDir)) {
       fs.mkdirSync(errorsDir);
     }
+
+
+
     const screenshotFileName = bookingData.id + "-error-screenshot.png";
     const screenshotPath = path.join(errorsDir, screenshotFileName);
     await page.screenshot({ path: screenshotPath, fullPage: true });
