@@ -26,6 +26,27 @@ async function ServiceCharges(
   let status = false;
   const recepientEmail = "farhan.qat123@gmail.com";
 
+  let ccEmail = "";
+  if (siteName === "AlcatrazTicketing") {
+    ccEmail = "tickets@alcatrazticketing.com";
+  } else if (siteName === "StatueTicketing") {
+    ccEmail = "tickets@statueticketing.com"
+  } else if (siteName === "PotomacTicketing") {
+    ccEmail = "tickets@potomacticketing.com"
+  } else if (siteName === "NiagaraCruiseTicketing") {
+    ccEmail = "tickets@niagaracruisetickets.com"
+  } else if (siteName === "BayCruiseTicketing") {
+    ccEmail = "tickets@baycruisetickets.com";
+  } else if (siteName === "BostonHarborCruiseTicketing") {
+    ccEmail = "tickets@bostoncruisetickets.com";
+  } else if (siteName === "FortSumterTicketing") {
+    ccEmail = "tickets@fortsumterticketing.com"
+  } else if (siteName === "KSCTicketing") {
+    ccEmail = "tickets@kennedyspacecenter.com";
+  } else {
+    ccEmail = "mymtvrs@gmail.com";
+  }
+
   try {
     if (!serviceChargesURL) {
       console.error(
@@ -111,7 +132,7 @@ async function ServiceCharges(
 
     await page.waitForTimeout(2000);
     const postalCodeVisible = await cardZipcodeNameLocator.isVisible();
-    if(postalCodeVisible) {
+    if (postalCodeVisible) {
       await cardZipcodeNameLocator.fill(postalCode);
     }
 
@@ -177,7 +198,8 @@ async function ServiceCharges(
         orderId, // order number
         sChargesAmount, // order description
         recepientEmail, // recipient email address
-        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
+        [ccEmail], // CC email(s), can be a single email or comma-separated multiple mails
+        // ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName,
@@ -191,7 +213,8 @@ async function ServiceCharges(
         orderId, // order number
         sChargesAmount, // service charges amount
         recepientEmail, // recipient email address
-        ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
+        [ccEmail], // CC email(s), can be a single email or comma-separated multiple mails
+        // ['mymtvrs@gmail.com'], // CC email(s), can be a single email or comma-separated multiple mails
         // [],
         screenshotPath, // path to the screenshot
         screenshotFileName,
