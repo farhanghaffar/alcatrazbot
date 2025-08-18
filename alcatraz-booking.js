@@ -127,6 +127,7 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         if (targetMonth === currentMonth && targetYear === currentYear) {
             console.log('Same month and year, proceeding with date selection');
             const dateCell = frameHandle.getByRole('presentation').locator(`.CalendarDay`).filter({hasText: `${targetDay}`}).first();
+            await page.waitForTimeout(8000);
             const dataCellAttributes = await dateCell.getAttribute('class')
             if(dataCellAttributes.includes('CalendarDay__blocked_calendar')) {
                 throw new Error('Date not available');
