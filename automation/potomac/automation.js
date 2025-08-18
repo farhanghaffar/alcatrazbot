@@ -314,6 +314,7 @@ async function potomacTourBooking(bookingData, tries, payload) {
 
     randomtime = getRandomTime();
     await page.waitForTimeout(randomtime);
+        await page.waitForTimeout(10000);
 
     const addToCartBtn = await frameHandle
       .locator(`[data-bdd="add-to-cart-button"]`)
@@ -634,7 +635,7 @@ async function potomacTourBooking(bookingData, tries, payload) {
   }
 
   const errorMsg = await frameHandle
-    .getByText("Oops... something went wrong.")
+    .getByText("Oops... something went wrong")
     .first();
   const errorMsgVisible = await errorMsg.isVisible();
 

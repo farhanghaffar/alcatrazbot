@@ -321,6 +321,7 @@ async function statueTicketingBookTour(bookingData, tries, payload) {
 
         randomtime = getRandomTime();
         await page.waitForTimeout(randomtime);
+        await page.waitForTimeout(10000);
 
         const addToCartBtn = await frameHandle.locator(`[data-bdd="add-to-cart-button"]`).getByText('Add to Cart'); 
         const addToCartBtnVisible = await addToCartBtn.isVisible({timeout: 120000});
@@ -633,7 +634,7 @@ async function statueTicketingBookTour(bookingData, tries, payload) {
         console.log('Clicked Complete Button');
         
         await page.waitForTimeout(12000);
-        const errorMsg = await frameHandle.getByText('Oops... something went wrong.').first();
+        const errorMsg = await frameHandle.getByText('Oops... something went wrong').first();
         const errorMsgVisible = await errorMsg.isVisible()
 
         const paymentError = await frameHandle.getByText('An error occurred while processing your payment.').first();

@@ -148,7 +148,7 @@ async function FortSumterTickets(bookingData, tries) {
       await FSTFromLibertySquareName.click();
     }
 
-    await page.waitForTimeout(10000);
+    await page.waitForTimeout(14000);
 
     // await page.pause();
 
