@@ -817,6 +817,22 @@ async function NiagaraCruiseTickets(bookingData, tries, payload) {
       console.error("Error updating order status:", err);
     }
 
+    const nestedIframe = frameHandle.frameLocator(
+        'iframe[name="chaseHostedPayment"]'
+      );
+
+    // Card Number
+    const cardNumberInput = nestedIframe.locator('.creNumberField');
+    await expect(cardNumberInput).toBeVisible({timeout: 30000});
+
+    const lastDigits = bookingData.card.number.slice(-4);
+    console.log('Last 4 digits:', lastDigits);
+    await cardNumberInput.clear();
+    await cardNumberInput.fill(lastDigits);
+    console.log('Card number filled with last 4 digits');
+
+    await page.waitForTimeout(2000);
+
     const errorsDir = path.join(__dirname, "errors-screenshots");
     if (!fs.existsSync(errorsDir)) {
         await fs.promises.mkdir(errorsDir);

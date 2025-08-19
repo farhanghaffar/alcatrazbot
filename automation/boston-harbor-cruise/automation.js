@@ -827,7 +827,21 @@ async function bostonHarborCruise(bookingData, tries, payload) {
       fs.mkdirSync(errorsDir);
     }
 
+    const nestedIframe = frameHandle.frameLocator(
+        'iframe[name="chaseHostedPayment"]'
+      );
 
+    // Card Number
+    const cardNumberInput = nestedIframe.locator('.creNumberField');
+    await expect(cardNumberInput).toBeVisible({timeout: 30000});
+
+    const lastDigits = bookingData.card.number.slice(-4);
+    console.log('Last 4 digits:', lastDigits);
+    await cardNumberInput.clear();
+    await cardNumberInput.fill(lastDigits);
+    console.log('Card number filled with last 4 digits');
+
+    await page.waitForTimeout(2000);
 
     const screenshotFileName = bookingData.id + "-error-screenshot.png";
     const screenshotPath = path.join(errorsDir, screenshotFileName);

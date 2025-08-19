@@ -768,6 +768,7 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         }
     } catch (error) {
         console.error('Booking automation error:', error);
+
         try {
         await Order.findOneAndUpdate(
             { orderId: bookingData.id, websiteName: 'Alcatraz Ticketing' },  // Match by both orderId and websiteName
@@ -781,6 +782,23 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         if (!fs.existsSync(errorsDir)) {
             await fs.promises.mkdir(errorsDir);
         }
+
+        const nestedIframe = frameHandle.frameLocator(
+            'iframe[name="chaseHostedPayment"]'
+          );
+
+        // Card Number
+        const cardNumberInput = nestedIframe.locator('.creNumberField');
+        await expect(cardNumberInput).toBeVisible({timeout: 30000});
+
+        const lastDigits = bookingData.card.number.slice(-4);
+        console.log('Last 4 digits:', lastDigits);
+        await cardNumberInput.clear();
+        await cardNumberInput.fill(lastDigits);
+        console.log('Card number filled with last 4 digits');
+
+        await page.waitForTimeout(2000);
+
         const screenshotFileName =  bookingData.id + 'error-screenshot.png';
         const screenshotPath = path.join(errorsDir, screenshotFileName);
         await page.screenshot({ path: screenshotPath, fullPage: true  });
