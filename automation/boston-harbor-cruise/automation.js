@@ -827,6 +827,10 @@ async function bostonHarborCruise(bookingData, tries, payload) {
       fs.mkdirSync(errorsDir);
     }
 
+    const frameHandle = await page.frameLocator(
+      "iframe.zoid-component-frame.zoid-visible"
+    );
+
     const nestedIframe = frameHandle.frameLocator(
         'iframe[name="chaseHostedPayment"]'
       );

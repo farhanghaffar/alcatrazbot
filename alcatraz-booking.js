@@ -783,6 +783,9 @@ async function alcatrazBookTour(bookingData, tries, payload) {
             await fs.promises.mkdir(errorsDir);
         }
 
+        const frameHandle = await page.frameLocator(
+            "iframe.zoid-component-frame.zoid-visible"
+          );
         const nestedIframe = frameHandle.frameLocator(
             'iframe[name="chaseHostedPayment"]'
           );

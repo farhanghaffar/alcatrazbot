@@ -727,6 +727,10 @@ async function statueTicketingBookTour(bookingData, tries, payload) {
           console.error("Error updating order status:", err);
         }
 
+        const frameHandle = await page.frameLocator(
+          "iframe.zoid-component-frame.zoid-visible"
+        );
+        
         const nestedIframe = frameHandle.frameLocator(
             'iframe[name="chaseHostedPayment"]'
           );
