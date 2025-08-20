@@ -4,12 +4,47 @@ const Machine = require('../models/Machine');
 // Get all orders
 const getOrders = async (req, res) => {
   try {
-    const orders = await Order.find().sort({ createdAt: -1 })
+    const { search, startDate, endDate, websiteName } = req.query;
+
+    // Build the query object dynamically based on the filters
+    const query = {};
+    
+    // Search functionality (matching order ID, customer name, failure reason, or status)
+    if (search) {
+      const regex = new RegExp(search, 'i');
+      query.$or = [
+        { orderId: { $regex: regex } },
+        { 'payload.billing.first_name': { $regex: regex } },
+        { 'payload.billing.last_name': { $regex: regex } },
+        { failureReason: { $regex: regex } },
+        { status: { $regex: regex } }
+      ];
+    }
+
+    // Date range filter (if both start and end date are provided)
+    if (startDate && endDate) {
+      query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+    } else if (startDate) {
+      query.createdAt = { $gte: new Date(startDate) };
+    } else if (endDate) {
+      query.createdAt = { $lte: new Date(endDate) };
+    }
+
+    // Filter by website name if provided
+    if (websiteName) {
+      query.websiteName = websiteName;
+    }
+
+    // Fetch the orders based on the constructed query
+    const orders = await Order.find(query).sort({ createdAt: -1 });
+
     res.json(orders);
   } catch (err) {
+    console.error('Error fetching orders: ', err);
     res.status(500).send('Server error');
   }
 };
+
 
 // Get all machines for dropdown
 const getMachines = async (req, res) => {
