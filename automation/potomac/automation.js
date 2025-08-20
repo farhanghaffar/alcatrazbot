@@ -369,6 +369,39 @@ async function potomacTourBooking(bookingData, tries, payload) {
     const emailInput = await frameHandle.locator('input[name="email"]');
     await expect(emailInput).toBeVisible({ timeout: 120000 });
     await typeWithDelay(emailInput, bookingData.billing.email);
+
+        // Keep clicking retry button until it's no longer visible or max attempts reached
+        let retryAttempts = 0;
+        const maxRetryAttempts = 5; // Prevent infinite loop
+
+        do {
+        // Check if retry button is visible
+        const retryBtnWithDataBdd = await frameHandle.locator('button[data-bdd="retry-fetching-summary"]');
+        const isRetryBtnWithDataBddVisible = await retryBtnWithDataBdd.isVisible().catch(() => false);
+        
+        if (!isRetryBtnWithDataBddVisible) {
+            console.log("Retry button no longer visible, continuing workflow");
+            break; // Exit the loop if button is not visible
+        }
+        
+        // Increment attempts counter
+        retryAttempts++;
+        
+        // Click the retry button
+        console.log(`Found retry-fetching-summary button (Attempt ${retryAttempts}/${maxRetryAttempts})`);
+        await retryBtnWithDataBdd.click();
+        console.log("Clicked retry-fetching-summary button");
+        
+        // Wait for response/network activity
+        await page.waitForTimeout(3000);
+        
+        } while (retryAttempts < maxRetryAttempts);
+
+        if (retryAttempts >= maxRetryAttempts) {
+        console.log(`Warning: Reached maximum retry attempts (${maxRetryAttempts})`);
+        }
+
+
     console.log("Email filled");
 
     randomtime = getRandomTime();
@@ -403,6 +436,37 @@ async function potomacTourBooking(bookingData, tries, payload) {
         .filter({ hasText: "Continue" });
       await continue3.first().click();
     }
+
+    
+        // Keep clicking retry button until it's no longer visible or max attempts reached
+        retryAttempts = 0;
+        do {
+        // Check if retry button is visible
+        const retryBtnWithDataBdd = await frameHandle.locator('button[data-bdd="retry-fetching-summary"]');
+        const isRetryBtnWithDataBddVisible = await retryBtnWithDataBdd.isVisible().catch(() => false);
+        
+        if (!isRetryBtnWithDataBddVisible) {
+            console.log("Retry button no longer visible in Billing Section, continuing workflow");
+            break; // Exit the loop if button is not visible
+        }
+        
+        // Increment attempts counter
+        retryAttempts++;
+        
+        // Click the retry button
+        console.log(`Found retry-fetching-summary button (Attempt ${retryAttempts}/${maxRetryAttempts})`);
+        await retryBtnWithDataBdd.click();
+        console.log("Clicked retry-fetching-summary button");
+        
+        // Wait for response/network activity
+        await page.waitForTimeout(3000);
+        
+        } while (retryAttempts < maxRetryAttempts);
+
+        if (retryAttempts >= maxRetryAttempts) {
+        console.log(`Warning: Reached maximum retry attempts (${maxRetryAttempts})`);
+        }
+
 
     const firstNameInput = await frameHandle.locator('input[name="firstName"]');
     await expect(firstNameInput).toBeVisible({ timeout: 80000 });
@@ -484,6 +548,38 @@ async function potomacTourBooking(bookingData, tries, payload) {
       .getByText("Continue to Payment")
       .first()
       .click();
+
+    
+      retryAttempts = 0;
+
+      do {
+          // Check if retry button is visible
+          const retryBtnWithDataBdd = await frameHandle.locator('button[data-bdd="retry-fetching-summary"]');
+          const isRetryBtnWithDataBddVisible = await retryBtnWithDataBdd.isVisible().catch(() => false);
+          
+          if (!isRetryBtnWithDataBddVisible) {
+              console.log("Retry button no longer visible in Billing Section, continuing workflow");
+              break; // Exit the loop if button is not visible
+          }
+          
+          // Increment attempts counter
+          retryAttempts++;
+          
+          // Click the retry button
+          console.log(`Found retry-fetching-summary button (Attempt ${retryAttempts}/${maxRetryAttempts})`);
+          await retryBtnWithDataBdd.click();
+          console.log("Clicked retry-fetching-summary button");
+          
+          // Wait for response/network activity
+          await page.waitForTimeout(3000);
+          
+          } while (retryAttempts < maxRetryAttempts);
+  
+          if (retryAttempts >= maxRetryAttempts) {
+          console.log(`Warning: Reached maximum retry attempts (${maxRetryAttempts})`);
+          }
+
+
     console.log("Potomac: Successfully filled booking details");
 
     const processingPaymentCheckbox = await frameHandle
@@ -515,6 +611,47 @@ async function potomacTourBooking(bookingData, tries, payload) {
       'iframe[name="chaseHostedPayment"]'
     );
 
+    retryAttempts = 0;
+    const getRandomTimeForPaymentSection = await getRandomDelayWithLimit(10000);
+    await page.waitForTimeout(getRandomTimeForPaymentSection);
+    // Keep clicking retry button until it's no longer visible or max attempts reached
+
+    do {
+      // Check if retry button is visible
+      const retryBtnInPaymentFrame = await frameHandle.getByRole(
+        "button",
+      ).filter({hasText: "Retry"});
+
+      const isRetryBtnInPaymentFrameVisible = await retryBtnInPaymentFrame
+        .isVisible()
+        .catch(() => false);
+    console.log("Retry button visibility: Payment Section", isRetryBtnInPaymentFrameVisible);
+
+      if (!isRetryBtnInPaymentFrameVisible) {
+        console.log("Retry button no longer visible, continuing workflow");
+        break; // Exit the loop if button is not visible
+      }
+
+      // Increment attempts counter
+      retryAttempts++;
+
+      // Click the retry button
+      console.log(
+        `Found retry-fetching-summary button (Attempt ${retryAttempts}/${maxRetryAttempts})`
+      );
+      await retryBtnInPaymentFrame.click();
+      console.log("Clicked retry-fetching-summary button");
+
+      // Wait for response/network activity
+      await page.waitForTimeout(3000);
+    } while (retryAttempts < maxRetryAttempts);
+
+    if (retryAttempts >= maxRetryAttempts) {
+      console.log(
+        `Warning: Reached maximum retry attempts (${maxRetryAttempts})`
+      );
+    }
+
     // Card Zip
     // const cardZipInput = nestedIframe.locator(".creZipField");
     // await expect(cardZipInput).toBeVisible({ timeout: 30000 });
@@ -541,6 +678,51 @@ async function potomacTourBooking(bookingData, tries, payload) {
     const cardExpYear = nestedIframe.locator("#expYear");
     await expect(cardExpYear).toBeVisible({ timeout: 30000 });
     await cardExpYear.selectOption(cardInfo.cardYear);
+
+    retryAttempts = 0;
+    const getRandomTimeForPaymentSection2 =
+      await getRandomDelayWithLimit(5000);
+    await page.waitForTimeout(getRandomTimeForPaymentSection2);
+    // Keep clicking retry button until it's no longer visible or max attempts reached
+
+    do {
+      // Check if retry button is visible
+      const retryBtnInPaymentFrame = await frameHandle
+        .getByRole("button")
+        .filter({ hasText: "Retry" });
+
+      const isRetryBtnInPaymentFrameVisible = await retryBtnInPaymentFrame
+        .isVisible()
+        .catch(() => false);
+      console.log(
+        "Retry button visibility: Payment Section",
+        isRetryBtnInPaymentFrameVisible
+      );
+
+      if (!isRetryBtnInPaymentFrameVisible) {
+        console.log("Retry button no longer visible, continuing workflow");
+        break; // Exit the loop if button is not visible
+      }
+
+      // Increment attempts counter
+      retryAttempts++;
+
+      // Click the retry button
+      console.log(
+        `Found retry-fetching-summary button (Attempt ${retryAttempts}/${maxRetryAttempts})`
+      );
+      await retryBtnInPaymentFrame.click();
+      console.log("Clicked retry-fetching-summary button");
+
+      // Wait for response/network activity
+      await page.waitForTimeout(3000);
+    } while (retryAttempts < maxRetryAttempts);
+
+    if (retryAttempts >= maxRetryAttempts) {
+      console.log(
+        `Warning: Reached maximum retry attempts (${maxRetryAttempts})`
+      );
+    }      
 
     console.log("Card payment information filled");
 

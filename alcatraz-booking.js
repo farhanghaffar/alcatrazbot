@@ -331,6 +331,38 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         await expect(emailInput).toBeVisible({timeout: 120000});
         // await emailInput.fill(bookingData.billing.email);
         await typeWithDelay(emailInput, bookingData.billing.email);
+
+        // Keep clicking retry button until it's no longer visible or max attempts reached
+        let retryAttempts = 0;
+        const maxRetryAttempts = 5; // Prevent infinite loop
+
+        do {
+        // Check if retry button is visible
+        const retryBtnWithDataBdd = await frameHandle.locator('button[data-bdd="retry-fetching-summary"]');
+        const isRetryBtnWithDataBddVisible = await retryBtnWithDataBdd.isVisible().catch(() => false);
+        
+        if (!isRetryBtnWithDataBddVisible) {
+            console.log("Retry button no longer visible, continuing workflow");
+            break; // Exit the loop if button is not visible
+        }
+        
+        // Increment attempts counter
+        retryAttempts++;
+        
+        // Click the retry button
+        console.log(`Found retry-fetching-summary button (Attempt ${retryAttempts}/${maxRetryAttempts})`);
+        await retryBtnWithDataBdd.click();
+        console.log("Clicked retry-fetching-summary button");
+        
+        // Wait for response/network activity
+        await page.waitForTimeout(3000);
+        
+        } while (retryAttempts < maxRetryAttempts);
+
+        if (retryAttempts >= maxRetryAttempts) {
+        console.log(`Warning: Reached maximum retry attempts (${maxRetryAttempts})`);
+        }
+
         console.log('Email filled');
 
         randomtime = getRandomTime();
@@ -371,6 +403,36 @@ async function alcatrazBookTour(bookingData, tries, payload) {
     
             const continue3 = await frameHandle.locator('button:not(disabled)').filter({ hasText: 'Continue' });
             await (continue3.first()).click();
+        }
+
+
+        // Keep clicking retry button until it's no longer visible or max attempts reached
+    retryAttempts = 0;
+        do {
+        // Check if retry button is visible
+        const retryBtnWithDataBdd = await frameHandle.locator('button[data-bdd="retry-fetching-summary"]');
+        const isRetryBtnWithDataBddVisible = await retryBtnWithDataBdd.isVisible().catch(() => false);
+        
+        if (!isRetryBtnWithDataBddVisible) {
+            console.log("Retry button no longer visible in Billing Section, continuing workflow");
+            break; // Exit the loop if button is not visible
+        }
+        
+        // Increment attempts counter
+        retryAttempts++;
+        
+        // Click the retry button
+        console.log(`Found retry-fetching-summary button (Attempt ${retryAttempts}/${maxRetryAttempts})`);
+        await retryBtnWithDataBdd.click();
+        console.log("Clicked retry-fetching-summary button");
+        
+        // Wait for response/network activity
+        await page.waitForTimeout(3000);
+        
+        } while (retryAttempts < maxRetryAttempts);
+
+        if (retryAttempts >= maxRetryAttempts) {
+        console.log(`Warning: Reached maximum retry attempts (${maxRetryAttempts})`);
         }
 
         const firstNameInput = await frameHandle.locator('input[name="firstName"]');
@@ -503,6 +565,36 @@ async function alcatrazBookTour(bookingData, tries, payload) {
             await TNCRadioElement.click();
         }
         await frameHandle.locator('button').getByText('Continue to Payment').first().click();
+
+        retryAttempts = 0;
+
+        do {
+            // Check if retry button is visible
+            const retryBtnWithDataBdd = await frameHandle.locator('button[data-bdd="retry-fetching-summary"]');
+            const isRetryBtnWithDataBddVisible = await retryBtnWithDataBdd.isVisible().catch(() => false);
+            
+            if (!isRetryBtnWithDataBddVisible) {
+                console.log("Retry button no longer visible in Billing Section, continuing workflow");
+                break; // Exit the loop if button is not visible
+            }
+            
+            // Increment attempts counter
+            retryAttempts++;
+            
+            // Click the retry button
+            console.log(`Found retry-fetching-summary button (Attempt ${retryAttempts}/${maxRetryAttempts})`);
+            await retryBtnWithDataBdd.click();
+            console.log("Clicked retry-fetching-summary button");
+            
+            // Wait for response/network activity
+            await page.waitForTimeout(3000);
+            
+            } while (retryAttempts < maxRetryAttempts);
+    
+            if (retryAttempts >= maxRetryAttempts) {
+            console.log(`Warning: Reached maximum retry attempts (${maxRetryAttempts})`);
+            }
+
         console.log('Successfully Filled Booking details');
 
         const processingPaymentCheckbox = await frameHandle.locator('#step-for-stage-processingPayment').locator('input[type="checkbox"]');
@@ -533,33 +625,45 @@ async function alcatrazBookTour(bookingData, tries, payload) {
           'iframe[name="chaseHostedPayment"]'
         );
 
-        const fetchResourceErrorMsg = await frameHandle.getByText(
-          "Oops... something went wrong"
-        );
-        const isFetchResourceErrorMsgVisible =
-          await fetchResourceErrorMsg.isVisible();
+        retryAttempts = 0;
+        const getRandomTimeForPaymentSection = await getRandomDelayWithLimit(10000);
+        await page.waitForTimeout(getRandomTimeForPaymentSection);
+        // Keep clicking retry button until it's no longer visible or max attempts reached
 
-        const fetchResourceNetworkError = await frameHandle.getByText(
-          "NetworkError when attempting to fetch resource."
-        );
-        const isFetchResourceNetworkErrorVisible =
-          await fetchResourceNetworkError.isVisible();
+        do {
+          // Check if retry button is visible
+          const retryBtnInPaymentFrame = await frameHandle.getByRole(
+            "button",
+          ).filter({hasText: "Retry"});
 
-        if (
-          isFetchResourceErrorMsgVisible &&
-          isFetchResourceNetworkErrorVisible
-        ) {
-          // throw new Error('Payment not completed');
-          console.log("NetworkError when attempting to fetch resource.");
-          const retryBtn = await nestedIframe
-            .getByRole("button")
-            .filter({ hasText: "RETRY" });
-          await expect(retryBtn).toBeVisible();
-          await retryBtn.click();
-          console.log("Clicked Retry to fetch Button");
-          await page.waitForTimeout(5000);
-        } else {
-          console.log("No NetworkError all resources fetched successfully, Proceeding...");
+          const isRetryBtnInPaymentFrameVisible = await retryBtnInPaymentFrame
+            .isVisible()
+            .catch(() => false);
+        console.log("Retry button visibility: Payment Section", isRetryBtnInPaymentFrameVisible);
+
+          if (!isRetryBtnInPaymentFrameVisible) {
+            console.log("Retry button no longer visible, continuing workflow");
+            break; // Exit the loop if button is not visible
+          }
+
+          // Increment attempts counter
+          retryAttempts++;
+
+          // Click the retry button
+          console.log(
+            `Found retry-fetching-summary button (Attempt ${retryAttempts}/${maxRetryAttempts})`
+          );
+          await retryBtnInPaymentFrame.click();
+          console.log("Clicked retry-fetching-summary button");
+
+          // Wait for response/network activity
+          await page.waitForTimeout(3000);
+        } while (retryAttempts < maxRetryAttempts);
+
+        if (retryAttempts >= maxRetryAttempts) {
+          console.log(
+            `Warning: Reached maximum retry attempts (${maxRetryAttempts})`
+          );
         }
 
         // const cardNameInput = nestedIframe.locator('.creNameField');
@@ -616,6 +720,47 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         const cardExpYear = nestedIframe.locator('#expYear');
         await expect(cardExpYear).toBeVisible({timeout: 30000});
         await cardExpYear.selectOption(cardInfo.cardYear);
+
+        retryAttempts = 0;
+        const getRandomTimeForPaymentSection2 = await getRandomDelayWithLimit(5000);
+        await page.waitForTimeout(getRandomTimeForPaymentSection2);
+        // Keep clicking retry button until it's no longer visible or max attempts reached
+
+        do {
+          // Check if retry button is visible
+          const retryBtnInPaymentFrame = await frameHandle.getByRole(
+            "button",
+          ).filter({hasText: "Retry"});
+
+          const isRetryBtnInPaymentFrameVisible = await retryBtnInPaymentFrame
+            .isVisible()
+            .catch(() => false);
+        console.log("Retry button visibility: Payment Section", isRetryBtnInPaymentFrameVisible);
+
+          if (!isRetryBtnInPaymentFrameVisible) {
+            console.log("Retry button no longer visible, continuing workflow");
+            break; // Exit the loop if button is not visible
+          }
+
+          // Increment attempts counter
+          retryAttempts++;
+
+          // Click the retry button
+          console.log(
+            `Found retry-fetching-summary button (Attempt ${retryAttempts}/${maxRetryAttempts})`
+          );
+          await retryBtnInPaymentFrame.click();
+          console.log("Clicked retry-fetching-summary button");
+
+          // Wait for response/network activity
+          await page.waitForTimeout(3000);
+        } while (retryAttempts < maxRetryAttempts);
+
+        if (retryAttempts >= maxRetryAttempts) {
+          console.log(
+            `Warning: Reached maximum retry attempts (${maxRetryAttempts})`
+          );
+        }
 
         console.log('Card payment information filled');
 
