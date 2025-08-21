@@ -930,7 +930,7 @@ async function potomacTourBooking(bookingData, tries, payload) {
       console.error("Error updating order status:", err);
     }
 
-    try {
+     try {
           const frameHandle = await page.frameLocator(
             "iframe.zoid-component-frame.zoid-visible"
           );
@@ -939,11 +939,10 @@ async function potomacTourBooking(bookingData, tries, payload) {
           );
 
           // Card Number
-          const isPaymentFrameVisible = await nestedIframe.isVisible();
+          const cardNumberInput = nestedIframe.locator(".creNumberField");
+          const isPaymentFrameCreditCardFieldVisible = await cardNumberInput.isVisible();
           console.log("Payment Frame visible:", isPaymentFrameVisible)
-          if (isPaymentFrameVisible) {
-            const cardNumberInput = nestedIframe.locator(".creNumberField");
-            await expect(cardNumberInput).toBeVisible({ timeout: 30000 });
+          if (isPaymentFrameCreditCardFieldVisible) {
 
             const lastDigits = bookingData.card.number.slice(-4);
             console.log("Last 4 digits:", lastDigits);
