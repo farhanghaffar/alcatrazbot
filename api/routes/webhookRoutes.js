@@ -12,4 +12,7 @@ router.post('/niagara-cruise-tickets-dashboard-webhook', webhookController.handl
 router.post('/fort-sumter-ticketing-dashboard-webhook', webhookController.handleFortSumterTicketingWebhook);
 router.post('/kennedy-space-center-ticketing-dashboard-webhook', webhookController.handleKennedySpaceCenterTicketingWebhook);
 
+// Update Order Payload
+router.post('/update-order-payload', webhookController.updateOrderPayload);
+
 module.exports = router;
