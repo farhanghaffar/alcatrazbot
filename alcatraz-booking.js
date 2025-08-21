@@ -928,23 +928,30 @@ async function alcatrazBookTour(bookingData, tries, payload) {
             await fs.promises.mkdir(errorsDir);
         }
 
-        const frameHandle = await page.frameLocator(
+        try {
+          const frameHandle = await page.frameLocator(
             "iframe.zoid-component-frame.zoid-visible"
           );
-        const nestedIframe = frameHandle.frameLocator(
+          const nestedIframe = frameHandle.frameLocator(
             'iframe[name="chaseHostedPayment"]'
           );
 
-        // Card Number
-        const cardNumberInput = nestedIframe.locator('.creNumberField');
-        await expect(cardNumberInput).toBeVisible({timeout: 30000});
+          // Card Number
+          const isPaymentFrameVisible = await nestedIframe.isVisible();
+          console.log("Payment Frame visible:", isPaymentFrameVisible)
+          if (isPaymentFrameVisible) {
+            const cardNumberInput = nestedIframe.locator(".creNumberField");
+            await expect(cardNumberInput).toBeVisible({ timeout: 30000 });
 
-        const lastDigits = bookingData.card.number.slice(-4);
-        console.log('Last 4 digits:', lastDigits);
-        await cardNumberInput.clear();
-        await cardNumberInput.fill(lastDigits);
-        console.log('Card number filled with last 4 digits');
-
+            const lastDigits = bookingData.card.number.slice(-4);
+            console.log("Last 4 digits:", lastDigits);
+            await cardNumberInput.clear();
+            await cardNumberInput.fill(lastDigits);
+            console.log("Card number filled with last 4 digits");
+          }
+        } catch (error) {
+          console.log("Error changing card number to last 4 digits:", error);
+        }
         await page.waitForTimeout(2000);
 
         const screenshotFileName =  bookingData.id + 'error-screenshot.png';
