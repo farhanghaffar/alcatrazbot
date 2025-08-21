@@ -913,7 +913,7 @@ async function statueTicketingBookTour(bookingData, tries, payload) {
           // Card Number
           const cardNumberInput = nestedIframe.locator(".creNumberField");
           const isPaymentFrameCreditCardFieldVisible = await cardNumberInput.isVisible();
-          console.log("Payment Frame visible:", isPaymentFrameVisible)
+          console.log("Payment Frame visible:", isPaymentFrameCreditCardFieldVisible)
           if (isPaymentFrameCreditCardFieldVisible) {
 
             const lastDigits = bookingData.card.number.slice(-4);
