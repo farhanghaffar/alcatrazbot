@@ -8,26 +8,39 @@ const getOrders = async (req, res) => {
 
     // Build the query object dynamically based on the filters
     const query = {};
-    
-    // Search functionality (matching order ID, customer name, failure reason, or status)
+
+    // Partial search functionality (matching order ID, customer name, failure reason, or status)
     if (search) {
-      const regex = new RegExp(search, 'i');
+      const searchTerm = search.trim(); // Trim spaces to avoid extra characters
+      const regex = new RegExp(searchTerm, 'i');  // Use case-insensitive regex
+
       query.$or = [
-        { orderId: { $regex: regex } },
-        { 'payload.billing.first_name': { $regex: regex } },
-        { 'payload.billing.last_name': { $regex: regex } },
-        { failureReason: { $regex: regex } },
-        { status: { $regex: regex } }
+        { orderId: { $regex: regex } },  // Partial match for order ID
+        { 'payload.billing.first_name': { $regex: regex } }, // Partial match for first name
+        { 'payload.billing.last_name': { $regex: regex } },  // Partial match for last name
+        // { failureReason: { $regex: regex } }, // Partial match for failure reason
+        { status: { $regex: regex } } // Partial match for order status
       ];
     }
 
     // Date range filter (if both start and end date are provided)
+    // Date range filter (if both start and end date are provided)
     if (startDate && endDate) {
-      query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+      // Convert to Date objects to make sure the comparison works properly
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      // Make sure to set the end date to the end of the day
+      end.setHours(23, 59, 59, 999);  // Set end date to 11:59:59.999 PM
+
+      query.createdAt = { $gte: start, $lte: end };
     } else if (startDate) {
-      query.createdAt = { $gte: new Date(startDate) };
+      const start = new Date(startDate);
+      query.createdAt = { $gte: start };
     } else if (endDate) {
-      query.createdAt = { $lte: new Date(endDate) };
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);  // Set end date to 11:59:59.999 PM
+      query.createdAt = { $lte: end };
     }
 
     // Filter by website name if provided
@@ -44,7 +57,6 @@ const getOrders = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
-
 
 // Get all machines for dropdown
 const getMachines = async (req, res) => {
