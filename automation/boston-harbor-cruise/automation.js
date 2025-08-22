@@ -941,7 +941,7 @@ async function bostonHarborCruise(bookingData, tries, payload) {
 
     const successDir = path.join(__dirname, "successful-orders-screenshots");
     if (!fs.existsSync(successDir)) {
-      fs.mkdir(successDir);
+      await fs.promises.mkdir(successDir);
     }
     const screenshotFileName = bookingData.id + "-order-sucess.png";
     const screenshotPath = path.join(successDir, screenshotFileName);
@@ -1002,7 +1002,7 @@ async function bostonHarborCruise(bookingData, tries, payload) {
 
     const errorsDir = path.join(__dirname, "errors-screenshots");
     if (!fs.existsSync(errorsDir)) {
-      fs.mkdirSync(errorsDir);
+      await fs.promises.mkdir(errorsDir);
     }
 
   try {
