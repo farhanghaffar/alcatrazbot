@@ -2,6 +2,7 @@ const Order = require('../models/Order');
 const Machine = require('../models/Machine');
 
 // Get all orders
+// Fetch the orders with the selectedMachine populated
 const getOrders = async (req, res) => {
   try {
     const { search, startDate, endDate, websiteName } = req.query;
@@ -9,7 +10,7 @@ const getOrders = async (req, res) => {
     // Build the query object dynamically based on the filters
     const query = {};
 
-    // Partial search functionality (matching order ID, customer name, failure reason, or status)
+    // Search functionality (matching order ID, customer name, failure reason, or status)
     if (search) {
       const searchTerm = search.trim(); // Trim spaces to avoid extra characters
       const regex = new RegExp(searchTerm, 'i');  // Use case-insensitive regex
@@ -18,21 +19,15 @@ const getOrders = async (req, res) => {
         { orderId: { $regex: regex } },  // Partial match for order ID
         { 'payload.billing.first_name': { $regex: regex } }, // Partial match for first name
         { 'payload.billing.last_name': { $regex: regex } },  // Partial match for last name
-        // { failureReason: { $regex: regex } }, // Partial match for failure reason
         { status: { $regex: regex } } // Partial match for order status
       ];
     }
 
     // Date range filter (if both start and end date are provided)
-    // Date range filter (if both start and end date are provided)
     if (startDate && endDate) {
-      // Convert to Date objects to make sure the comparison works properly
       const start = new Date(startDate);
       const end = new Date(endDate);
-
-      // Make sure to set the end date to the end of the day
       end.setHours(23, 59, 59, 999);  // Set end date to 11:59:59.999 PM
-
       query.createdAt = { $gte: start, $lte: end };
     } else if (startDate) {
       const start = new Date(startDate);
@@ -48,8 +43,10 @@ const getOrders = async (req, res) => {
       query.websiteName = websiteName;
     }
 
-    // Fetch the orders based on the constructed query
-    const orders = await Order.find(query).sort({ createdAt: -1 });
+    // Fetch the orders with the selectedMachine populated (get machine's name)
+    const orders = await Order.find(query)
+      .populate('triggeredMachine', 'name') // Populate selectedMachine field with 'name'
+      .sort({ createdAt: -1 });
 
     res.json(orders);
   } catch (err) {
@@ -57,6 +54,32 @@ const getOrders = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
+
+// Update the triggered machine on an order
+const updateTriggeredMachine = async (req, res) => {
+  const { orderId, triggeredMachineId } = req.body; // Get the triggered machine from the request
+
+  try {
+    // Find the order by its ID and update the triggeredMachine field
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { triggeredMachine: triggeredMachineId }, // Only update triggeredMachine
+      { new: true } // Return the updated order
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    return res.status(200).json(updatedOrder); // Send back the updated order with triggeredMachine
+  } catch (err) {
+    console.error('Error updating triggered machine:', err);
+    res.status(500).send('Server error');
+  }
+};
+
+
 
 // Get all machines for dropdown
 const getMachines = async (req, res) => {
@@ -148,4 +171,4 @@ const deleteMachine = async (req, res) => {
 };
 
 
-module.exports = { getOrders, getMachines, updateOrderStatus, deleteMachine, addMachine, editMachine };
+module.exports = { getOrders, getMachines, updateOrderStatus, deleteMachine, addMachine, editMachine, updateTriggeredMachine };
