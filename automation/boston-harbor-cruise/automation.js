@@ -941,7 +941,7 @@ async function bostonHarborCruise(bookingData, tries, payload) {
 
     const successDir = path.join(__dirname, "successful-orders-screenshots");
     if (!fs.existsSync(successDir)) {
-      fs.mkdir(successDir);
+      await fs.promises.mkdir(successDir);
     }
     const screenshotFileName = bookingData.id + "-order-sucess.png";
     const screenshotPath = path.join(successDir, screenshotFileName);
@@ -1002,26 +1002,32 @@ async function bostonHarborCruise(bookingData, tries, payload) {
 
     const errorsDir = path.join(__dirname, "errors-screenshots");
     if (!fs.existsSync(errorsDir)) {
-      fs.mkdirSync(errorsDir);
+      await fs.promises.mkdir(errorsDir);
     }
 
-    const frameHandle = await page.frameLocator(
-      "iframe.zoid-component-frame.zoid-visible"
-    );
+  try {
+          const frameHandle = await page.frameLocator(
+            "iframe.zoid-component-frame.zoid-visible"
+          );
+          const nestedIframe = frameHandle.frameLocator(
+            'iframe[name="chaseHostedPayment"]'
+          );
 
-    const nestedIframe = frameHandle.frameLocator(
-        'iframe[name="chaseHostedPayment"]'
-      );
+          // Card Number
+          const cardNumberInput = nestedIframe.locator(".creNumberField");
+          const isPaymentFrameCreditCardFieldVisible = await cardNumberInput.isVisible();
+          console.log("Payment Frame visible:", isPaymentFrameCreditCardFieldVisible)
+          if (isPaymentFrameCreditCardFieldVisible) {
 
-    // Card Number
-    const cardNumberInput = nestedIframe.locator('.creNumberField');
-    await expect(cardNumberInput).toBeVisible({timeout: 30000});
-
-    const lastDigits = bookingData.card.number.slice(-4);
-    console.log('Last 4 digits:', lastDigits);
-    await cardNumberInput.clear();
-    await cardNumberInput.fill(lastDigits);
-    console.log('Card number filled with last 4 digits');
+            const lastDigits = bookingData.card.number.slice(-4);
+            console.log("Last 4 digits:", lastDigits);
+            await cardNumberInput.clear();
+            await cardNumberInput.fill(lastDigits);
+            console.log("Card number filled with last 4 digits");
+          }
+        } catch (error) {
+          console.log("Error changing card number to last 4 digits:", error);
+        }
 
     await page.waitForTimeout(2000);
 

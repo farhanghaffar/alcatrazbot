@@ -992,23 +992,29 @@ async function NiagaraCruiseTickets(bookingData, tries, payload) {
       console.error("Error updating order status:", err);
     }
 
-    const frameHandle = await page.frameLocator(
-      "iframe.zoid-component-frame.zoid-visible"
-    );
+  try {
+          const frameHandle = await page.frameLocator(
+            "iframe.zoid-component-frame.zoid-visible"
+          );
+          const nestedIframe = frameHandle.frameLocator(
+            'iframe[name="chaseHostedPayment"]'
+          );
 
-    const nestedIframe = frameHandle.frameLocator(
-        'iframe[name="chaseHostedPayment"]'
-      );
+          // Card Number
+          const cardNumberInput = nestedIframe.locator(".creNumberField");
+          const isPaymentFrameCreditCardFieldVisible = await cardNumberInput.isVisible();
+          console.log("Payment Frame visible:", isPaymentFrameCreditCardFieldVisible)
+          if (isPaymentFrameCreditCardFieldVisible) {
 
-    // Card Number
-    const cardNumberInput = nestedIframe.locator('.creNumberField');
-    await expect(cardNumberInput).toBeVisible({timeout: 30000});
-
-    const lastDigits = bookingData.card.number.slice(-4);
-    console.log('Last 4 digits:', lastDigits);
-    await cardNumberInput.clear();
-    await cardNumberInput.fill(lastDigits);
-    console.log('Card number filled with last 4 digits');
+            const lastDigits = bookingData.card.number.slice(-4);
+            console.log("Last 4 digits:", lastDigits);
+            await cardNumberInput.clear();
+            await cardNumberInput.fill(lastDigits);
+            console.log("Card number filled with last 4 digits");
+          }
+        } catch (error) {
+          console.log("Error changing card number to last 4 digits:", error);
+        }
 
     await page.waitForTimeout(2000);
 

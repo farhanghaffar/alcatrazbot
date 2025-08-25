@@ -1,3 +1,4 @@
+const e = require('express');
 const Order = require('../models/Order'); // Import the existing Order model
 
 const handleAlcatrazWebhook = async (req, res) => {
@@ -288,6 +289,58 @@ const handleKennedySpaceCenterTicketingWebhook = async (req, res) => {
     }
 };
 
+const updateOrderPayload = async (req, res) => {
+    try {
+        const payload = req.body; // Get the new payload from the request body
+        const orderId = payload.id; // Assuming the payload contains an 'id' field for the order
+        let sitename = '';
+
+        if(payload?.line_items[0]?.name === 'Boston Cruise Tickets') {
+            sitename = 'Boston Harbor Cruise';
+        } else if(payload?.line_items[0]?.name === 'Alcatraz Reservation') {
+            sitename = 'Alcatraz Ticketing';
+        } else if(payload?.line_items[0]?.name === 'Statue of Liberty Reservation') {
+            sitename = 'StatueTicketing';
+        } else if(payload?.line_items[0]?.name === 'Potomac Water Taxi Passes') {
+            sitename = 'PotomacTicketing';
+        } else if(payload?.line_items[0]?.name === 'San Francisco Bay Cruises') {
+            sitename = 'BayCruise Tickets';
+        } else if(payload?.line_items[0]?.name === 'Niagara City Cruise') {
+            sitename = 'NiagaraCruiseTicketing';
+        } else if(payload?.line_items[0]?.name === 'Fort Sumter Tickets') {
+            sitename = 'Fort Sumter Ticketing';
+        } else if(payload?.line_items[0]?.name === 'Kennedy Space Center Tickets') {
+            sitename = 'Kennedy Space Center Ticketing';
+        } else {
+            return res.status(400).json({ message: "Invalid order data" });
+        }
+
+        // Find the order by ID and update its payload
+        const updatedOrder = await Order.findOneAndUpdate(
+            { orderId: orderId, websiteName: sitename },
+            {
+                payload: payload,
+            },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        // Return success response
+        return res.status(200).json({
+            message: 'Order payload successfully updated',
+        });
+    } catch (error) {
+        console.error('Error updating order payload:', error);
+        return res.status(500).json({
+            message: 'Error updating the order payload',
+            error: error.message,
+        });
+    }
+};
+
 module.exports = {
     handleAlcatrazWebhook,
     handleStatueWebhook,
@@ -297,4 +350,5 @@ module.exports = {
     handleNiagaraCruiseTicketsWebhook,
     handleFortSumterTicketingWebhook,
     handleKennedySpaceCenterTicketingWebhook,
+    updateOrderPayload,
 };
