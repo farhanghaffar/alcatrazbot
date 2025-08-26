@@ -16,12 +16,15 @@ const {
   getRandomUserAgent,
   formatAndValidateCardExpirationDate,
   addOneHour,
+  getRandomDelayWithLimit,
+  addOrUpdateOrder,
 } = require("./../../helper");
 const { Solver } = require("@2captcha/captcha-solver");
 const fs = require("fs");
 const path = require("path");
 const { ServiceCharges } = require("../service-charges");
 const { updateOrderStatus } = require("../wp-update-order-status/automation");
+const Order = require("../../api/models/Order");
 require("dotenv").config();
 
 // Apply stealth plugin to avoid bot detection
@@ -96,7 +99,7 @@ const launchOptions = {
 
 let randomtime = 0;
 
-async function FortSumterTickets(bookingData, tries) {
+async function FortSumterTickets(bookingData, tries, payload) {
   // Add extra anti-detection measures by randomizing user agent
   const userAgent = getRandomUserAgent();
   console.log("User Agent:", userAgent);
@@ -190,6 +193,9 @@ async function FortSumterTickets(bookingData, tries) {
     });
 
     console.log("Starting booking automation...");
+
+    await addOrUpdateOrder(bookingData, 'Fort Sumter Ticketing', '/fort-sumter-ticketing-webhook', payload);
+
 
     let tourURL = "https://www.fortsumtertours.com/";
 
@@ -1179,7 +1185,22 @@ async function FortSumterTickets(bookingData, tries) {
       try {
         // Use Puppeteer's selector approach instead of Playwright's locator
         const nameFieldSelector = "#id_name, input[name='contact-name']";
-        await frame.waitForSelector(nameFieldSelector, {visible: true, timeout: 5000});
+
+        // Log before trying to interact
+        const fieldExists = await frame.$(nameFieldSelector);
+        if (!fieldExists) {
+          console.error("Field does not exist at this point in time");
+        } else {
+          console.log("Field is ready for interaction");
+        }
+
+        await frame.waitForSelector(nameFieldSelector, {visible: true, timeout: 50000});
+
+        // Ensure the field is focused
+        await frame.click(nameFieldSelector);
+
+        // custom delay random
+        await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), Math.floor(Math.random() * 5000));
         
         // Type full name with human-like delay
         for (let i = 0; i < fullName.length; i++) {
@@ -1197,7 +1218,7 @@ async function FortSumterTickets(bookingData, tries) {
               input.dispatchEvent(new Event('input', { bubbles: true }));
               input.dispatchEvent(new Event('change', { bubbles: true }));
             }
-          }, "[data-test-id='name-input']", fullName);
+          }, '[name="contact3-name"]', fullName);
           console.log("Used fallback method for full name");
         } catch (fallbackError) {
           console.error("Fallback for full name also failed:", fallbackError.message);
@@ -1327,51 +1348,221 @@ async function FortSumterTickets(bookingData, tries) {
       // Get all frames in the page
       const frames = page.frames();
       console.log(`Found ${frames.length} frames in the page`);
+
+      // Log details of all frames for debugging
+// console.log("Listing all frame details:");
+// const allFramesDetails = await Promise.all(frames.map(async (f, index) => {
+//   try {
+//     const url = f.url() || 'unknown';
+//     const name = f.name() || 'unnamed';
+//     const title = await f.evaluate(() => document.querySelector('iframe')?.getAttribute('title') || 'no-title').catch(() => 'no-title');
+//     return { index, url, name, title };
+//   } catch (err) {
+//     return { index, url: 'error', name: 'error', title: `Error: ${err.message}` };
+//   }
+// }));
+// console.log("All frames:", JSON.stringify(allFramesDetails, null, 2));
       
       // Find the Stripe payment iframe (the secure payment input frame)
       console.log("Looking for secure payment input frame...");
       let stripeFrame = null;
       
-      try {
-        // Wait for Stripe iframe to be available
-        await frame.waitForSelector('iframe[title="Secure payment input frame"]', {visible: true, timeout: 10000})
-          .catch(async () => {
-            console.log("Trying alternative selector for Stripe iframe");
-            await frame.waitForSelector('iframe[src*="stripe.com"]', {visible: true, timeout: 5000});
-          });
+      // try {
+      //   // Wait for Stripe iframe to be available
+      //   await frame.waitForSelector('iframe[title="Secure payment input frame"]', {visible: true, timeout: 50000})
+      //     .catch(async () => {
+      //       console.log("Trying alternative selector for Stripe iframe");
+      //       await frame.waitForSelector('div#stripe-payment-element-container iframe[title="Secure payment input frame"]', {visible: true, timeout: 30000});
+      //     });
           
-        // Find the iframe element
-        const stripeIframeElement = await frame.$('iframe[title="Secure payment input frame"], iframe[src*="stripe.com"]');
+      //   // Find the iframe element
+      //   const stripeIframeElement = await frame.$('iframe[title="Secure payment input frame"], iframe[src*="stripe.com"]');
+
+      //   console.log("stripeIframeElement:", stripeIframeElement)
         
-        if (stripeIframeElement) {
-          // Get frame by element handle
-          stripeFrame = await stripeIframeElement.contentFrame();
-          console.log("Successfully located Stripe payment frame");
-        }
-      } catch (e) {
-        console.error(`Error finding Stripe iframe: ${e.message}`);
+      //   if (stripeIframeElement) {
+      //     // Get frame by element handle
+      //     stripeFrame = await stripeIframeElement.contentFrame();
+      //     console.log("Successfully located Stripe payment frame", stripeFrame);
+      //   }
+      // } catch (e) {
+      //   console.error(`Error finding Stripe iframe: ${e.message}`);
         
-        // Fallback method: search all frames by URL
-        stripeFrame = frames.find(f => {
-          try {
-            return f.url() && f.url().includes('stripe.com');
-          } catch (e) {
-            console.log(`Error checking frame URL: ${e.message}`);
-            return false;
+      //   // Fallback method: search all frames by URL
+      //   stripeFrame = frames.find(f => {
+      //     try {
+      //       return f.url() && f.url().includes('stripe.com');
+      //     } catch (e) {
+      //       console.log(`Error checking frame URL: ${e.message}`);
+      //       return false;
+      //     }
+      //   });
+        
+      //   if (stripeFrame) {
+      //     console.log("Found Stripe frame using URL fallback method");
+      //   }
+      // }
+
+      
+  // Log details of all frames for debugging
+  console.log("Listing all frame details:");
+  const allFramesDetails = await Promise.all(frames.map(async (f, index) => {
+    try {
+      const url = f.url() || 'unknown';
+      const name = f.name() || 'unnamed';
+      // Get title from parent frame context
+      const title = await frame.evaluate((frameName) => {
+        const iframe = Array.from(document.querySelectorAll('iframe')).find(el => el.name === frameName);
+        return iframe?.getAttribute('title') || 'no-title';
+      }, name).catch(() => 'no-title');
+      return { index, url, name, title };
+    } catch (err) {
+      return { index, url: 'error', name: 'error', title: `Error: ${err.message}` };
+    }
+  }));
+  console.log("All frames:", JSON.stringify(allFramesDetails, null, 2));
+
+  // Find the Stripe payment iframe
+  console.log("Looking for secure payment input frame...");
+  // let stripeFrame = null;
+  let selectedFrameDetails = null;
+
+  // Try selectors sequentially
+  console.log("Attempting to locate iframe...");
+  let stripeIframeElement = null;
+  let selectorUsed = null;
+  const selectors = [
+    'iframe[title="Secure payment input frame"]',
+    'iframe[src*="stripe.com"]',
+    'div#stripe-payment-element-container iframe' // Parent ID-based locator
+  ];
+
+  for (const [index, selector] of selectors.entries()) {
+    try {
+      console.log(`Trying selector ${index + 1}/${selectors.length}: ${selector}`);
+      stripeIframeElement = await frame.waitForSelector(selector, { visible: true, timeout: 30000 });
+      selectorUsed = selector;
+      console.log(`Iframe found with selector: ${selector}`);
+      break;
+    } catch (e) {
+      console.log(`Selector ${selector} failed: ${e.message}`);
+    }
+  }
+
+  // Get iframe details
+  if (stripeIframeElement) {
+    const iframeInfo = await frame.evaluate(el => ({
+      url: el.src || 'unknown',
+      name: el.name || 'unnamed',
+      title: el.getAttribute('title') || 'no-title',
+      id: el.id || 'no-id',
+      classes: Array.from(el.classList),
+      parentId: el.parentElement?.id || 'no-parent-id',
+      parentClasses: Array.from(el.parentElement?.classList || [])
+    }), stripeIframeElement);
+    console.log("Selected iframe details:", JSON.stringify(iframeInfo, null, 2));
+    selectedFrameDetails = { selector: selectorUsed, source: 'selector', ...iframeInfo };
+
+    // Get content frame
+    stripeFrame = await stripeIframeElement.contentFrame();
+    console.log("Successfully located Stripe payment frame:", JSON.stringify({
+      name: stripeFrame.name(),
+      url: stripeFrame.url()
+    }, null, 2));
+
+    // Wait for iframe content to load
+    console.log("Waiting for Stripe iframe content to load...");
+    await stripeFrame.waitForFunction(() => document.readyState === 'complete', { timeout: 30000 }).catch(err => {
+      console.warn(`Iframe content load wait failed: ${err.message}`);
+    });
+
+    // Log iframe content summary
+    const iframeContent = await stripeFrame.evaluate(() => {
+      const body = document.body.innerHTML.substring(0, 500);
+      const inputs = Array.from(document.querySelectorAll('input')).map(input => ({
+        id: input.id || 'no-id',
+        name: input.name || 'no-name',
+        placeholder: input.placeholder || 'no-placeholder',
+        type: input.type || 'unknown'
+      }));
+      return { bodySummary: body, inputs };
+    }).catch(err => ({
+      bodySummary: `Error accessing iframe content: ${err.message}`,
+      inputs: []
+    }));
+    console.log("Stripe iframe content summary:", JSON.stringify(iframeContent, null, 2));
+
+    // Validate card number input presence
+    console.log("Checking for card number input in selected iframe...");
+    const cardInputExists = await stripeFrame.evaluate(() => {
+      return !!document.querySelector('#Field-numberInput, [placeholder="1234 1234 1234 1234"], input[name="cardnumber"], input[autocomplete="cc-number"]');
+    }).catch(() => false);
+    console.log(`Card number input exists in iframe: ${cardInputExists}`);
+    if (!cardInputExists) {
+      console.warn("Card number input not found in selected iframe. This may cause subsequent failures.");
+    }
+  } else {
+    console.error("No iframe found with selectors. Falling back to frame iteration...");
+    // Fallback: search all frames by URL
+    console.log("Attempting fallback: searching frames by URL...");
+    stripeFrame = await Promise.race([
+      Promise.resolve(frames.find(async f => {
+        try {
+          const url = f.url();
+          const isStripe = url && url.includes('stripe.com');
+          if (isStripe) {
+            console.log(`Found potential Stripe frame: URL=${url}, Name=${f.name() || 'unnamed'}`);
+            const hasCardInput = await f.evaluate(() => {
+              return !!document.querySelector('#Field-numberInput, [placeholder="1234 1234 1234 1234"], input[name="cardnumber"], input[autocomplete="cc-number"]');
+            }).catch(() => false);
+            console.log(`Frame (URL=${url}) has card number input: ${hasCardInput}`);
+            return isStripe && hasCardInput;
           }
-        });
-        
-        if (stripeFrame) {
-          console.log("Found Stripe frame using URL fallback method");
+          return false;
+        } catch (err) {
+          console.log(`Error checking frame URL: ${err.message}`);
+          return false;
         }
-      }
+      })),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Fallback frame search timed out")), 30000))
+    ]);
+
+    if (stripeFrame) {
+      console.log("Found Stripe frame using URL fallback method");
+      selectedFrameDetails = {
+        selector: 'URL-based fallback',
+        source: 'frame-iteration',
+        url: stripeFrame.url() || 'unknown',
+        name: stripeFrame.name() || 'unnamed',
+        parentId: 'unknown',
+        parentClasses: []
+      };
+      const iframeContent = await stripeFrame.evaluate(() => {
+        const body = document.body.innerHTML.substring(0, 500);
+        const inputs = Array.from(document.querySelectorAll('input')).map(input => ({
+          id: input.id || 'no-id',
+          name: input.name || 'no-name',
+          placeholder: input.placeholder || 'no-placeholder',
+          type: input.type || 'unknown'
+        }));
+        return { bodySummary: body, inputs };
+      }).catch(err => ({
+        bodySummary: `Error accessing iframe content: ${err.message}`,
+        inputs: []
+      }));
+      console.log("Fallback Stripe iframe content summary:", JSON.stringify(iframeContent, null, 2));
+    }
+  }
       
       if (!stripeFrame) {
         throw new Error("Could not find Stripe payment iframe");
       }
       
       // Wait for a moment to ensure the iframe is fully loaded
-      await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), 2000);
+      // await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), 2000);
+      // Add randomized delay before card details
+      const randomDelayBeforeCardDetailsSection1 = Math.floor(Math.random() * 3000) + 2000;
+      await new Promise(resolve => setTimeout(resolve, randomDelayBeforeCardDetailsSection1));
       
       // Check for OTP dialog and close if present
       try {
@@ -1397,7 +1588,8 @@ async function FortSumterTickets(bookingData, tries) {
           if (closeButtonExists) {
             console.log("Close button found and clicked");
             // Wait for dialog to close
-            await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), 1000);
+            const randomeDeley = await getRandomDelayWithLimit(10000);
+            await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), randomeDeley);
           } else {
             console.log("Close button not found or not clickable");
           }
@@ -1410,23 +1602,26 @@ async function FortSumterTickets(bookingData, tries) {
       
       // Process card fields
       console.log("Starting to fill payment form...");
-      
+      // Add randomized delay before card details
+      const randomDelayBeforeCardDetailsSection = Math.floor(Math.random() * 3000) + 2000;
+      await new Promise(resolve => setTimeout(resolve, randomDelayBeforeCardDetailsSection));
+
       try {
         // Card Number
         console.log("Locating card number input...");
 
-          // Add randomized delay before ticket selection
-      const randomDelayBeforeCardDetailsSection = Math.floor(Math.random() * 3000) + 2000;
+          // Add randomized delay before card number input
+      const randomDelayBeforeCardDetailsSection = Math.floor(Math.random() * 3000) + 5000;
       await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), randomDelayBeforeCardDetailsSection);
 
 
-        await stripeFrame.waitForSelector('#Field-numberInput, [placeholder="1234 1234 1234 1234"]', {visible: true, timeout: 30000})
+        await stripeFrame.waitForSelector('#Field-numberInput', {visible: true, timeout: 30000})
           .catch(async () => {
             console.log("Trying alternative selector for card number field");
-            await stripeFrame.waitForSelector('#Field-numberInput, input[placeholder="1234 1234 1234 1234"]', {visible: true, timeout: 5000});
+            await stripeFrame.waitForSelector('input[placeholder="1234 1234 1234 1234"]', {visible: true, timeout: 5000});
           });
         
-        const cardNumberSelector = '#Field-numberInput, [placeholder="1234 1234 1234 1234"]';
+        const cardNumberSelector = '[placeholder="1234 1234 1234 1234"]';
         console.log("Card number field found. Starting to type card number...");
         
         // Remove spaces from card number if present
@@ -2116,6 +2311,15 @@ async function FortSumterTickets(bookingData, tries) {
       // Make sure we strictly enforce finding the thank you message
       if (thankYouMessageVisible) {
         console.log("Thank you message found! Booking confirmed successfully!");
+        try {
+              await Order.findOneAndUpdate(
+                { orderId: bookingData.id, websiteName: 'Fort Sumter Ticketing' },  // Match by both orderId and websiteName
+                { status: 'Passed', failureReason: null },  // Update the status field to 'Failed'
+                { new: true }  // Return the updated document
+              );
+            } catch (err) {
+              console.error("Error updating order status:", err);
+            }
       } else {
         // If message wasn't found after timeout, throw an error to trigger catch block
         throw new Error("Booking confirmation message 'Thanks for booking with us!' not found after timeout");
@@ -2188,6 +2392,18 @@ async function FortSumterTickets(bookingData, tries) {
     } catch (error) {
       console.error("Error during checkout process:", error.message);
       
+      
+       try {
+            await Order.findOneAndUpdate(
+              { orderId: bookingData.id, websiteName: 'Fort Sumter Ticketing' },  // Match by both orderId and websiteName
+              { status: 'Failed', failureReason: error?.message || error },  // Update the status field to 'Failed'
+              { new: true }  // Return the updated document
+            );
+          } catch (err) {
+            console.error("Error updating order status:", err);
+          }
+      
+
       // Create directory for error screenshots
       const errorsDir = path.join(__dirname, "errors-screenshots");
       if (!fs.existsSync(errorsDir)) {
