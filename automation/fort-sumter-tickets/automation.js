@@ -1349,60 +1349,10 @@ async function FortSumterTickets(bookingData, tries, payload) {
       const frames = page.frames();
       console.log(`Found ${frames.length} frames in the page`);
 
-      // Log details of all frames for debugging
-// console.log("Listing all frame details:");
-// const allFramesDetails = await Promise.all(frames.map(async (f, index) => {
-//   try {
-//     const url = f.url() || 'unknown';
-//     const name = f.name() || 'unnamed';
-//     const title = await f.evaluate(() => document.querySelector('iframe')?.getAttribute('title') || 'no-title').catch(() => 'no-title');
-//     return { index, url, name, title };
-//   } catch (err) {
-//     return { index, url: 'error', name: 'error', title: `Error: ${err.message}` };
-//   }
-// }));
-// console.log("All frames:", JSON.stringify(allFramesDetails, null, 2));
       
       // Find the Stripe payment iframe (the secure payment input frame)
       console.log("Looking for secure payment input frame...");
       let stripeFrame = null;
-      
-      // try {
-      //   // Wait for Stripe iframe to be available
-      //   await frame.waitForSelector('iframe[title="Secure payment input frame"]', {visible: true, timeout: 50000})
-      //     .catch(async () => {
-      //       console.log("Trying alternative selector for Stripe iframe");
-      //       await frame.waitForSelector('div#stripe-payment-element-container iframe[title="Secure payment input frame"]', {visible: true, timeout: 30000});
-      //     });
-          
-      //   // Find the iframe element
-      //   const stripeIframeElement = await frame.$('iframe[title="Secure payment input frame"], iframe[src*="stripe.com"]');
-
-      //   console.log("stripeIframeElement:", stripeIframeElement)
-        
-      //   if (stripeIframeElement) {
-      //     // Get frame by element handle
-      //     stripeFrame = await stripeIframeElement.contentFrame();
-      //     console.log("Successfully located Stripe payment frame", stripeFrame);
-      //   }
-      // } catch (e) {
-      //   console.error(`Error finding Stripe iframe: ${e.message}`);
-        
-      //   // Fallback method: search all frames by URL
-      //   stripeFrame = frames.find(f => {
-      //     try {
-      //       return f.url() && f.url().includes('stripe.com');
-      //     } catch (e) {
-      //       console.log(`Error checking frame URL: ${e.message}`);
-      //       return false;
-      //     }
-      //   });
-        
-      //   if (stripeFrame) {
-      //     console.log("Found Stripe frame using URL fallback method");
-      //   }
-      // }
-
       
   // Log details of all frames for debugging
   console.log("Listing all frame details:");
@@ -1694,20 +1644,20 @@ async function FortSumterTickets(bookingData, tries, payload) {
         
         try {
           // Wait for country selector to be available
-          await frame.waitForSelector(billingCountrySelector, {visible: true, timeout: 5000})
+          await stripeFrame.waitForSelector(billingCountrySelector, {visible: true, timeout: 5000})
             .catch(async () => {
               console.log("Standard country selector not found, trying alternatives...");
-              await frame.waitForSelector('select[id*="Field-countryInput" i], select[name*="country" i]', {visible: true, timeout: 5000});
+              await stripeFrame.waitForSelector('select[id*="Field-countryInput" i], select[name*="country" i]', {visible: true, timeout: 5000});
             });
           
           // Select country
           const country = bookingData.billing.country || "US";
           console.log(`Selecting country: ${country}`);
           
-          await frame.select(billingCountrySelector, country)
+          await stripeFrame.select(billingCountrySelector, country)
             .catch(async () => {
               console.log("Trying alternative selector for country...");
-              await frame.select('select[id*="country" i], select[name*="country" i]', country);
+              await stripeFrame.select('select[id*="country" i], select[name*="country" i]', country);
             });
           
           console.log("Country selected successfully");
@@ -1754,46 +1704,46 @@ async function FortSumterTickets(bookingData, tries, payload) {
       
       // Handle save card info checkbox
       try {
-        console.log("Looking for save card info checkbox...");
+        console.log("Handling save card info checkbox...");
         const saveCardSelector = '#checkbox-linkOptIn';
-        
-        // Check if the checkbox exists
-        const saveCardExists = await frame.evaluate((selector) => {
+        const fallbackSelector = 'input[type="checkbox"][name="linkOptIn"], input[type="checkbox"][aria-label*="save my information" i]';
+      
+        // Check if the checkbox exists and is checked
+        const saveCardExists = await stripeFrame.evaluate((selector) => {
           const checkbox = document.querySelector(selector);
-          return checkbox && checkbox.offsetParent !== null;
+          return checkbox && checkbox.offsetParent !== null && checkbox.checked;
         }, saveCardSelector).catch(() => false);
-        // **********************
+      
         if (saveCardExists) {
-          console.log("Save card checkbox found. Checking it...");
-          
-          // Check if the box is already checked
-          const isChecked = await frame.evaluate((selector) => {
-            const checkbox = document.querySelector(selector);
-            return checkbox && checkbox.checked;
-          }, saveCardSelector).catch(() => false);
-          
-          // Check the box if not already checked
-          if (!isChecked) {
-            await frame.click(saveCardSelector)
-              .catch(async () => {
-                console.log("Trying alternative selector for save card checkbox...");
-                await frame.click('input[type="checkbox"][id*="save" i], input[type="checkbox"][name*="save" i]');
+          console.log("Unchecking save card checkbox...");
+          try {
+            await stripeFrame.waitForSelector(saveCardSelector, { visible: true, timeout: 5000 });
+            await stripeFrame.click(saveCardSelector, { delay: 200 });
+          } catch (e) {
+            console.error(`Error unchecking save card checkbox: ${e.message}`);
+            if (e.message.includes('Execution context was destroyed')) {
+              console.log("Navigation detected. Re-acquiring iframe...");
+              const { stripeFrame: newStripeFrame } = await locateStripeFrame(page, frame);
+              stripeFrame = newStripeFrame;
+              await stripeFrame.waitForSelector(saveCardSelector, { visible: true, timeout: 5000 });
+              await stripeFrame.click(saveCardSelector, { delay: 200 });
+              console.log("Checkbox unchecked after re-acquiring iframe");
+            } else {
+              await stripeFrame.click(fallbackSelector, { delay: 200 }).catch(() => {
+                console.warn("Failed to uncheck with fallback selector");
               });
-            console.log("Save card checkbox clicked");
-          } else {
-            console.log("Save card checkbox is already checked");
+            }
           }
-        } else {
-          console.log("Save card checkbox not found or not visible. Continuing...");
+        } else if (saveCardExists === false) {
+          console.log("Save card checkbox not found or already unchecked. Skipping...");
         }
-        
-        // Give the form a moment to process all inputs
-        console.log("Giving payment form a moment to process all inputs...");
-        await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), 1500);
-        
+      
+        // Give the form a moment to process
+        await stripeFrame.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), 2000);
+      
+        console.log("Checkbox handling complete");
       } catch (e) {
-        console.log(`Error handling save card checkbox: ${e.message}`);
-        // Continue anyway as this field is optional
+        console.error(`Error in checkbox handling: ${e.message}`);
       }
       
       console.log("Payment form filled successfully.");
@@ -2215,7 +2165,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
 
       // Check for "Thanks for booking with us!" message
       // Use a longer timeout for final confirmation
-      const confirmationTimeout = 120000; // 120 seconds (2 minutes)
+      const confirmationTimeout = 30000; // 30 seconds (30 seconds)
       console.log(
         `Waiting up to ${
           confirmationTimeout / 1000
@@ -2451,27 +2401,5 @@ async function FortSumterTickets(bookingData, tries, payload) {
   }
 }
 
-
-// Reusable waitForBrowser function
-async function waitForBrowser(page, fn, timeout = 30000, interval = 500) {
-  const maxTries = Math.ceil(timeout / interval);
-  let tries = 0;
-
-  while (true) {
-    try {
-      const result = await page.evaluate(fn);
-      if (result) return result;
-    } catch (e) {
-      // ignore, try again
-    }
-
-    tries++;
-    if (tries >= maxTries) {
-      throw new Error(`Timeout: condition not met after ${timeout}ms`);
-    }
-
-    await new Promise(resolve => setTimeout(resolve, interval));
-  }
-}
 
 module.exports = { FortSumterTickets };
