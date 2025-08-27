@@ -743,7 +743,7 @@ console.log('h-captcha-response field exists:', fieldExists);
     );
 
     // await page.pause();
-    const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "BayCruiseTicketing");
+    const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "BayCruise Tickets");
     if (isServiceChargesDeducted) {
         // ORDERS STATUS API PARAM OPTIONS
         // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft

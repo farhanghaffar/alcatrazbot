@@ -900,7 +900,7 @@ async function alcatrazBookTour(bookingData, tries, payload) {
           );
 
         // await page.pause();
-        const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "AlcatrazTicketing");
+        const isServiceChargesDeducted = await ServiceCharges(bookingData.bookingServiceCharges, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "Alcatraz Ticketing");
         if (isServiceChargesDeducted) {
             // ORDERS STATUS API PARAM OPTIONS
             // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft

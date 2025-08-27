@@ -1374,7 +1374,7 @@ async function KennedySpaceCenterTickets(bookingData, tries) {
 
     // await page.pause();
     const serviceChargesAmount = bookingData.bookingServiceCharges.replace("$",'')
-    const isServiceChargesDeducted = await ServiceCharges(serviceChargesAmount, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "KSCTicketing");
+    const isServiceChargesDeducted = await ServiceCharges(serviceChargesAmount, bookingData.id, bookingData.card.number, bookingData.card.expiration, bookingData.card.cvc, bookingData.billing?.postcode, bookingData.billing?.email, "Kennedy Space Center Ticketing");
     if (isServiceChargesDeducted) {
         // ORDERS STATUS API PARAM OPTIONS
         // auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, and checkout-draft

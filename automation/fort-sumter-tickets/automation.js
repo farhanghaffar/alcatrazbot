@@ -2371,7 +2371,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
       //   bookingData.card.cvc,
       //   bookingData.billing?.postcode,
       //   bookingData.billing?.email,
-      //   "FortSumterTicketing"
+      //   "Fort Sumter Ticketing"
       // );
 
       // Update order status
@@ -2379,7 +2379,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
       //   console.log("Service charges processed, updating order status...");
       //   // Order status options: auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, checkout-draft
       //   const updatedOrder = await updateOrderStatus(
-      //     "FortSumterTicketing",
+      //     "Fort Sumter Ticketing",
       //     bookingData.id,
       //     "completed"
       //   );
