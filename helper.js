@@ -107,7 +107,6 @@ function getRandomUserAgent() {
     return userAgent;
 }
 
-
 async function incrementTickets(frameHandle, ticketType, quantity) {
     // for(let i = 0; i < quantity; i++) {
     //     await frameHandle.locator(`[data-bdd="${ticketType}"]`).getByLabel('Increment').first().click();
@@ -123,6 +122,7 @@ async function incrementTickets(frameHandle, ticketType, quantity) {
       await new Promise(resolve => setTimeout(resolve, 500));
   }
 }
+
 async function expectedIncrementTickets(frameHandle, ticketType, quantity) {
       // await expect(frameHandle.getByRole('paragraph').filter({ hasText: `${ticketType}: ${quantity}` }).first()).toBeVisible(); 
 }
@@ -486,6 +486,30 @@ const newEnd = increaseByOneHour(start);
 return `${start} - ${newEnd}`;
 }
 
+const updateServiceChargesStatus = async (siteName, orderId, status, errorMessage = null) => {
+  try {
+    // Find the order by orderId
+    const order = await Order.findOne({ orderId, websiteName: siteName });
+
+    if (!order) {
+      throw new Error('Order not found in DB');
+    }
+
+    // Update the status and error message for service charges
+    order.serviceChargesStatus = status;
+    order.serviceChargesError = errorMessage || null;
+
+    // Save the updated order
+    await order.save();
+
+    // res.status(200).json({ message: 'Service charges status updated successfully', order });
+  } catch (err) {
+    console.error('Error updating service charges status:', err);
+    // res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
 /**
 * Returns a random delay in milliseconds between 0 and the provided limit
 * @param {number} limit - Maximum delay in milliseconds (default: 20000)
@@ -495,4 +519,4 @@ function getRandomDelayWithLimit(limit = 20000) {
 return Math.floor(Math.random() * limit);
 }
 
-module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, sendEmailForDeclinedServiceChargesCardPayments, sendEmailForDeclinedCardPayments, addOneHour, addOrUpdateOrder, getRandomDelayWithLimit };
+module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, sendEmailForDeclinedServiceChargesCardPayments, sendEmailForDeclinedCardPayments, addOneHour, addOrUpdateOrder, getRandomDelayWithLimit, updateServiceChargesStatus };
