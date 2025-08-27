@@ -491,9 +491,9 @@ const updateServiceChargesStatus = async (siteName, orderId, status, errorMessag
     // Find the order by orderId
     const order = await Order.findOne({ orderId, websiteName: siteName });
 
-    // if (!order) {
-    //   return res.status(404).json({ message: 'Order not found' });
-    // }
+    if (!order) {
+      throw new Error('Order not found in DB');
+    }
 
     // Update the status and error message for service charges
     order.serviceChargesStatus = status;
