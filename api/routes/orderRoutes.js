@@ -1,5 +1,5 @@
 const express = require('express');
-const { getOrders, getMachines, updateOrderStatus, addMachine, editMachine, deleteMachine, updateTriggeredMachine } = require('../controllers/orderController');
+const { getOrders, getMachines, updateOrderStatus, addMachine, editMachine, deleteMachine, updateTriggeredMachine, updateServiceChargesStatus } = require('../controllers/orderController');
 const router = express.Router();
 const protect = require('../middleware/authMiddleware');
 
@@ -8,6 +8,8 @@ router.get('/orders', protect, getOrders);   // Get all orders
 router.get('/machines', protect, getMachines); // Get all machines for dropdown
 router.put('/order/status', protect, updateOrderStatus);
 router.put('/order/update-triggered-machine', protect, updateTriggeredMachine);
+
+router.put('/update-service-charges-status', updateServiceChargesStatus);
 
 // Route for adding a new machine
 router.post('/machine/add', protect, addMachine);

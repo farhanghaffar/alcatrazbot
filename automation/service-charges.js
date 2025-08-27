@@ -3,7 +3,7 @@ const { expect } = require("playwright/test");
 require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
-const { sendServiceChargesDeductionEmail } = require("../helper");
+const { sendServiceChargesDeductionEmail, updateServiceChargesStatus } = require("../helper");
 
 async function ServiceCharges(
   sChargesAmount,
@@ -16,6 +16,8 @@ async function ServiceCharges(
   siteName,
   sChargesCurrency = "USD"
 ) {
+  await updateServiceChargesStatus(siteName, orderId, 'Executed', null);
+
   const browser = await firefox.launch({ headless: false });
   const context = await browser.newContext();
 
@@ -176,6 +178,8 @@ async function ServiceCharges(
       console.log("Error:", errorMessage);
       await expect(sChargesPaymentErrorAlertClassLocator).toBeVisible();
 
+      await updateServiceChargesStatus(siteName, orderId, 'Failed', errorMessage);
+
       await sendServiceChargesDeductionEmail(
         orderId, // order number
         sChargesAmount, // order description
@@ -194,6 +198,8 @@ async function ServiceCharges(
       await expect(sChargesPaymentSuccessAlertClassLocator).toBeVisible();
       status = true;
 
+      await updateServiceChargesStatus(siteName, orderId, 'Charged', null);
+
       await sendServiceChargesDeductionEmail(
         orderId, // order number
         sChargesAmount, // order description
@@ -208,7 +214,6 @@ async function ServiceCharges(
       );
     } else {
       console.error("Unknown error occurred!");
-
       await sendServiceChargesDeductionEmail(
         orderId, // order number
         sChargesAmount, // service charges amount
@@ -227,6 +232,8 @@ async function ServiceCharges(
   } catch (error) {
     console.error(error);
 
+    await updateServiceChargesStatus(siteName, orderId, 'Failed', error.message || error.toString());
+    
     const errorsDir = path.join(__dirname, "errors");
     if (!fs.existsSync(errorsDir)) {
       fs.mkdirSync(errorsDir);

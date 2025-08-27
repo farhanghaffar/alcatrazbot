@@ -6,7 +6,6 @@ const path = require('path');
 const crypto = require('crypto');
 const cors = require('cors');
 const { ServiceCharges } = require('./automation/service-charges');
-require('dotenv').config();
 const { alcatrazBookTour } = require('./alcatraz-booking');
 const { statueTicketingBookTour } = require('./statueticketing-booking');
 const { potomacTourBooking } = require('./automation/potomac/automation');
@@ -19,6 +18,7 @@ const mongoose = require('mongoose');
 const authRoutes = require('./api/routes/authRoutes');
 const orderRoutes = require('./api/routes/orderRoutes');
 const webhookRoutes = require('./api/routes/webhookRoutes');
+require('dotenv').config();
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -47,8 +47,8 @@ app.use(express.json());
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('MongoDB Connection Error ==>', err));
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.log('MongoDB Connection Error ==>', err));
 
 // Routes
 app.use('/api', authRoutes);  // Authentication routes
@@ -75,7 +75,7 @@ const verifyWooCommerceWebhook = (req, res, next) => {
 // Webhook endpoint with verification | https://www.statueticketing.com/
 app.post('/webhook', async (req, res) => {
     console.log('Order data:', JSON.stringify(req.body));
-    
+
     const reqBody = req.body;
 
     try {
@@ -177,7 +177,7 @@ app.post('/webhook', async (req, res) => {
             console.log(`Retry attempt #${tries}...`);
             bookingResult = await statueTicketingBookTour(orderData, tries, reqBody);
         }
-        
+
         if (bookingResult.success) {
             console.log('Booking automation completed successfully');
         } else {
@@ -192,7 +192,7 @@ app.post('/webhook', async (req, res) => {
 // Webhook endpoint with verification | https://www.alcatrazticketing.com/
 app.post('/alcatraz-webhook', async (req, res) => {
     console.log('Order data:', JSON.stringify(req.body));
-    
+
     const reqBody = req.body;
 
     try {
@@ -281,7 +281,7 @@ app.post('/alcatraz-webhook', async (req, res) => {
             message: 'Webhook received. Processing in background.'
         });
 
-        
+
         // Run booking automation in background
         // if(  
         //     (Number(orderData?.adults) || 0) +
@@ -289,29 +289,29 @@ app.post('/alcatraz-webhook', async (req, res) => {
         //     (Number(orderData?.juniors) || 0) +
         //     (Number(orderData?.seniors) || 0) <= 4
         // ) {
-            setImmediate(async () => {
-                try {
-                    console.log('Starting booking automation process...');
-                    let tries = 0;
-                    const maxRetries = 3;
-                    let bookingResult = await alcatrazBookTour(orderData, tries, reqBody);
-                    
-                    // Retry logic
-                    while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected') && !bookingResult?.error?.includes('Tickets are not available for the date you selected.')) {
-                        tries++;
-                        console.log(`Retry attempt #${tries}...`);
-                        bookingResult = await alcatrazBookTour(orderData, tries, reqBody);
-                    }
-            
-                    if (bookingResult.success) {
-                        console.log('Booking automation completed successfully');
-                    } else {
-                        console.error('Booking automation failed:', bookingResult.error);
-                    }
-                } catch (automationError) {
-                    console.error('Error in booking automation:', automationError);
+        setImmediate(async () => {
+            try {
+                console.log('Starting booking automation process...');
+                let tries = 0;
+                const maxRetries = 3;
+                let bookingResult = await alcatrazBookTour(orderData, tries, reqBody);
+
+                // Retry logic
+                while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected') && !bookingResult?.error?.includes('Tickets are not available for the date you selected.')) {
+                    tries++;
+                    console.log(`Retry attempt #${tries}...`);
+                    bookingResult = await alcatrazBookTour(orderData, tries, reqBody);
                 }
-            });
+
+                if (bookingResult.success) {
+                    console.log('Booking automation completed successfully');
+                } else {
+                    console.error('Booking automation failed:', bookingResult.error);
+                }
+            } catch (automationError) {
+                console.error('Error in booking automation:', automationError);
+            }
+        });
         // }
     } catch (error) {
         console.error('Error processing webhook:', error);
@@ -325,57 +325,104 @@ app.post('/alcatraz-webhook', async (req, res) => {
 // To charge service fee for booking 
 app.post('/charge', async (req, res) => {
     try {
-      const { paymentMethodId, amount, currency, description } = req.body;
-  
-      // Convert dollars to cents
-      const amountInCents = Math.round(amount * 100);
-      
-      if (isNaN(amountInCents) || amountInCents < 50) {
-        throw new Error('Invalid amount');
-      }
+        const { paymentMethodId, amount, currency, description } = req.body;
 
-    // Extract the site name from the description (first word before space)
-    const siteNameMatch = description.match(/^([^\s]+)/);
-    const siteName = siteNameMatch ? siteNameMatch[0] : 'Alcatraz';  // Default to 'DefaultSite' if no match
+        // Convert dollars to cents
+        const amountInCents = Math.round(amount * 100);
 
-    // Create dynamic statement descriptor (Prefix + Suffix)
-    let statementDescriptorPrefix = siteName.toUpperCase();  
-    const maxPrefixLength = 17; 
+        if (isNaN(amountInCents) || amountInCents < 50) {
+            throw new Error('Invalid amount');
+        }
 
-    // Truncate the prefix if it's longer than 15 characters (to leave space for "* SC")
-    if (statementDescriptorPrefix.length > maxPrefixLength) {
-      statementDescriptorPrefix = statementDescriptorPrefix.slice(0, maxPrefixLength);
-    }
+        // Extract the site name from the description (first word before space)
+        const siteNameMatch = description.match(/^([^\s]+)/);
+        const siteName = siteNameMatch ? siteNameMatch[0] : 'Alcatraz';  // Default to 'DefaultSite' if no match
 
-    const statementDescriptorSuffix = "SC"; 
+        // Create dynamic statement descriptor (Prefix + Suffix)
+        let statementDescriptorPrefix = siteName.toUpperCase();
+        const maxPrefixLength = 17;
 
-    // Construct the full statement descriptor
-    const statementDescriptor = `${statementDescriptorPrefix}* ${statementDescriptorSuffix}`;
-    console.log("Statement Descriptor:", statementDescriptor);
-    
-    if (statementDescriptor.length > 22) {
-      throw new Error('Statement descriptor exceeds 22 characters');
-    }
-      
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: amountInCents,
-        currency: currency || 'usd',
-        payment_method: paymentMethodId,
-        // Restrict to card only if needed
-        payment_method_types: ['card'],
-        // Include description here
-        description,
-        statement_descriptor: statementDescriptor,
-        confirmation_method: 'manual',
-        confirm: true,
-      });
-      
-      res.status(200).json({ success: true });
+        // Truncate the prefix if it's longer than 15 characters (to leave space for "* SC")
+        if (statementDescriptorPrefix.length > maxPrefixLength) {
+            statementDescriptorPrefix = statementDescriptorPrefix.slice(0, maxPrefixLength);
+        }
+
+        const statementDescriptorSuffix = "SC";
+
+        // Construct the full statement descriptor
+        const statementDescriptor = `${statementDescriptorPrefix}* ${statementDescriptorSuffix}`;
+        console.log("Statement Descriptor:", statementDescriptor);
+
+        if (statementDescriptor.length > 22) {
+            throw new Error('Statement descriptor exceeds 22 characters');
+        }
+
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: amountInCents,
+            currency: currency || 'usd',
+            payment_method: paymentMethodId,
+            // Restrict to card only if needed
+            payment_method_types: ['card'],
+            // Include description here
+            description,
+            statement_descriptor: statementDescriptor,
+            confirmation_method: 'manual',
+            confirm: true,
+        });
+
+        res.status(200).json({ success: true });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
-  });
-  
+});
+
+app.post('/charge-service-fee', async (req, res) => {
+    try {
+        const reqBody = req.body;
+
+        const orderDetails = {
+            orderId: reqBody.id,
+            sChargesAmount: reqBody?.line_items[0]?.meta_data
+                .find(item => item.key === 'Service Charges' || item.key === '_booking_serviceCharges')
+                ?.value.replace(/[^0-9.-]+/g, ''),
+            siteName: '',
+            userEmail: reqBody?.billing?.email || '',
+            postalCode: reqBody?.billing?.postcode || '',
+            cardNumber: reqBody?.meta_data.find(item => item.key.toLowerCase() === 'credit_card_number')?.value || '',
+            cardExpiryDate: reqBody?.meta_data.find(item => item.key.toLowerCase() === 'credit_card_expiration')?.value || '',
+            cardCVC: reqBody?.meta_data.find(item => item.key.toLowerCase() === 'credit_card_cvc')?.value || '',
+            sChargesCurrency: reqBody?.line_items[0]?.meta_data
+                .find(item => item.key === 'Service Charges' || item.key === '_booking_serviceCharges')
+                ?.value.includes('CA$') ? 'CAD' : 'USD',
+        }
+
+        if (reqBody?.line_items[0]?.name === 'Boston Cruise Tickets') {
+            orderDetails.siteName = 'Boston Harbor Cruise';
+        } else if (reqBody?.line_items[0]?.name === 'Alcatraz Reservation') {
+            orderDetails.siteName = 'Alcatraz Ticketing';
+        } else if (reqBody?.line_items[0]?.name === 'Statue of Liberty Reservation') {
+            orderDetails.siteName = 'StatueTicketing';
+        } else if (reqBody?.line_items[0]?.name === 'Potomac Water Taxi Passes') {
+            orderDetails.siteName = 'PotomacTicketing';
+        } else if (reqBody?.line_items[0]?.name === 'San Francisco Bay Cruises') {
+            orderDetails.siteName = 'BayCruise Tickets';
+        } else if (reqBody?.line_items[0]?.name === 'Niagara City Cruise') {
+            orderDetails.siteName = 'NiagaraCruiseTicketing';
+        } else if (reqBody?.line_items[0]?.name === 'Fort Sumter Tickets') {
+            orderDetails.siteName = 'Fort Sumter Ticketing';
+        } else if (reqBody?.line_items[0]?.name === 'Kennedy Space Center Tickets') {
+            orderDetails.siteName = 'Kennedy Space Center Ticketing';
+        } else {
+            return res.status(400).json({ message: "Invalid order data" });
+        }
+
+        await ServiceCharges(orderDetails?.sChargesAmount, orderDetails?.orderId, orderDetails?.cardNumber, orderDetails?.cardExpiryDate, orderDetails?.cardCVC, orderDetails?.postalCode, orderDetails?.userEmail, orderDetails?.siteName, orderDetails?.sChargesCurrency)
+
+    } catch (error) {
+        console.error('Error charging service fees:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -389,7 +436,7 @@ app.get('/', (req, res) => {
 // Webhook endpoint with verification | http://potomacticketing.com/
 app.post('/potomac-webhook', async (req, res) => {
     console.log('Order data:', JSON.stringify(req.body));
-    
+
     const reqBody = req.body;
 
     try {
@@ -440,7 +487,7 @@ app.post('/potomac-webhook', async (req, res) => {
                 case 'One Day Pass Quantity':
                     orderData.ticketQuantity = item?.value;
                     break;
-                
+
                 case 'Two Day Pass Quantity':
                     orderData.ticketQuantity = item?.value;
                     break;
@@ -473,14 +520,14 @@ app.post('/potomac-webhook', async (req, res) => {
                 let tries = 0;
                 const maxRetries = 3;
                 let bookingResult = await potomacTourBooking(orderData, tries, reqBody);
-                
+
                 // Retry logic
                 while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected') && !bookingResult?.error?.includes('Tickets are not available for the date you selected.')) {
                     tries++;
                     console.log(`Retry attempt #${tries}...`);
                     bookingResult = await potomacTourBooking(orderData, tries, reqBody);
                 }
-        
+
                 if (bookingResult.success) {
                     console.log('Potomac Booking automation completed successfully');
                 } else {
@@ -491,7 +538,7 @@ app.post('/potomac-webhook', async (req, res) => {
             }
         });
 
-        
+
     } catch (error) {
         console.error('Error processing webhook:', error);
         res.status(200).json({
@@ -504,7 +551,7 @@ app.post('/potomac-webhook', async (req, res) => {
 // Webhook endpoint with verification | https://baycruisetickets.com/
 app.post('/bay-cruise-tickets-webhook', async (req, res) => {
     console.log('Bay Cruises Tickets: Order data:', JSON.stringify(req.body));
-    
+
     const reqBody = req.body;
 
     try {
@@ -604,14 +651,14 @@ app.post('/bay-cruise-tickets-webhook', async (req, res) => {
                 let tries = 0;
                 const maxRetries = 3;
                 let bookingResult = await BayCruiseTickets(orderData, tries);
-                
+
                 // Retry logic
                 while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
                     tries++;
                     console.log(`Retry attempt #${tries}...`);
                     bookingResult = await BayCruiseTickets(orderData, tries);
                 }
-        
+
                 if (bookingResult.success) {
                     console.log('Bay Cruises Tickets: Booking automation completed successfully');
                 } else {
@@ -622,7 +669,7 @@ app.post('/bay-cruise-tickets-webhook', async (req, res) => {
             }
         });
 
-        
+
     } catch (error) {
         console.error('Error processing webhook:', error);
         res.status(200).json({
@@ -635,7 +682,7 @@ app.post('/bay-cruise-tickets-webhook', async (req, res) => {
 // Webhook endpoint with verification | http://bostoncruisetickets.com/
 app.post('/boston-harbor-cruise-tickets-webhook', async (req, res) => {
     console.log('Order data:', JSON.stringify(req.body));
-    
+
     const reqBody = req.body;
 
     try {
@@ -726,14 +773,14 @@ app.post('/boston-harbor-cruise-tickets-webhook', async (req, res) => {
                 let tries = 0;
                 const maxRetries = 3;
                 let bookingResult = await bostonHarborCruise(orderData, tries, reqBody);
-                
+
                 // Retry logic
                 while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected') && !bookingResult?.error?.includes('Tickets are not available for the date you selected.')) {
                     tries++;
                     console.log(`Retry attempt #${tries}...`);
                     bookingResult = await bostonHarborCruise(orderData, tries, reqBody);
                 }
-        
+
                 if (bookingResult.success) {
                     console.log('Boston Harbar Cruise Booking automation completed successfully');
                 } else {
@@ -744,7 +791,7 @@ app.post('/boston-harbor-cruise-tickets-webhook', async (req, res) => {
             }
         });
 
-        
+
     } catch (error) {
         console.error('Error processing webhook:', error);
         res.status(200).json({
@@ -757,7 +804,7 @@ app.post('/boston-harbor-cruise-tickets-webhook', async (req, res) => {
 // Webhook endpoint with verification |  https://niagaracruisetickets.com/
 app.post('/niagara-cruise-tickets-webhook', async (req, res) => {
     console.log('Order data:', JSON.stringify(req.body));
-    
+
     const reqBody = req.body;
 
     try {
@@ -848,14 +895,14 @@ app.post('/niagara-cruise-tickets-webhook', async (req, res) => {
                 let tries = 0;
                 const maxRetries = 3;
                 let bookingResult = await NiagaraCruiseTickets(orderData, tries, reqBody);
-                
+
                 // Retry logic
                 while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.') && !bookingResult?.error?.includes('Order Rejected') && !bookingResult?.error?.includes('Tickets are not available for the date you selected.')) {
                     tries++;
                     console.log(`Retry attempt #${tries}...`);
                     bookingResult = await NiagaraCruiseTickets(orderData, tries, reqBody);
                 }
-        
+
                 if (bookingResult.success) {
                     console.log('Niagara Cruise Booking automation completed successfully');
                 } else {
@@ -866,7 +913,7 @@ app.post('/niagara-cruise-tickets-webhook', async (req, res) => {
             }
         });
 
-        
+
     } catch (error) {
         console.error('Error processing webhook:', error);
         res.status(200).json({
@@ -879,7 +926,7 @@ app.post('/niagara-cruise-tickets-webhook', async (req, res) => {
 // Webhook endpoint with verification | https://fortsumterticketing.com/
 app.post('/fort-sumter-ticketing-webhook', async (req, res) => {
     console.log('Fort Sumter Tickets: Order data:', JSON.stringify(req.body));
-    
+
     const reqBody = req.body;
 
     try {
@@ -973,14 +1020,14 @@ app.post('/fort-sumter-ticketing-webhook', async (req, res) => {
                 let tries = 0;
                 const maxRetries = 3;
                 let bookingResult = await FortSumterTickets(orderData, tries);
-                
+
                 // Retry logic
                 // while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
                 //     tries++;
                 //     console.log(`Retry attempt #${tries}...`);
                 //     bookingResult = await FortSumterTickets(orderData, tries);
                 // }
-        
+
                 if (bookingResult.success) {
                     console.log('Fort Sumter Tickets: Booking automation completed successfully');
                 } else {
@@ -991,7 +1038,7 @@ app.post('/fort-sumter-ticketing-webhook', async (req, res) => {
             }
         });
 
-        
+
     } catch (error) {
         console.error('Error processing webhook:', error);
         res.status(200).json({
@@ -1004,7 +1051,7 @@ app.post('/fort-sumter-ticketing-webhook', async (req, res) => {
 // Webhook endpoint with verification | https://www.kennedyspacecenter.com/
 app.post('/kennedy-space-center-ticketing-webhook', async (req, res) => {
     console.log('Kennedy SpaceCenter Tickets: Order data:', JSON.stringify(req.body));
-    
+
     const reqBody = req.body;
 
     try {
@@ -1094,14 +1141,14 @@ app.post('/kennedy-space-center-ticketing-webhook', async (req, res) => {
                 let tries = 0;
                 const maxRetries = 3;
                 let bookingResult = await KennedySpaceCenterTickets(orderData, tries);
-                
+
                 // Retry logic
                 // while (tries < maxRetries - 1 && !bookingResult.success && !bookingResult?.error?.includes('Payment not completed') && !bookingResult?.error?.includes('Expected format is MM/YY.') && !bookingResult?.error?.includes('Month should be between 1 and 12.') && !bookingResult?.error?.includes('The card has expired.')) {
                 //     tries++;
                 //     console.log(`Retry attempt #${tries}...`);
                 //     bookingResult = await KennedySpaceCenterTickets(orderData, tries);
                 // }
-        
+
                 if (bookingResult.success) {
                     console.log('Kennedy SpaceCenter Tickets: Booking automation completed successfully');
                 } else {
@@ -1112,7 +1159,7 @@ app.post('/kennedy-space-center-ticketing-webhook', async (req, res) => {
             }
         });
 
-        
+
     } catch (error) {
         console.error('Error processing webhook:', error);
         res.status(200).json({
@@ -1126,7 +1173,7 @@ app.post('/kennedy-space-center-ticketing-webhook', async (req, res) => {
 // try {
 //     // const server = https.createServer(sslOptions, app);
 //     const server = http.createServer(app);
-    
+
 //     server.listen(PORT, () => {
 //         console.log(`HTTPS Server is running on port ${PORT}`);
 //         console.log(`Webhook endpoint: http://localhost:${PORT}/webhook`);

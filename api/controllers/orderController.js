@@ -55,7 +55,6 @@ const getOrders = async (req, res) => {
   }
 };
 
-
 // Update the triggered machine on an order
 const updateTriggeredMachine = async (req, res) => {
   const { orderId, triggeredMachineId } = req.body; // Get the triggered machine from the request
@@ -78,8 +77,6 @@ const updateTriggeredMachine = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
-
-
 
 // Get all machines for dropdown
 const getMachines = async (req, res) => {
@@ -105,6 +102,28 @@ const updateOrderStatus = async (req, res) => {
     await order.save();
     
     res.json({ msg: 'Order status updated successfully', order });
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+};
+
+const updateServiceChargesStatus = async (req, res) => {
+  const { orderId, status, websiteName } = req.body;
+
+  try {
+    // Find the order by orderId and websiteName
+    const order = await Order.findOne({ orderId, websiteName });
+
+    if (!order) {
+      return res.status(404).json({ msg: 'Order not found with the specified website' });
+    }
+
+    // Update serviceChargesStatus
+    order.serviceChargesStatus = status;
+
+    await order.save();
+
+    res.json({ msg: 'Service charges status updated successfully', order });
   } catch (err) {
     res.status(500).send('Server error');
   }
@@ -171,4 +190,4 @@ const deleteMachine = async (req, res) => {
 };
 
 
-module.exports = { getOrders, getMachines, updateOrderStatus, deleteMachine, addMachine, editMachine, updateTriggeredMachine };
+module.exports = { getOrders, getMachines, updateOrderStatus, deleteMachine, addMachine, editMachine, updateTriggeredMachine, updateServiceChargesStatus };

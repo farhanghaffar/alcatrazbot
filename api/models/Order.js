@@ -11,6 +11,8 @@ const orderSchema = new mongoose.Schema({
     required: false, // Set this to false since it will only be populated when triggered
   },
   status: { type: String, enum: ['Not Triggered', 'Failed', 'Passed', 'Executed'], default: 'Not Triggered' },
+  serviceChargesStatus: { type: String, enum: ['Not Triggered', 'Failed', 'Charged', 'Executed'], default: 'Not Triggered' },
+  serviceChargesError: { type: String, default: null },
   failureReason: { type: String, default: null },
   triggerable: { type: Boolean, default: true }
 }, {
