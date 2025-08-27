@@ -491,9 +491,9 @@ const updateServiceChargesStatus = async (siteName, orderId, status, errorMessag
     // Find the order by orderId
     const order = await Order.findOne({ orderId, websiteName: siteName });
 
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
+    // if (!order) {
+    //   return res.status(404).json({ message: 'Order not found' });
+    // }
 
     // Update the status and error message for service charges
     order.serviceChargesStatus = status;
@@ -502,10 +502,10 @@ const updateServiceChargesStatus = async (siteName, orderId, status, errorMessag
     // Save the updated order
     await order.save();
 
-    res.status(200).json({ message: 'Service charges status updated successfully', order });
+    // res.status(200).json({ message: 'Service charges status updated successfully', order });
   } catch (err) {
     console.error('Error updating service charges status:', err);
-    res.status(500).json({ message: 'Server error' });
+    // res.status(500).json({ message: 'Server error' });
   }
 };
 
