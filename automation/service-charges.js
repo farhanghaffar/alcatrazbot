@@ -29,7 +29,7 @@ async function ServiceCharges(
   const recepientEmail = "farhan.qat123@gmail.com";
 
   let ccEmail = "";
-  if (siteName === "AlcatrazTicketing") {
+  if (siteName === "Alcatraz Ticketing") {
     ccEmail = "tickets@alcatrazticketing.com";
   } else if (siteName === "StatueTicketing") {
     ccEmail = "tickets@statueticketing.com"
