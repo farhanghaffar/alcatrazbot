@@ -227,7 +227,7 @@ async function potomacTourBooking(bookingData, tries, payload) {
         console.error(
           "Tickets are not available for the selected date. Throwing an error."
         );
-        throw new Error("Tickets are not available for the date you selected.");
+        throw new Error("SOLD OUT");
       }
             
     }

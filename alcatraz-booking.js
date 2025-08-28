@@ -208,7 +208,7 @@ async function alcatrazBookTour(bookingData, tries, payload) {
             console.log(`Visibility of "no tickets available" message: ${isNoTicketsMessageVisible}`);
             if (isNoTicketsMessageVisible) {
                 console.error('Tickets are not available for the selected date. Throwing an error.');
-                throw new Error('Tickets are not available for the date you selected.');
+                throw new Error('SOLD OUT');
             }
         }
         const showMoreTimesButton = frameHandle.getByRole('button').filter({ hasText: 'Show more times' }).first();

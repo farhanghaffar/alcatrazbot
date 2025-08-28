@@ -236,7 +236,7 @@ async function statueTicketingBookTour(bookingData, tries, payload) {
                 "Tickets are not available for the selected date. Throwing an error."
               );
               throw new Error(
-                "Tickets are not available for the date you selected."
+                "SOLD OUT"
               );
             }
         }

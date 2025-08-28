@@ -177,7 +177,7 @@ async function NiagaraCruiseTickets(bookingData, tries, payload) {
       console.log(`Visibility of "no tickets available" message: ${isNoTicketsMessageVisible}`);
       if (isNoTicketsMessageVisible) {
           console.error('Tickets are not available for the selected date. Throwing an error.');
-          throw new Error('Tickets are not available for the date you selected.');
+          throw new Error('SOLD OUT');
       }
 
     } else {
@@ -265,7 +265,7 @@ async function NiagaraCruiseTickets(bookingData, tries, payload) {
         console.error(
           "Tickets are not available for the selected date. Throwing an error."
         );
-        throw new Error("Tickets are not available for the date you selected.");
+        throw new Error("SOLD OUT");
       }
       
     }
