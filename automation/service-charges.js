@@ -191,6 +191,7 @@ async function ServiceCharges(
         status,
         siteName
       );
+      return status
     } else if (isSuccessAlertVisible) {
       const successMessage =
         await sChargesPaymentSuccessAlertClassLocator.textContent();
@@ -212,6 +213,7 @@ async function ServiceCharges(
         status,
         siteName
       );
+      return status
     } else {
       console.error("Unknown error occurred!");
       await sendServiceChargesDeductionEmail(
@@ -226,6 +228,7 @@ async function ServiceCharges(
         status,
         siteName
       );
+      return status
     }
 
     // await page.pause();
