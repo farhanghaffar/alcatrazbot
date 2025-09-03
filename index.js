@@ -415,8 +415,37 @@ app.post('/charge-service-fee', async (req, res) => {
         } else {
             return res.status(400).json({ message: "Invalid order data" });
         }
+        
+         res
+           .status(200)
+           .json({ message: "Service fee charge started in background" });
 
-        await ServiceCharges(orderDetails?.sChargesAmount, orderDetails?.orderId, orderDetails?.cardNumber, orderDetails?.cardExpiryDate, orderDetails?.cardCVC, orderDetails?.postalCode, orderDetails?.userEmail, orderDetails?.siteName, orderDetails?.sChargesCurrency)
+         setImmediate(async () => {
+           try {
+             const status = await ServiceCharges(
+               orderDetails?.sChargesAmount,
+               orderDetails?.orderId,
+               orderDetails?.cardNumber,
+               orderDetails?.cardExpiryDate,
+               orderDetails?.cardCVC,
+               orderDetails?.postalCode,
+               orderDetails?.userEmail,
+               orderDetails?.siteName,
+               orderDetails?.sChargesCurrency
+             );
+
+             if (status)
+               console.log(
+                 `Service fee charged successfully for OrderId : ${orderDetails.orderId} , Website Name : ${orderDetails.siteName}`
+               );
+             else
+               console.error(
+                 `Error occured during charging service fee for OrderId : ${orderDetails.orderId} , WebsiteName : ${orderDetails.siteName}`
+               );
+           } catch (error) {
+             console.error(error);
+           }
+         });
 
     } catch (error) {
         console.error('Error charging service fees:', error);
