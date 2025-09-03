@@ -304,6 +304,7 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         await page.waitForTimeout(10000);
         const addToCartBtn = await frameHandle.locator(`[data-bdd="add-to-cart-button"]`).getByText('Add to Cart'); 
         const addToCartBtnVisible = await addToCartBtn.isVisible({timeout: 120000});
+        console.log(`Debug: Visibility of "add to cart" button: ${addToCartBtnVisible}`);
 
         randomtime = getRandomTime();
         await page.waitForTimeout(randomtime);
@@ -314,14 +315,58 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         console.log(`Debug: Visibility of "checkout now" button: ${checkoutNowBtnVisible}`);
         // await page.waitForTimeout(15000);
         if(addToCartBtnVisible) {
-            await addToCartBtn.click();
-            console.log('Debug: Clicked Add to Cart button');
-            await page.waitForSelector('iframe.zoid-component-frame', { timeout: 120000 });
-            const checkoutPageFrame = await page.frameLocator('iframe.zoid-component-frame')
-            const checkoutButton = await checkoutPageFrame.getByRole(`button`).filter({hasText: 'Checkout'});
-            await expect(checkoutButton).toBeVisible({timeout: 80000});
-            await checkoutButton.click();
-            console.log('Debug: Clicked Checkout button');
+          await addToCartBtn.click();
+          console.log("Debug: Clicked Add to Cart button");
+
+          // Retry mechanism if the page hasn't navigated yet (button is still visible)
+          let retryCount = 0;
+          const maxRetries = 5; // Limit the number of retries
+
+          while (retryCount < maxRetries) {
+            // Wait for a random time before checking again
+            await page.waitForTimeout(5000);
+
+            const addToCartBtnVisibleInLoop = await addToCartBtn.isVisible({
+              timeout: 120000,
+            });
+            console.log(
+              `Visibility of "Add to Cart" button: ${addToCartBtnVisibleInLoop}`
+            );
+
+            // If the button is still visible, click it again
+            if (addToCartBtnVisibleInLoop) {
+              console.log(
+                "Add to Cart button still visible, retrying click..."
+              );
+              await addToCartBtn.click(); // Retry clicking
+            } else {
+              console.log(
+                "Add to Cart button no longer visible, moving on to next step."
+              );
+              break; // Exit loop when the button is no longer visible (page navigated)
+            }
+
+            retryCount++;
+
+            if (retryCount >= maxRetries) {
+              console.log("Exiting loop after max retries");
+              break; // Exit loop after max retries
+            }
+          }
+
+          console.log("Debug: Waiting for checkout page frame");
+          await page.waitForSelector("iframe.zoid-component-frame", {
+            timeout: 120000,
+          });
+          const checkoutPageFrame = await page.frameLocator(
+            "iframe.zoid-component-frame"
+          );
+          const checkoutButton = await checkoutPageFrame
+            .getByRole(`button`)
+            .filter({ hasText: "Checkout" });
+          await expect(checkoutButton).toBeVisible({ timeout: 80000 });
+          await checkoutButton.click();
+          console.log("Debug: Clicked Checkout button");
         } else if(checkoutNowBtnVisible) {
             await checkoutNowBtn.click();
             console.log('Debug: Clicked Checkout Now button');
