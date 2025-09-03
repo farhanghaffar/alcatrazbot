@@ -309,18 +309,22 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         await page.waitForTimeout(randomtime);
 
         const checkoutNowBtn = await frameHandle.locator('[data-bdd="checkout-now-button"]').filter({hasText: 'Checkout Now'});
-        await page.waitForTimeout(15000);
+        await page.waitForTimeout(20000);
         const checkoutNowBtnVisible = await checkoutNowBtn.isVisible();
-        await page.waitForTimeout(15000);
+        console.log(`Debug: Visibility of "checkout now" button: ${checkoutNowBtnVisible}`);
+        // await page.waitForTimeout(15000);
         if(addToCartBtnVisible) {
             await addToCartBtn.click();
+            console.log('Debug: Clicked Add to Cart button');
             await page.waitForSelector('iframe.zoid-component-frame', { timeout: 120000 });
             const checkoutPageFrame = await page.frameLocator('iframe.zoid-component-frame')
             const checkoutButton = await checkoutPageFrame.getByRole(`button`).filter({hasText: 'Checkout'});
             await expect(checkoutButton).toBeVisible({timeout: 80000});
             await checkoutButton.click();
+            console.log('Debug: Clicked Checkout button');
         } else if(checkoutNowBtnVisible) {
             await checkoutNowBtn.click();
+            console.log('Debug: Clicked Checkout Now button');
         }
         // await expect(page).toHaveURL(/cart/, {timeout: 80000});
         // console.log('Successfully reached cart page');
