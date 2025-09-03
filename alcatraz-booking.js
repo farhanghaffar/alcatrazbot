@@ -272,15 +272,22 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         const checkOutNowBtn0 = await frameHandle.getByRole('button', {name: 'Checkout Now'});
         const continueButtonVisible = await continueButton.isVisible();
         const buyNowBtnVisible = await buyNowBtn.isVisible();
+        const checkOutNowBtn0IsVisible = await checkOutNowBtn0.isVisible();
         if(continueButtonVisible) {
             await continueButton.click();
+            console.log("Continue Button clicked!");
         } else if(buyNowBtnVisible) {
             await buyNowBtn.click();
-        } else {
+            console.log("Buy Now Button clicked!");
+        } else if(checkOutNowBtn0IsVisible) {
             await checkOutNowBtn0.click();
+            console.log("Checkout Now Button clicked!");
+        } else {
+            console.log("No button found on tickets page!");
         }
 
-        console.log('Clicked Continue button');
+        randomtime = getRandomTime();
+        await page.waitForTimeout(randomtime);
 
         for (const [ticketType, quantity] of Object.entries(ticketQuantities)) {
             if (quantity > 0) {
