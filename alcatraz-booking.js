@@ -346,6 +346,7 @@ async function alcatrazBookTour(bookingData, tries, payload) {
                 "Add to Cart button still visible, retrying click..."
               );
               await addToCartBtn.click(); // Retry clicking
+
             } else {
               console.log(
                 "Add to Cart button no longer visible, moving on to next step."
@@ -362,6 +363,9 @@ async function alcatrazBookTour(bookingData, tries, payload) {
           }
 
           console.log("Debug: Waiting for checkout page frame");
+          
+          await page.waitForLoadState("networkidle");
+
           await page.waitForSelector("iframe.zoid-component-frame", {
             timeout: 120000,
           });
