@@ -5,50 +5,183 @@ const Machine = require("../models/Machine");
 // Fetch the orders with the selectedMachine populated
 const getOrders = async (req, res) => {
   try {
-    const { search, startDate, endDate, websiteName } = req.query;
+    const {
+      search,
+      startDate,
+      endDate,
+      websiteName,
+      orderId,
+      customerName,
+      failureReason,
+      updateStatus,
+      serviceChargesStatus,
+      triggeredMachine,
+      sortOrder,
+    } = req.query;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
 
     // Build the query object dynamically based on the filters
-    const query = {};
+    const matchStage = {};
 
-    // Search functionality (matching order ID, customer name, failure reason, or status)
+    if (orderId) {
+      matchStage.orderId = { $regex: new RegExp(orderId, "i") };
+    }
+
+    if (customerName) {
+      const regex = new RegExp(customerName, "i");
+      matchStage["payload.billing.first_name"] = { $regex: regex };
+      matchStage["payload.billing.last_name"] = { $regex: regex };
+    }
+
+    if (failureReason) {
+      matchStage.failureReason = { $regex: new RegExp(failureReason, "i") };
+    }
+
+    if (updateStatus) {
+      matchStage.status = updateStatus;
+    }
+
+    if (serviceChargesStatus) {
+      matchStage.serviceChargesStatus = serviceChargesStatus;
+    }
+
+    if (triggeredMachine) {
+      const machineRegex = new RegExp(triggeredMachine, "i");
+      const machines = await Machine.find({
+        name: { $regex: machineRegex },
+      }).select("_id");
+      const machineIds = machines.map((m) => m._id);
+      matchStage.triggeredMachine = { $in: machineIds };
+    }
+
     if (search) {
-      const searchTerm = search.trim(); // Trim spaces to avoid extra characters
-      const regex = new RegExp(searchTerm, "i"); // Use case-insensitive regex
-
-      query.$or = [
-        { orderId: { $regex: regex } }, // Partial match for order ID
-        { "payload.billing.first_name": { $regex: regex } }, // Partial match for first name
-        { "payload.billing.last_name": { $regex: regex } }, // Partial match for last name
-        { status: { $regex: regex } }, // Partial match for order status
+      const searchTerm = search.trim();
+      const regex = new RegExp(searchTerm, "i");
+      matchStage.$or = [
+        { orderId: { $regex: regex } },
+        { "payload.billing.first_name": { $regex: regex } },
+        { "payload.billing.last_name": { $regex: regex } },
+        { status: { $regex: regex } },
       ];
     }
 
-    // Date range filter (if both start and end date are provided)
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-      end.setHours(23, 59, 59, 999); // Set end date to 11:59:59.999 PM
-      query.createdAt = { $gte: start, $lte: end };
+      end.setHours(23, 59, 59, 999);
+      matchStage.createdAt = { $gte: start, $lte: end };
     } else if (startDate) {
       const start = new Date(startDate);
-      query.createdAt = { $gte: start };
+      matchStage.createdAt = { $gte: start };
     } else if (endDate) {
       const end = new Date(endDate);
-      end.setHours(23, 59, 59, 999); // Set end date to 11:59:59.999 PM
-      query.createdAt = { $lte: end };
+      end.setHours(23, 59, 59, 999);
+      matchStage.createdAt = { $lte: end };
     }
 
-    // Filter by website name if provided
     if (websiteName) {
-      query.websiteName = websiteName;
+      matchStage.websiteName = websiteName;
     }
 
-    // Fetch the orders with the selectedMachine populated (get machine's name)
-    const orders = await Order.find(query)
-      .populate("triggeredMachine", "name") // Populate selectedMachine field with 'name'
-      .sort({ createdAt: -1 });
+    // Aggregation pipeline setup
+    let pipeline = [];
 
-    res.json(orders);
+    // Add the $match stage if there are any filters
+    if (Object.keys(matchStage).length > 0) {
+      pipeline.push({ $match: matchStage });
+    }
+
+    // Handle sorting by tour date
+    if (sortOrder) {
+      const sortDirection = sortOrder === "asc" ? 1 : -1;
+
+      // Add a new field 'sortableTourDate' using $addFields
+      pipeline.push({
+        $addFields: {
+          sortableTourDate: {
+            $dateFromString: {
+              dateString: {
+                $reduce: {
+                  input: "$payload.line_items.meta_data",
+                  initialValue: "",
+                  in: {
+                    $let: {
+                      vars: {
+                        dateObj: {
+                          $arrayElemAt: [
+                            "$$this",
+                            {
+                              $indexOfArray: [
+                                "$$this.key",
+                                {
+                                  $cond: [
+                                    { $in: ["_booking_date", "$$this.key"] },
+                                    "_booking_date",
+                                    "Booking Date",
+                                  ],
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      },
+                      in: "$$dateObj.value",
+                    },
+                  },
+                },
+              },
+              onError: "$createdAt",
+            },
+          },
+        },
+      });
+
+      // Add the $sort stage
+      pipeline.push({
+        $sort: { sortableTourDate: sortDirection },
+      });
+    }
+    pipeline.push({
+      $sort: { createdAt: -1 },
+    });
+
+    // Add pagination stages
+    const totalOrders = await Order.countDocuments(matchStage);
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    pipeline.push({ $skip: skip });
+    pipeline.push({ $limit: limit });
+
+    // Populate the triggeredMachine field
+    pipeline.push({
+      $lookup: {
+        from: "machines", // name of the machines collection
+        localField: "triggeredMachine",
+        foreignField: "_id",
+        as: "triggeredMachine",
+      },
+    });
+
+    pipeline.push({
+      $unwind: {
+        path: "$triggeredMachine",
+        preserveNullAndEmptyArrays: true,
+      },
+    });
+
+    // Execute the pipeline
+    const orders = await Order.aggregate(pipeline);
+
+    // Respond with the paginated data
+    res.json({
+      orders,
+      currentPage: page,
+      totalPages,
+      totalOrders,
+    });
   } catch (err) {
     console.error("Error fetching orders: ", err);
     res.status(500).send("Server error");
