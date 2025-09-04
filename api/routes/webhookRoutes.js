@@ -13,6 +13,9 @@ router.post('/fort-sumter-ticketing-dashboard-webhook', webhookController.handle
 router.post('/kennedy-space-center-ticketing-dashboard-webhook', webhookController.handleKennedySpaceCenterTicketingWebhook);
 router.post('/hoover-dam-dashboard-webhook', webhookController.handleHooverDamWebhook);
 router.post('/mackinac-dashboard-webhook', webhookController.handleMackinacWebhook);
+router.post('/ship-island-ferry-dashboard-webhook', webhookController.handleShipIslandFerryWebhook);
+router.post('/battleship-dashboard-webhook', webhookController.handleBattleShipWebhook);
+router.post('/plantation-dashboard-webhook', webhookController.handlePlantationWebhook);
 
 // Update Order Payload
 router.post('/update-order-payload', webhookController.updateOrderPayload);

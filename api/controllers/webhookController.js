@@ -324,7 +324,10 @@ const handleKennedySpaceCenterTicketingWebhook = async (req, res) => {
       return res.status(400).json({ message: "Invalid order data" });
     }
 
-    const existingOrder = await orderExists(orderData.id, "Kennedy Space Center Ticketing");
+    const existingOrder = await orderExists(
+      orderData.id,
+      "Kennedy Space Center Ticketing"
+    );
 
     if (existingOrder) {
       return res.status(200).json({ message: "Order already exists" });
@@ -366,7 +369,10 @@ const handleHooverDamWebhook = async (req, res) => {
       return res.status(400).json({ message: "Invalid order data" });
     }
 
-    const existingOrder = await orderExists(orderData.id, "HooverDam Ticketing");
+    const existingOrder = await orderExists(
+      orderData.id,
+      "HooverDam Ticketing"
+    );
 
     if (existingOrder) {
       return res.status(200).json({ message: "Order already exists" });
@@ -420,6 +426,141 @@ const handleMackinacWebhook = async (req, res) => {
       payload: orderData,
       webhookEndpoint: "/mackinac-webhook",
       websiteName: "Mackinac Ticketing",
+      status: "Not Triggered",
+      failureReason: null,
+      triggerable: true,
+    };
+
+    // Save the order directly in the database
+    const newOrder = await Order.create(orderDetails);
+
+    // Return success response
+    return res.status(200).json({
+      message: "Order successfully received and stored",
+      order: newOrder,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error processing the webhook",
+      error: error.message,
+    });
+  }
+};
+
+const handleShipIslandFerryWebhook = async (req, res) => {
+  try {
+    const orderData = req.body; // Get the order data from the request body
+
+    if (!orderData.id) {
+      return res.status(400).json({ message: "Invalid order data" });
+    }
+
+    const existingOrder = await orderExists(
+      orderData.id,
+      "ShipIslandFerry Ticketing"
+    );
+
+    if (existingOrder) {
+      return res.status(200).json({ message: "Order already exists" });
+    }
+
+    // Prepare the order details
+    const orderDetails = {
+      orderId: orderData.id,
+      payload: orderData,
+      webhookEndpoint: "/ship-island-ferry-webhook",
+      websiteName: "ShipIslandFerry Ticketing",
+      status: "Not Triggered",
+      failureReason: null,
+      triggerable: true,
+    };
+
+    // Save the order directly in the database
+    const newOrder = await Order.create(orderDetails);
+
+    // Return success response
+    return res.status(200).json({
+      message: "Order successfully received and stored",
+      order: newOrder,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error processing the webhook",
+      error: error.message,
+    });
+  }
+};
+
+const handleBattleShipWebhook = async (req, res) => {
+  try {
+    const orderData = req.body; // Get the order data from the request body
+
+    if (!orderData.id) {
+      return res.status(400).json({ message: "Invalid order data" });
+    }
+
+    const existingOrder = await orderExists(
+      orderData.id,
+      "Battleship Ticketing"
+    );
+
+    if (existingOrder) {
+      return res.status(200).json({ message: "Order already exists" });
+    }
+
+    // Prepare the order details
+    const orderDetails = {
+      orderId: orderData.id,
+      payload: orderData,
+      webhookEndpoint: "/battleship-webhook",
+      websiteName: "Battleship Ticketing",
+      status: "Not Triggered",
+      failureReason: null,
+      triggerable: true,
+    };
+
+    // Save the order directly in the database
+    const newOrder = await Order.create(orderDetails);
+
+    // Return success response
+    return res.status(200).json({
+      message: "Order successfully received and stored",
+      order: newOrder,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error processing the webhook",
+      error: error.message,
+    });
+  }
+};
+
+const handlePlantationWebhook = async (req, res) => {
+  try {
+    const orderData = req.body; // Get the order data from the request body
+
+    if (!orderData.id) {
+      return res.status(400).json({ message: "Invalid order data" });
+    }
+
+    const existingOrder = await orderExists(
+      orderData.id,
+      "Plantation Ticketing"
+    );
+
+    if (existingOrder) {
+      return res.status(200).json({ message: "Order already exists" });
+    }
+
+    // Prepare the order details
+    const orderDetails = {
+      orderId: orderData.id,
+      payload: orderData,
+      webhookEndpoint: "/plantation-webhook",
+      websiteName: "Plantation Ticketing",
       status: "Not Triggered",
       failureReason: null,
       triggerable: true,
@@ -509,5 +650,8 @@ module.exports = {
   handleKennedySpaceCenterTicketingWebhook,
   handleHooverDamWebhook,
   handleMackinacWebhook,
+  handleShipIslandFerryWebhook,
+  handleBattleShipWebhook,
+  handlePlantationWebhook,
   updateOrderPayload,
 };
