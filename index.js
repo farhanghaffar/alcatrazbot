@@ -46,7 +46,9 @@ app.use(cors());
 app.use(express.json());
 
 // DB Connection
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI,{retryReads: true,
+    retryWrites: true,
+    serverSelectionTimeoutMS: 5000 })
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log('MongoDB Connection Error ==>', err));
 
