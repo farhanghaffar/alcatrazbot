@@ -207,8 +207,10 @@ const getStats = async (req, res) => {
   try {
     const { websiteName, startDate, endDate } = req.query;
 
-    const matchStage = {};
+    const pipeline = [];
 
+    // Stage 1: Initial Match for filtering
+    const matchStage = {};
     if (websiteName) {
       matchStage.websiteName = websiteName;
     }
@@ -221,17 +223,13 @@ const getStats = async (req, res) => {
         matchStage.createdAt.$lte = new Date(endDate);
       }
     }
-
-    const pipeline = [];
-
     if (Object.keys(matchStage).length > 0) {
-      pipeline.push({
-        $match: matchStage,
-      });
+      pipeline.push({ $match: matchStage });
     }
 
+    // Stage 2: Calculate numeric fields and flags for counting
     pipeline.push({
-      $addFields: {
+      $set: {
         numericTotal: {
           $convert: {
             input: "$payload.total",
@@ -241,72 +239,42 @@ const getStats = async (req, res) => {
           },
         },
         numericProfit: {
-          $reduce: {
-            input: "$payload.line_items",
-            initialValue: 0,
-            in: {
-              $add: [
-                "$$value",
-                {
-                  $reduce: {
-                    input: "$$this.meta_data",
-                    initialValue: 0,
+          $sum: {
+            $map: {
+              input: "$payload.line_items",
+              as: "lineItem",
+              in: {
+                $sum: {
+                  $map: {
+                    input: "$$lineItem.meta_data",
+                    as: "metaData",
                     in: {
-                      $add: [
-                        "$$value",
-                        {
+                      $cond: {
+                        if: {
+                          $or: [
+                            { $eq: ["$$metaData.key", "_booking_serviceCharges"] },
+                            { $eq: ["$$metaData.key", "Service Charges"] },
+                          ],
+                        },
+                        then: {
                           $convert: {
                             input: {
-                              $cond: {
-                                if: {
-                                  $or: [
-                                    {
-                                      $eq: [
-                                        "$$this.key",
-                                        "_booking_serviceCharges",
-                                      ],
+                              $switch: {
+                                branches: [
+                                  {
+                                    case: {
+                                      $regexMatch: { input: "$$metaData.value", regex: /^CA\$/ },
                                     },
-                                    { $eq: ["$$this.key", "Service Charges"] },
-                                  ],
-                                },
-                                then: {
-                                  $switch: {
-                                    branches: [
-                                      {
-                                        case: {
-                                          $regexMatch: {
-                                            input: "$$this.value",
-                                            regex: /^CA\$/,
-                                          },
-                                        },
-                                        then: {
-                                          $substrCP: [
-                                            "$$this.value",
-                                            3,
-                                            { $strLenCP: "$$this.value" },
-                                          ],
-                                        },
-                                      },
-                                      {
-                                        case: {
-                                          $regexMatch: {
-                                            input: "$$this.value",
-                                            regex: /^\$/,
-                                          },
-                                        },
-                                        then: {
-                                          $substrCP: [
-                                            "$$this.value",
-                                            1,
-                                            { $strLenCP: "$$this.value" },
-                                          ],
-                                        },
-                                      },
-                                    ],
-                                    default: "$$this.value",
+                                    then: { $substrCP: ["$$metaData.value", 3, { $strLenCP: "$$metaData.value" }] },
                                   },
-                                },
-                                else: "0",
+                                  {
+                                    case: {
+                                      $regexMatch: { input: "$$metaData.value", regex: /^\$/ },
+                                    },
+                                    then: { $substrCP: ["$$metaData.value", 1, { $strLenCP: "$$metaData.value" }] },
+                                  },
+                                ],
+                                default: "$$metaData.value",
                               },
                             },
                             to: "double",
@@ -314,30 +282,74 @@ const getStats = async (req, res) => {
                             onNull: 0,
                           },
                         },
-                      ],
+                        else: 0,
+                      },
                     },
                   },
                 },
-              ],
+              },
             },
           },
         },
+        isFailed: { $eq: ["$status", "Failed"] },
       },
     });
 
+    // Stage 3: Group and sum the calculated fields
     pipeline.push({
       $group: {
         _id: null,
-        totalSales: { $sum: "$numericTotal" },
-        totalProfit: { $sum: "$numericProfit" },
+        totalSales: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $eq: ["$status", "Passed"] },
+                  {
+                    $or: [
+                      { $eq: ["$serviceChargesStatus", "Charged"] },
+                      { $eq: [{ $ifNull: ["$serviceChargesStatus", null] }, null] }
+                    ]
+                  }
+                ]
+              },
+              "$numericTotal",
+              0,
+            ],
+          },
+        },
+        totalProfit: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $eq: ["$status", "Passed"] },
+                  {
+                    $or: [
+                      { $eq: ["$serviceChargesStatus", "Charged"] },
+                      { $eq: [{ $ifNull: ["$serviceChargesStatus", null] }, null] }
+                    ]
+                  }
+                ]
+              },
+              "$numericProfit",
+              0,
+            ],
+          },
+        },
+        totalOrders: { $sum: 1 },
+        totalFailed: { $sum: { $cond: ["$isFailed", 1, 0] } },
       },
     });
 
+    // Stage 4: Project and format the final output
     pipeline.push({
       $project: {
         _id: 0,
         totalSales: "$totalSales",
         totalProfit: "$totalProfit",
+        totalOrders: "$totalOrders",
+        totalFailed: "$totalFailed",
       },
     });
 
@@ -347,6 +359,8 @@ const getStats = async (req, res) => {
       totalSales: result[0]?.totalSales || 0,
       totalProfit: result[0]?.totalProfit || 0,
       totalCost: 0,
+      totalOrders: result[0]?.totalOrders || 0,
+      totalFailed: result[0]?.totalFailed || 0,
     });
   } catch (error) {
     console.error(error);
@@ -363,25 +377,35 @@ const getChartData = async (req, res) => {
 
     const pipeline = [];
 
+     const matchStage = {
+      $and: [
+        { status: "Passed" },
+        {
+          $or: [
+            { serviceChargesStatus: "Charged" },
+            { serviceChargesStatus: { $exists: false } }
+          ]
+        }
+      ]
+    };
+
     // Filter by websiteName if provided
-    if (websiteName) {
-      pipeline.push({
-        $match: { websiteName: websiteName },
+     if (websiteName) {
+      matchStage.$and.push({ websiteName: websiteName });
+    }
+    if (month && year) {
+      matchStage.$and.push({
+        $expr: {
+          $and: [
+            { $eq: [{ $year: "$createdAt" }, Number(year)] },
+            { $eq: [{ $month: "$createdAt" }, Number(month)] },
+          ],
+        },
       });
     }
 
-    // Filter by year and month if provided, using $expr for robust date matching
-    if (month && year) {
-      pipeline.push({
-        $match: {
-          $expr: {
-            $and: [
-              { $eq: [{ $year: "$createdAt" }, Number(year)] },
-              { $eq: [{ $month: "$createdAt" }, Number(month)] },
-            ],
-          },
-        },
-      });
+    if (matchStage.$and.length > 0) {
+      pipeline.push({ $match: matchStage });
     }
 
     // Use the provided logic to correctly sum total and profit
