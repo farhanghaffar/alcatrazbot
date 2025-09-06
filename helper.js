@@ -1,4 +1,4 @@
-const { expect } = require('@playwright/test');
+const { expect, errors } = require('@playwright/test');
 const nodemailer = require('nodemailer');
 const path = require('path');
 const UserAgent = require('user-agents');
@@ -519,4 +519,19 @@ function getRandomDelayWithLimit(limit = 20000) {
 return Math.floor(Math.random() * limit);
 }
 
-module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, sendEmailForDeclinedServiceChargesCardPayments, sendEmailForDeclinedCardPayments, addOneHour, addOrUpdateOrder, getRandomDelayWithLimit, updateServiceChargesStatus };
+function isPlaywrightTimeout(e) {
+  const msg = String(e?.message ?? e ?? '');
+  return (
+    (errors && e instanceof errors.TimeoutError) ||
+    e?.name === 'TimeoutError' ||
+    /(?:\bTimeout\b|ms exceeded)/i.test(msg)
+  );
+}
+
+function normalizeFailureReason(e) {
+  if (isPlaywrightTimeout(e)) return 'Timeout';
+  const msg = String(e?.message ?? e ?? 'Failure');
+  return msg.length > 500 ? msg.slice(0, 500) + '…' : msg;
+}
+
+module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, sendEmailForDeclinedServiceChargesCardPayments, sendEmailForDeclinedCardPayments, addOneHour, addOrUpdateOrder, getRandomDelayWithLimit, updateServiceChargesStatus, normalizeFailureReason };

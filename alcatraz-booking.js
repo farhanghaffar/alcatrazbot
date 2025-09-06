@@ -1,6 +1,6 @@
 const { chromium, firefox } = require('playwright');
 const { expect } = require('@playwright/test');
-const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, addOrUpdateOrder, getRandomDelayWithLimit } = require('./helper');
+const { incrementTickets, expectedIncrementTickets, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, addOrUpdateOrder, getRandomDelayWithLimit, normalizeFailureReason } = require('./helper');
 const { Solver } = require('@2captcha/captcha-solver');
 const Order = require('./api/models/Order');
 const fs = require('fs');  
@@ -364,7 +364,7 @@ async function alcatrazBookTour(bookingData, tries, payload) {
 
           console.log("Debug: Waiting for checkout page frame");
           
-          await page.waitForLoadState("networkidle");
+          await page.waitForTimeout(20000);
 
           await page.waitForSelector("iframe.zoid-component-frame", {
             timeout: 120000,
@@ -977,7 +977,7 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         try {
         await Order.findOneAndUpdate(
             { orderId: bookingData.id, websiteName: 'Alcatraz Ticketing' },  // Match by both orderId and websiteName
-            { status: 'Failed', failureReason: error?.message || error },  // Update the status field to 'Failed'
+            { status: 'Failed', failureReason: normalizeFailureReason(error) },  // Update the status field to 'Failed'
             { new: true }  // Return the updated document
           );
         } catch (err) {
