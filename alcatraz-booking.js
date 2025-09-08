@@ -968,6 +968,11 @@ async function alcatrazBookTour(bookingData, tries, payload) {
             console.log(`Order#${bookingData?.id} status changed to ${updatedOrder?.status} successfully!`); 
         }
 
+        // Clear cookies and permissions
+        await context.clearCookies();
+        await context.clearPermissions();
+        await context.storageState({ path: 'state.json' });
+
         return {
             success: true
         }
@@ -1032,6 +1037,12 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         } catch(err) {
             console.log('Sending mail Error', err);
         }
+
+        // Clear cookies and permissions
+        await context.clearCookies();
+        await context.clearPermissions();
+        await context.storageState({ path: 'state.json' });
+
         // await page.pause();
         return { 
             success: false, 
