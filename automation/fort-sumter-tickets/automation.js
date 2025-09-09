@@ -2396,7 +2396,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
     // Close browser if it exists
     if (browser) {
       console.log("Closing browser...");
-      await browser.close();
+      // await browser.close();
     }
   }
 }
