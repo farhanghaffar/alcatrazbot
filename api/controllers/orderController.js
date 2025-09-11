@@ -252,7 +252,12 @@ const getStats = async (req, res) => {
                       $cond: {
                         if: {
                           $or: [
-                            { $eq: ["$$metaData.key", "_booking_serviceCharges"] },
+                            {
+                              $eq: [
+                                "$$metaData.key",
+                                "_booking_serviceCharges",
+                              ],
+                            },
                             { $eq: ["$$metaData.key", "Service Charges"] },
                           ],
                         },
@@ -263,15 +268,33 @@ const getStats = async (req, res) => {
                                 branches: [
                                   {
                                     case: {
-                                      $regexMatch: { input: "$$metaData.value", regex: /^CA\$/ },
+                                      $regexMatch: {
+                                        input: "$$metaData.value",
+                                        regex: /^CA\$/,
+                                      },
                                     },
-                                    then: { $substrCP: ["$$metaData.value", 3, { $strLenCP: "$$metaData.value" }] },
+                                    then: {
+                                      $substrCP: [
+                                        "$$metaData.value",
+                                        3,
+                                        { $strLenCP: "$$metaData.value" },
+                                      ],
+                                    },
                                   },
                                   {
                                     case: {
-                                      $regexMatch: { input: "$$metaData.value", regex: /^\$/ },
+                                      $regexMatch: {
+                                        input: "$$metaData.value",
+                                        regex: /^\$/,
+                                      },
                                     },
-                                    then: { $substrCP: ["$$metaData.value", 1, { $strLenCP: "$$metaData.value" }] },
+                                    then: {
+                                      $substrCP: [
+                                        "$$metaData.value",
+                                        1,
+                                        { $strLenCP: "$$metaData.value" },
+                                      ],
+                                    },
                                   },
                                 ],
                                 default: "$$metaData.value",
@@ -308,10 +331,15 @@ const getStats = async (req, res) => {
                   {
                     $or: [
                       { $eq: ["$serviceChargesStatus", "Charged"] },
-                      { $eq: [{ $ifNull: ["$serviceChargesStatus", null] }, null] }
-                    ]
-                  }
-                ]
+                      {
+                        $eq: [
+                          { $ifNull: ["$serviceChargesStatus", null] },
+                          null,
+                        ],
+                      },
+                    ],
+                  },
+                ],
               },
               "$numericTotal",
               0,
@@ -327,10 +355,15 @@ const getStats = async (req, res) => {
                   {
                     $or: [
                       { $eq: ["$serviceChargesStatus", "Charged"] },
-                      { $eq: [{ $ifNull: ["$serviceChargesStatus", null] }, null] }
-                    ]
-                  }
-                ]
+                      {
+                        $eq: [
+                          { $ifNull: ["$serviceChargesStatus", null] },
+                          null,
+                        ],
+                      },
+                    ],
+                  },
+                ],
               },
               "$numericProfit",
               0,
@@ -377,20 +410,20 @@ const getChartData = async (req, res) => {
 
     const pipeline = [];
 
-     const matchStage = {
+    const matchStage = {
       $and: [
         { status: "Passed" },
         {
           $or: [
             { serviceChargesStatus: "Charged" },
-            { serviceChargesStatus: { $exists: false } }
-          ]
-        }
-      ]
+            { serviceChargesStatus: { $exists: false } },
+          ],
+        },
+      ],
     };
 
     // Filter by websiteName if provided
-     if (websiteName) {
+    if (websiteName) {
       matchStage.$and.push({ websiteName: websiteName });
     }
     if (month && year) {
@@ -700,6 +733,61 @@ const deleteMachine = async (req, res) => {
   }
 };
 
+const startCardDataClean = async (req, res) => {
+  // Respond immediately to the client
+  res.status(202).json({
+    success: true,
+    message: "Card data cleaning has started in the background.",
+  });
+
+  // Start the background process using setImmediate or process.nextTick
+  setImmediate(async () => {
+    try {
+      await cleanCardData();
+    } catch (error) {
+      console.error("Error during background data cleaning:", error);
+      // You might want to log this error to a file or a logging service
+    }
+  });
+};
+
+async function cleanCardData() {
+  try {
+    const query = {
+      serviceChargesStatus: "Charged",
+      status: "Passed",
+    };
+
+    const updateOperation = {
+      $set: {
+        "payload.meta_data.$[elem].value": "",
+      },
+    };
+
+    const arrayFilters = {
+      arrayFilters: [
+        {
+          "elem.key": {
+            $in: [
+              "credit_card_cvc",
+              "credit_card_expiration",
+              "credit_card_number",
+            ],
+          },
+        },
+      ],
+    };
+
+    const result = await Order.updateMany(query, updateOperation, arrayFilters);
+
+    console.log(
+      `Update operation completed. Matched: ${result.matchedCount}, Modified: ${result.modifiedCount}`
+    );
+  } catch (error) {
+    console.error("Error in cleanCardData function:", error);
+  }
+}
+
 module.exports = {
   getOrders,
   getStats,
@@ -712,4 +800,5 @@ module.exports = {
   editMachine,
   updateTriggeredMachine,
   updateServiceChargesStatus,
+  startCardDataClean
 };

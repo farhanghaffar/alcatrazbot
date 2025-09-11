@@ -1,5 +1,16 @@
 const e = require("express");
 const Order = require("../models/Order"); // Import the existing Order model
+const { exec, spawn } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+// Go up one directory to find the 'ovpn_configs' folder
+const OVPN_CONFIGS_DIR = path.join(__dirname, '..', 'ovpn_configs');
+
+// Global variables to manage the VPN process and current connection
+let vpnProcess = null;
+let currentConnection = null;
+
 
 const orderExists = async (orderId, websiteName) => {
   try {
@@ -639,6 +650,211 @@ const updateOrderPayload = async (req, res) => {
   }
 };
 
+
+// Gracefully handle server shutdown to disconnect the VPN
+process.on('SIGINT', () => {
+    console.log('Received SIGINT. Disconnecting VPN and shutting down.');
+    if (vpnProcess) {
+        vpnProcess.kill('SIGINT');
+        vpnProcess = null;
+        currentConnection = null;
+    }
+    process.exit();
+});
+/**
+ * Endpoint to check the current VPN status using OS-specific commands.
+ */
+const getVpnStatus = (req, res) => {
+    const platform = os.platform();
+    let checkCommand;
+
+    if (platform === 'win32') {
+        checkCommand = 'tasklist /FI "IMAGENAME eq openvpn.exe"';
+    } else { // 'linux' or 'darwin' (macOS)
+        checkCommand = 'ps aux | grep openvpn | grep -v grep';
+    }
+
+    exec(checkCommand, (error, stdout, stderr) => {
+        if (error || stderr) {
+            // An error or stderr output usually means the process was not found
+            return res.json({
+                isConnected: false,
+                currentServer: null,
+            });
+        }
+
+        const isConnected = stdout.includes('openvpn');
+        res.json({
+            isConnected: isConnected,
+            currentServer: isConnected ? currentConnection : null,
+        });
+    });
+};
+
+
+/**
+ * Endpoint to disconnect the currently active VPN connection.
+ */
+const disconnectVpn = async (req, res) => {
+    if (vpnProcess) {
+        // Kill the OpenVPN process
+        vpnProcess.kill('SIGINT');
+        vpnProcess = null;
+        currentConnection = null;
+        res.json({ success: true, message: 'Disconnected from VPN.' });
+    } else {
+        res.json({ success: true, message: 'No active VPN connection to disconnect.' });
+    }
+};
+
+/**
+ * Endpoint to switch to a new random VPN configuration.
+ */
+const switchVpn = async (req, res) => {
+    const MAX_RETRIES = 5;
+    const CONNECT_TIMEOUT_MS = 15000; // 15 seconds
+
+    // Disconnect any existing VPN connection
+    if (vpnProcess) {
+        // Disconnect gracefully by killing the process
+        vpnProcess.kill('SIGINT');
+        // Wait a moment for the process to terminate before starting a new one
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        vpnProcess = null;
+    }
+
+    // Get credentials from environment variables
+    const username = process.env.NORDVPN_USER;
+    const password = process.env.NORDVPN_PASS;
+
+    if (!username || !password) {
+        return res.status(400).json({ error: 'VPN credentials not found.' });
+    }
+    
+    // Get a list of all available files
+    fs.readdir(OVPN_CONFIGS_DIR, async (err, files) => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to read configuration files.', details: err });
+        }
+
+        const ovpnFiles = files.filter(file => path.extname(file).toLowerCase() === '.ovpn');
+        const originalFiles = [...ovpnFiles]; // Keep a copy of all available files
+
+        let success = false;
+        let retries = 0;
+        let lastError = null;
+
+        while (retries < MAX_RETRIES && !success) {
+            const availableFiles = ovpnFiles.filter(file => file !== currentConnection);
+
+            if (availableFiles.length === 0) {
+                // If we run out of files, reset the list, but don't try the current one again
+                ovpnFiles.splice(0, ovpnFiles.length, ...originalFiles);
+                continue;
+            }
+
+            // Select a new random file and remove it from the list for this attempt
+            const randomIndex = Math.floor(Math.random() * availableFiles.length);
+            const newFile = availableFiles[randomIndex];
+            ovpnFiles.splice(ovpnFiles.indexOf(newFile), 1);
+            
+            const newConfigPath = path.join(OVPN_CONFIGS_DIR, newFile);
+
+            const platform = os.platform();
+            let command;
+            let args;
+
+            if (platform === 'win32') {
+                command = 'openvpn.exe';
+            } else { // 'linux' or 'darwin' (macOS)
+                command = 'openvpn';
+            }
+            
+            // Create a temporary file to pass credentials
+            const tempAuthFilePath = path.join(os.tmpdir(), `auth_${Date.now()}.txt`);
+            fs.writeFileSync(tempAuthFilePath, `${username}\n${password}`);
+            
+            // Pass the temporary file path to OpenVPN
+            args = ['--config', newConfigPath, '--auth-user-pass', tempAuthFilePath];
+
+            console.log(`Attempting to connect to ${newFile} (Attempt ${retries + 1} of ${MAX_RETRIES})`);
+
+            const connectionPromise = new Promise((resolve, reject) => {
+                const processInstance = spawn(command, args);
+                let connected = false;
+
+                processInstance.stdout.on('data', (data) => {
+                    const output = data.toString();
+                    console.log(`OpenVPN stdout: ${output}`);
+                    if (output.includes('Initialization Sequence Completed')) {
+                        connected = true;
+                        resolve(processInstance);
+                    }
+                });
+
+                processInstance.stderr.on('data', (data) => {
+                    const output = data.toString();
+                    console.error(`OpenVPN stderr: ${output}`);
+                    if (output.includes('AUTH_FAILED')) {
+                        lastError = 'Authentication failed. Please check your credentials.';
+                        reject(new Error(lastError));
+                    } else if (output.includes('Access is denied.')) {
+                        lastError = 'Access is denied. Please run the API server with administrative privileges.';
+                        reject(new Error(lastError));
+                    }
+                });
+
+                processInstance.on('close', (code) => {
+                    // Clean up the temporary file regardless of exit status
+                    try {
+                        fs.unlinkSync(tempAuthFilePath);
+                    } catch (cleanupErr) {
+                        console.error('Failed to delete temporary auth file:', cleanupErr);
+                    }
+
+                    if (!connected) {
+                        lastError = `OpenVPN process exited with code ${code}`;
+                        reject(new Error(lastError));
+                    }
+                });
+
+                // Set a timeout for the connection attempt
+                setTimeout(() => {
+                    if (!connected) {
+                        lastError = `Connection attempt timed out after ${CONNECT_TIMEOUT_MS / 1000} seconds.`;
+                        processInstance.kill('SIGINT');
+                        reject(new Error(lastError));
+                    }
+                }, CONNECT_TIMEOUT_MS);
+            });
+
+            try {
+                vpnProcess = await connectionPromise;
+                currentConnection = newFile;
+                success = true;
+            } catch (error) {
+                retries++;
+                console.error(`Connection failed: ${error.message}`);
+                vpnProcess = null;
+            }
+        }
+
+        if (success) {
+            res.json({
+                success: true,
+                message: `Successfully connected to ${currentConnection} after ${retries + 1} attempts.`,
+                newConnection: currentConnection
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                message: `Failed to connect to a VPN server after ${MAX_RETRIES} attempts. Last error: ${lastError}`,
+            });
+        }
+    });
+};
+
+
 module.exports = {
   handleAlcatrazWebhook,
   handleStatueWebhook,
@@ -654,4 +870,7 @@ module.exports = {
   handleBattleShipWebhook,
   handlePlantationWebhook,
   updateOrderPayload,
+  switchVpn,
+  getVpnStatus,
+  disconnectVpn
 };

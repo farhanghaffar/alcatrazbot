@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const webhookController = require('../controllers/webhookController');
+const protect = require('../middleware/authMiddleware');
 
 // Route to handle incoming webhook request
 router.post('/alcatraz-dashboard-webhook', webhookController.handleAlcatrazWebhook);
@@ -19,5 +20,10 @@ router.post('/plantation-dashboard-webhook', webhookController.handlePlantationW
 
 // Update Order Payload
 router.post('/update-order-payload', webhookController.updateOrderPayload);
+
+//Switch VPN
+router.post("/switch-vpn",protect,webhookController.switchVpn)
+router.get("/vpn-status",protect,webhookController.getVpnStatus)
+router.post("/disconnect-vpn",protect,webhookController.disconnectVpn)
 
 module.exports = router;
