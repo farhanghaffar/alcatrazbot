@@ -19,6 +19,8 @@ const orderSchema = new mongoose.Schema({
   timestamps: true
 });
 
+orderSchema.index({ websiteName: 1, orderId: 1 });
+
 const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
 
 module.exports = Order;

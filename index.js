@@ -48,7 +48,8 @@ app.use(express.json());
 // DB Connection
 mongoose.connect(process.env.MONGO_URI,{retryReads: true,
     retryWrites: true,
-    serverSelectionTimeoutMS: 5000 })
+    serverSelectionTimeoutMS: 5000,
+maxPoolSize: 10 })
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log('MongoDB Connection Error ==>', err));
 
