@@ -18,6 +18,7 @@ const {
   addOneHour,
   getRandomDelayWithLimit,
   addOrUpdateOrder,
+  sendEmailWithMultipleAttachments,
 } = require("./../../helper");
 const { Solver } = require("@2captcha/captcha-solver");
 const fs = require("fs");
@@ -26,6 +27,11 @@ const { ServiceCharges } = require("../service-charges");
 const { updateOrderStatus } = require("../wp-update-order-status/automation");
 const Order = require("../../api/models/Order");
 require("dotenv").config();
+const axios = require('axios');
+const os = require('os');
+// const PuppeteerVideoRecorder = require('puppeteer-video-recorder');
+
+// const downloadsDir = path.join(os.homedir(), 'Downloads/fortsumter');
 
 // Apply stealth plugin to avoid bot detection
 puppeteer.use(StealthPlugin());
@@ -103,6 +109,10 @@ async function FortSumterTickets(bookingData, tries, payload) {
   // Add extra anti-detection measures by randomizing user agent
   const userAgent = getRandomUserAgent();
   console.log("User Agent:", userAgent);
+
+  // Verify FFmpeg
+  // const { execSync } = require('child_process');
+  // console.log('FFmpeg Version:', execSync('ffmpeg -version').toString());
   
   // Update launch options with the random user agent
   const browserOptions = {
@@ -123,6 +133,25 @@ async function FortSumterTickets(bookingData, tries, payload) {
   const pages = await browser.pages();
   const page = pages[0]; // Use the first page that already exists
 
+  // Configure recorder
+  // const videoPath = path.join(downloadsDir);
+  // const recorder = new PuppeteerVideoRecorder(page);
+  // const recorder = await PuppeteerVideoRecorder(page, videoPath, {
+  //   fps: 25,
+  //   videoFrame: {
+  //     width: 1280,
+  //     height: 720,
+  //   },
+  //   followNewTab: true, // optional, follow new tabs if page opens them
+  // });
+
+  // Initialize video recorder
+  // const recorder = new PuppeteerVideoRecorder(); // No arguments here
+  // await recorder.init(page, videoPath); // Initialize with page and path
+
+  // Start recording
+  // console.log("Recording started...")
+  // await recorder.start();
   
   // Additional page configurations for bot detection avoidance
   await page.evaluateOnNewDocument(() => {
@@ -239,7 +268,11 @@ async function FortSumterTickets(bookingData, tries, payload) {
     await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), 5000);
     // Find all button elements that could be booking buttons
     console.log("Looking for booking buttons...");
-    const buttons = await page.$$('a.button, button, a.btn, .btn, [role="button"], a[href*="book"]');
+    // const buttons = await page.$$('a.button, button, a.btn, .btn, [role="button"], a[href*="book"]');
+    const buttons = await page.$$(
+  'a.button.headerbook[role="button"], p.hasbutton > a.button[role="button"]'
+);
+
     console.log(`Found ${buttons.length} potential button elements`);
     
     // Debug info to see what buttons are on the page
@@ -303,7 +336,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
         
         for (const elem of fallbackElements) {
           const elemText = await page.evaluate(el => el.textContent.trim().toLowerCase(), elem);
-          if (elemText.includes('Book Tickets') || elemText.includes('Book Your Tour')) {
+          if (elemText.includes('book tickets') || elemText.includes('book your tour')) {
             await elem.click();
             bookButtonClicked = true;
             console.log(`Clicked fallback element with text: "${elemText}"`); 
@@ -425,269 +458,6 @@ async function FortSumterTickets(bookingData, tries, payload) {
   // await page.evaluate(() => { debugger; });
 
     try {
-      // if (targetMonth === currentMonth && targetYear === currentYear) {
-      //   console.log("Same month and year, proceeding with date selection");
-        
-      //   // Use a more reliable approach for date selection
-      //   console.log("Attempting to select calendar date...");
-      //   // First, wait for any calendar cells to be visible
-      //   await frame.waitForSelector('td button', {visible: true, timeout: 10000});
-        
-      //   // Get all available calendar cells
-      //   const calendarCells = await frame.$$('td button');
-      //   console.log(`Found ${calendarCells.length} calendar cells`);
-        
-      //   // Find the cell with our target day
-      //   let targetCell = null;
-      //   for (const cell of calendarCells) {
-      //     try {
-      //       // Try to get the text content of the button
-      //       const cellText = await frame.evaluate(el => {
-      //         // Look for any text or span content that matches our day
-      //         const buttonText = el.textContent.trim();
-      //         const spanText = el.querySelector('span') ? el.querySelector('span').textContent.trim() : '';
-      //         return buttonText || spanText;
-      //       }, cell);
-            
-      //       console.log(`Checking calendar cell with text: "${cellText}"`);            
-      //       if (cellText === targetDay.toString()) {
-      //         targetCell = cell;
-      //         console.log(`Found matching calendar cell for day ${targetDay}`);
-      //         break;
-      //       }
-      //     } catch (err) {
-      //       console.log("Error processing calendar cell:", err.message);
-      //     }
-      //   }
-        
-      //   if (!targetCell) {
-      //     throw new Error(`Could not find calendar cell for day ${targetDay}`);
-      //   }
-        
-      //   // Check if the cell is disabled
-      //   // const isDisabled = await frame.evaluate(el => {
-      //   //   return el.hasAttribute('disabled') || el.classList.contains('disabled') || 
-      //   //          el.getAttribute('aria-disabled') === 'true';
-      //   // }, targetCell);
-       
-      //   const availabilityInfo = await frame.evaluate(() => {
-      //     // Try to access Angular scope (if accessible)
-      //     const button = document.querySelector('td button[aria-label="Sunday, August 31, 2025 "]');
-      //     if (!button) return { found: false };
-        
-      //     const ngModel = angular.element(button).scope();
-      //     const dayData = ngModel?.day;
-        
-      //     return {
-      //       found: true,
-      //       dayCount: dayData?.count,
-      //       dayAvailable: dayData?.count > 0,
-      //       ngDisabledExpr: button.getAttribute('ng-disabled'),
-      //       actualDisabled: button.disabled,
-      //       className: button.className
-      //     };
-      //   });
-        
-      //   console.log("Angular availability debug:", availabilityInfo);
-
-      //   // const isDisabled = await frame.evaluate((el) => {
-      //   //   return (
-      //   //     el.classList.contains("disabled") ||
-      //   //     el.getAttribute("aria-disabled") === "true" ||
-      //   //     el.hasAttribute("ng-disabled")
-      //   //   );
-      //   // }, targetCell);
-
-      //   // const isDisabled = await frame.evaluate((el) => {
-      //   //   return el.disabled || el.classList.contains("disabled") || el.getAttribute("aria-disabled") === "true";
-      //   // }, targetCell);
-
-      //   // const isDisabled = await frame.evaluate((el) => {
-      //   //   const classDisabled = el.classList.contains("disabled");
-      //   //   const ariaDisabled = el.getAttribute("aria-disabled") === "true";
-      //   //   const domDisabled = el.disabled; // actual disabled property
-      //   //   const pastDayClass = el.classList.contains("past-day");
-      //   //   const emptyClass = el.classList.contains("empty");
-        
-      //   //   // Return true if element is actually disabled in DOM
-      //   //   // OR aria-disabled is true
-      //   //   // OR visually marked as past/unavailable
-      //   //   return domDisabled || ariaDisabled || classDisabled || pastDayClass || emptyClass;
-      //   // }, targetCell);
-        
-      //   const isDisabled = await frame.evaluate(el => {
-      //     return el.disabled; // the DOM property alone is enough
-      //   }, targetCell);
-        
-
-      //   // const isDisabled = await frame.evaluate((el) => {
-      //   //   const ariaDisabled = el.getAttribute("aria-disabled");
-      //   //   const ngDisabled = el.getAttribute("ng-disabled"); // e.g., "!day.count"
-      //   //   const classDisabled = el.classList.contains("disabled");
-        
-      //   //   // Evaluate ng-disabled dynamically if it's Angular expression
-      //   //   // Angular often sets the disabled property automatically, so we can check that
-      //   //   const angularDisabled = el.disabled; // this is the actual DOM disabled property
-        
-      //   //   return classDisabled || ariaDisabled === "true" || angularDisabled;
-      //   // }, targetCell);
-
-      //   console.log("Is disabled:", isDisabled);
-
-      //   await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), Math.floor(Math.random() * 1000) + 5000000);
-        
-
-      //   if (isDisabled) {
-      //     throw new Error(`Date ${targetDay} is not available for booking (disabled)`);
-      //   }
-        
-      //   // Scroll to the cell and click it
-      //   await frame.evaluate(el => {
-      //     el.scrollIntoView({behavior: 'smooth', block: 'center'});
-      //   }, targetCell);
-        
-      //   // Random delay to simulate human consideration
-      //   await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), Math.floor(Math.random() * 1000) + 500);
-        
-      //   // Click the date
-      //   await targetCell.click();
-      //   console.log(`Successfully clicked on date ${targetDay}`);
-      // } 
-      
-      // *******************************************
-//       if (targetMonth === currentMonth && targetYear === currentYear) {
-//         console.log("Same month and year, proceeding with date selection");
-      
-//         console.log("Attempting to select calendar date...");
-//         await frame.waitForSelector('td button', { visible: true, timeout: 10000 });
-      
-//         const calendarCells = await frame.$$('td button');
-//         console.log(`Found ${calendarCells.length} calendar cells`);
-      
-//         // let targetCell = null;
-//         // for (const cell of calendarCells) {
-//         //   try {
-//         //     const cellText = await frame.evaluate(el => {
-//         //       const buttonText = el.textContent.trim();
-//         //       const spanText = el.querySelector('span') ? el.querySelector('span').textContent.trim() : '';
-//         //       return buttonText || spanText;
-//         //     }, cell);
-      
-//         //     console.log(`Checking calendar cell with text: "${cellText}"`);
-//         //     if (cellText === targetDay.toString()) {
-//         //       targetCell = cell;
-//         //       console.log(`Found matching calendar cell for day ${targetDay}`);
-      
-//         //       // Wait until AngularJS/DOM marks it as enabled
-//         //       await frame.waitForFunction(el => {
-//         //         return !(
-//         //           el.classList.contains("disabled") ||
-//         //           el.getAttribute("aria-disabled") === "true" ||
-//         //           el.hasAttribute("ng-disabled")
-//         //         );
-//         //       }, {}, targetCell);
-      
-//         //       break;
-//         //     }
-//         //   } catch (err) {
-//         //     console.log("Error processing calendar cell:", err.message);
-//         //   }
-//         // }
-
-//         // Find the cell with our target day
-// let targetCell = null;
-// for (const cell of calendarCells) {
-//   try {
-//     // Try to get the text content of the button
-//     const cellText = await frame.evaluate((el) => {
-//       try {
-//         // Look for any text or span content that matches our day
-//         const buttonText = el.textContent ? el.textContent.trim() : "";
-//         const spanText = el.querySelector("span")
-//           ? el.querySelector("span").textContent.trim()
-//           : "";
-//         return (buttonText || spanText).replace(/\D/g, ""); // Extract only numbers
-//       } catch (err) {
-//         return "";
-//       }
-//     }, cell);
-
-//     console.log(`Checking calendar cell with text: "${cellText}"`);
-
-//     // Check if this cell matches our target day
-//     if (cellText === targetDay.toString()) {
-//       // Double-check that this cell is actually visible and clickable
-//       const isVisible = await frame.evaluate((el) => {
-//         const style = window.getComputedStyle(el);
-//         return (
-//           style.display !== "none" &&
-//           style.visibility !== "hidden" &&
-//           el.offsetWidth > 0 &&
-//           el.offsetHeight > 0
-//         );
-//       }, cell);
-
-//       if (isVisible) {
-//         targetCell = cell;
-//         console.log(`Found matching calendar cell for day ${targetDay}`);
-//         break;
-//       }
-//     }
-//   } catch (err) {
-//     console.log("Error processing calendar cell:", err.message);
-//     // Continue to next cell instead of breaking
-//     continue;
-//   }
-// }
-      
-//         if (!targetCell) {
-//           throw new Error(`Could not find calendar cell for day ${targetDay}`);
-//         }
-      
-//         // const isDisabled = await frame.evaluate(el => {
-//         //   return (
-//         //     el.classList.contains("disabled") ||
-//         //     el.getAttribute("aria-disabled") === "true" ||
-//         //     el.hasAttribute("ng-disabled")
-//         //   );
-//         // }, targetCell);
-
-//         const isDisabled = await frame.evaluate(el => {
-//           // Check for DOM disabled
-//           if (el.disabled) return true;
-        
-//           // Check for aria-disabled
-//           if (el.getAttribute("aria-disabled") === "true") return true;
-        
-//           // Check for ng-disabled (Angular logic)
-//           const ngDisabled = el.getAttribute("ng-disabled");
-//           if (ngDisabled === "!day.count") {
-//             // If ng-disabled="!day.count", check if element has class "empty"
-//             // which typically indicates no data or disabled
-//             if (el.classList.contains("empty")) return true;
-//           }
-        
-//           // Check common "disabled" classes
-//           if (el.classList.contains("disabled") || el.classList.contains("past-day")) return true;
-        
-//           return false;
-//         }, targetCell);
-      
-//         if (isDisabled) {
-//           throw new Error(`Date ${targetDay} is not available for booking (disabled)`);
-//         }
-      
-//         await frame.evaluate(el => {
-//           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-//         }, targetCell);
-      
-//         await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), Math.floor(Math.random() * 1000) + 500);
-      
-//         await targetCell.click();
-//         console.log(`Successfully clicked on date ${targetDay}`);
-//       }     
-      // ********************************************
-
       if (targetMonth === currentMonth && targetYear === currentYear) {
         console.log("Same month and year, proceeding with date selection");
       
@@ -988,9 +758,6 @@ async function FortSumterTickets(bookingData, tries, payload) {
     const randomtime = getRandomTime();
     await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), randomtime);
 
-    // // Debugging point - use debugger statement in browser debugging
-    // await page.evaluate(() => { debugger; });
-
     // Process time slot selection - normalize time string first
     let timeSlotToSelect = bookingData.bookingTime;
 
@@ -1163,8 +930,6 @@ async function FortSumterTickets(bookingData, tries, payload) {
       throw new Error(`Failed to select time slot or tickets: ${error.message}`);
     }
 
-    // // Debugging point - use debugger statement in browser debugging
-  // await page.evaluate(() => { debugger; });
     await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), 5000);
 
     console.log("Successfully reached Contact Details section!");
@@ -1177,11 +942,11 @@ async function FortSumterTickets(bookingData, tries, payload) {
     try {
       // Fill in personal information with human-like typing
       console.log("Filling in contact details form...");
-      
+
       // Fill full name with type delay (combined name field)
       console.log("Typing full name: " + bookingData.billing.first_name + " " + bookingData.billing.last_name);
       const fullName = `${bookingData.billing.first_name} ${bookingData.billing.last_name}`.trim();
-      
+
       try {
         // Use Puppeteer's selector approach instead of Playwright's locator
         const nameFieldSelector = "#id_name, input[name='contact-name']";
@@ -1194,17 +959,17 @@ async function FortSumterTickets(bookingData, tries, payload) {
           console.log("Field is ready for interaction");
         }
 
-        await frame.waitForSelector(nameFieldSelector, {visible: true, timeout: 50000});
+        await frame.waitForSelector(nameFieldSelector, { visible: true, timeout: 50000 });
 
         // Ensure the field is focused
         await frame.click(nameFieldSelector);
 
         // custom delay random
         await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), Math.floor(Math.random() * 5000));
-        
+
         // Type full name with human-like delay
         for (let i = 0; i < fullName.length; i++) {
-          await frame.type(nameFieldSelector, fullName[i], {delay: Math.floor(Math.random() * 150) + 50});
+          await frame.type(nameFieldSelector, fullName[i], { delay: Math.floor(Math.random() * 150) + 50 });
         }
         console.log("Full name typed successfully");
       } catch (e) {
@@ -1225,26 +990,18 @@ async function FortSumterTickets(bookingData, tries, payload) {
         }
       }
       await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), Math.floor(Math.random() * 800) + 400);
-      
-      // Generate random phone number in format XXX-XXX-XXXX
-      const generateRandomPhone = () => {
-        const areaCode = Math.floor(Math.random() * 900) + 100; // 100-999
-        const middle = Math.floor(Math.random() * 900) + 100; // 100-999
-        const end = Math.floor(Math.random() * 10000).toString().padStart(4, '0'); // 0000-9999
-        return `${areaCode}-${middle}-${end}`;
-      };
-      
+
       const randomPhone = bookingData.billing.phone;
-      console.log("Using randomly generated phone number:", randomPhone);
-      
+      console.log("Using user phone number:", randomPhone);
+
       // Fill phone with type delay
       try {
         const phoneFieldSelector = "#id_phone, input[name='contact-phone']";
-        await frame.waitForSelector(phoneFieldSelector, {visible: true, timeout: 5000});
-        
+        await frame.waitForSelector(phoneFieldSelector, { visible: true, timeout: 5000 });
+
         // Type phone with human-like delay
         for (let i = 0; i < randomPhone.length; i++) {
-          await frame.type(phoneFieldSelector, randomPhone[i], {delay: Math.floor(Math.random() * 150) + 50});
+          await frame.type(phoneFieldSelector, randomPhone[i], { delay: Math.floor(Math.random() * 150) + 50 });
         }
         console.log("Phone number typed successfully");
       } catch (e) {
@@ -1265,15 +1022,15 @@ async function FortSumterTickets(bookingData, tries, payload) {
         }
       }
       await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), Math.floor(Math.random() * 800) + 400);
-      
+
       // Fill email with type delay
       try {
         const emailFieldSelector = "#id_email, input[name='contact-email']";
-        await frame.waitForSelector(emailFieldSelector, {visible: true, timeout: 5000});
-        
+        await frame.waitForSelector(emailFieldSelector, { visible: true, timeout: 5000 });
+
         // Type email with human-like delay
         for (let i = 0; i < bookingData.billing.email.length; i++) {
-          await frame.type(emailFieldSelector, bookingData.billing.email[i], {delay: Math.floor(Math.random() * 150) + 50});
+          await frame.type(emailFieldSelector, bookingData.billing.email[i], { delay: Math.floor(Math.random() * 150) + 50 });
         }
         console.log("Email typed successfully");
       } catch (e) {
@@ -1294,20 +1051,20 @@ async function FortSumterTickets(bookingData, tries, payload) {
         }
       }
       await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), Math.floor(Math.random() * 800) + 400);
-      
+
       // Add a slightly longer random pause to seem more human-like
       const randomTimeTwo = Math.floor(Math.random() * 2000) + 1000;
       await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), randomTimeTwo);
-      
+
       // Note: Removed address, city, state, zip code and country fields as they're no longer needed
       // according to the updated form requirements
-      
+
       console.log("Contact details completed successfully");
-      
+
       // Add randomized delay before payment processing
       const paymentDelay = Math.floor(Math.random() * 3000) + 2000;
       await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), paymentDelay);
-      
+
 
 
       // ****************************************************************************
@@ -1316,25 +1073,25 @@ async function FortSumterTickets(bookingData, tries, payload) {
 
       // Process Stripe payment form
       console.log("Processing payment information...");
-      
+
       // Find payment details section
       console.log("Looking for payment details section...");
       try {
-        await frame.waitForSelector("[data-test-id='payment-details']", {visible: true, timeout: 15000});
+        await frame.waitForSelector("[data-test-id='payment-details']", { visible: true, timeout: 15000 });
         console.log("Payment details section found");
       } catch (e) {
         console.log("Could not find payment details section with standard selector, trying alternative selectors...");
         // Try a more generic approach as fallback
-        await frame.waitForSelector("iframe", {visible: true, timeout: 5000});
+        await frame.waitForSelector("iframe", { visible: true, timeout: 5000 });
       }
-      
+
       // Process postal code logic
       let postcodeValue = bookingData.billing.postcode;
       if (!postcodeValue && bookingData.billing.country === "AE") {
         postcodeValue = "1224";
       }
       console.log("Using zipcode value:", postcodeValue);
-      
+
       // Create card info object
       const cardInfo = {
         cardName: `${bookingData.billing.first_name} ${bookingData.billing.last_name}`.trim(),
@@ -1344,176 +1101,150 @@ async function FortSumterTickets(bookingData, tries, payload) {
         cardCVC: bookingData.card.cvc,
         cardExpiration: bookingData.card.expiration
       };
-      
+
       // Get all frames in the page
       const frames = page.frames();
       console.log(`Found ${frames.length} frames in the page`);
 
-      
+
       // Find the Stripe payment iframe (the secure payment input frame)
       console.log("Looking for secure payment input frame...");
       let stripeFrame = null;
-      
-  // Log details of all frames for debugging
-  console.log("Listing all frame details:");
-  const allFramesDetails = await Promise.all(frames.map(async (f, index) => {
-    try {
-      const url = f.url() || 'unknown';
-      const name = f.name() || 'unnamed';
-      // Get title from parent frame context
-      const title = await frame.evaluate((frameName) => {
-        const iframe = Array.from(document.querySelectorAll('iframe')).find(el => el.name === frameName);
-        return iframe?.getAttribute('title') || 'no-title';
-      }, name).catch(() => 'no-title');
-      return { index, url, name, title };
-    } catch (err) {
-      return { index, url: 'error', name: 'error', title: `Error: ${err.message}` };
-    }
-  }));
-  console.log("All frames:", JSON.stringify(allFramesDetails, null, 2));
 
-  // Find the Stripe payment iframe
-  console.log("Looking for secure payment input frame...");
-  // let stripeFrame = null;
-  let selectedFrameDetails = null;
+      // Find the Stripe payment iframe
+      console.log("Looking for secure payment input frame...");
+      // let stripeFrame = null;
+      let selectedFrameDetails = null;
 
-  // Try selectors sequentially
-  console.log("Attempting to locate iframe...");
-  let stripeIframeElement = null;
-  let selectorUsed = null;
-  const selectors = [
-    'iframe[title="Secure payment input frame"]',
-    'iframe[src*="stripe.com"]',
-    'div#stripe-payment-element-container iframe' // Parent ID-based locator
-  ];
+      // Try selectors sequentially
+      console.log("Attempting to locate iframe...");
+      let stripeIframeElement = null;
+      let selectorUsed = null;
+      const selectors = [
+        'iframe[title="Secure payment input frame"]',
+        'iframe[src*="stripe.com"]',
+        'div#stripe-payment-element-container iframe' // Parent ID-based locator
+      ];
 
-  for (const [index, selector] of selectors.entries()) {
-    try {
-      console.log(`Trying selector ${index + 1}/${selectors.length}: ${selector}`);
-      stripeIframeElement = await frame.waitForSelector(selector, { visible: true, timeout: 30000 });
-      selectorUsed = selector;
-      console.log(`Iframe found with selector: ${selector}`);
-      break;
-    } catch (e) {
-      console.log(`Selector ${selector} failed: ${e.message}`);
-    }
-  }
-
-  // Get iframe details
-  if (stripeIframeElement) {
-    const iframeInfo = await frame.evaluate(el => ({
-      url: el.src || 'unknown',
-      name: el.name || 'unnamed',
-      title: el.getAttribute('title') || 'no-title',
-      id: el.id || 'no-id',
-      classes: Array.from(el.classList),
-      parentId: el.parentElement?.id || 'no-parent-id',
-      parentClasses: Array.from(el.parentElement?.classList || [])
-    }), stripeIframeElement);
-    console.log("Selected iframe details:", JSON.stringify(iframeInfo, null, 2));
-    selectedFrameDetails = { selector: selectorUsed, source: 'selector', ...iframeInfo };
-
-    // Get content frame
-    stripeFrame = await stripeIframeElement.contentFrame();
-    console.log("Successfully located Stripe payment frame:", JSON.stringify({
-      name: stripeFrame.name(),
-      url: stripeFrame.url()
-    }, null, 2));
-
-    // Wait for iframe content to load
-    console.log("Waiting for Stripe iframe content to load...");
-    await stripeFrame.waitForFunction(() => document.readyState === 'complete', { timeout: 30000 }).catch(err => {
-      console.warn(`Iframe content load wait failed: ${err.message}`);
-    });
-
-    // Log iframe content summary
-    const iframeContent = await stripeFrame.evaluate(() => {
-      const body = document.body.innerHTML.substring(0, 500);
-      const inputs = Array.from(document.querySelectorAll('input')).map(input => ({
-        id: input.id || 'no-id',
-        name: input.name || 'no-name',
-        placeholder: input.placeholder || 'no-placeholder',
-        type: input.type || 'unknown'
-      }));
-      return { bodySummary: body, inputs };
-    }).catch(err => ({
-      bodySummary: `Error accessing iframe content: ${err.message}`,
-      inputs: []
-    }));
-    console.log("Stripe iframe content summary:", JSON.stringify(iframeContent, null, 2));
-
-    // Validate card number input presence
-    console.log("Checking for card number input in selected iframe...");
-    const cardInputExists = await stripeFrame.evaluate(() => {
-      return !!document.querySelector('#Field-numberInput, [placeholder="1234 1234 1234 1234"], input[name="cardnumber"], input[autocomplete="cc-number"]');
-    }).catch(() => false);
-    console.log(`Card number input exists in iframe: ${cardInputExists}`);
-    if (!cardInputExists) {
-      console.warn("Card number input not found in selected iframe. This may cause subsequent failures.");
-    }
-  } else {
-    console.error("No iframe found with selectors. Falling back to frame iteration...");
-    // Fallback: search all frames by URL
-    console.log("Attempting fallback: searching frames by URL...");
-    stripeFrame = await Promise.race([
-      Promise.resolve(frames.find(async f => {
+      for (const [index, selector] of selectors.entries()) {
         try {
-          const url = f.url();
-          const isStripe = url && url.includes('stripe.com');
-          if (isStripe) {
-            console.log(`Found potential Stripe frame: URL=${url}, Name=${f.name() || 'unnamed'}`);
-            const hasCardInput = await f.evaluate(() => {
-              return !!document.querySelector('#Field-numberInput, [placeholder="1234 1234 1234 1234"], input[name="cardnumber"], input[autocomplete="cc-number"]');
-            }).catch(() => false);
-            console.log(`Frame (URL=${url}) has card number input: ${hasCardInput}`);
-            return isStripe && hasCardInput;
-          }
-          return false;
-        } catch (err) {
-          console.log(`Error checking frame URL: ${err.message}`);
-          return false;
+          console.log(`Trying selector ${index + 1}/${selectors.length}: ${selector}`);
+          stripeIframeElement = await frame.waitForSelector(selector, { visible: true, timeout: 30000 });
+          selectorUsed = selector;
+          console.log(`Iframe found with selector: ${selector}`);
+          break;
+        } catch (e) {
+          console.log(`Selector ${selector} failed: ${e.message}`);
         }
-      })),
-      new Promise((_, reject) => setTimeout(() => reject(new Error("Fallback frame search timed out")), 30000))
-    ]);
+      }
 
-    if (stripeFrame) {
-      console.log("Found Stripe frame using URL fallback method");
-      selectedFrameDetails = {
-        selector: 'URL-based fallback',
-        source: 'frame-iteration',
-        url: stripeFrame.url() || 'unknown',
-        name: stripeFrame.name() || 'unnamed',
-        parentId: 'unknown',
-        parentClasses: []
-      };
-      const iframeContent = await stripeFrame.evaluate(() => {
-        const body = document.body.innerHTML.substring(0, 500);
-        const inputs = Array.from(document.querySelectorAll('input')).map(input => ({
-          id: input.id || 'no-id',
-          name: input.name || 'no-name',
-          placeholder: input.placeholder || 'no-placeholder',
-          type: input.type || 'unknown'
+      // Get iframe details
+      if (stripeIframeElement) {
+        const iframeInfo = await frame.evaluate(el => ({
+          url: el.src || 'unknown',
+          name: el.name || 'unnamed',
+          title: el.getAttribute('title') || 'no-title',
+          id: el.id || 'no-id',
+          classes: Array.from(el.classList),
+          parentId: el.parentElement?.id || 'no-parent-id',
+          parentClasses: Array.from(el.parentElement?.classList || [])
+        }), stripeIframeElement);
+        console.log("Selected iframe details:", JSON.stringify(iframeInfo, null, 2));
+        selectedFrameDetails = { selector: selectorUsed, source: 'selector', ...iframeInfo };
+
+        // Get content frame
+        stripeFrame = await stripeIframeElement.contentFrame();
+        console.log("Successfully located Stripe payment frame:", JSON.stringify({
+          name: stripeFrame.name(),
+          url: stripeFrame.url()
+        }, null, 2));
+
+        // Log iframe content summary
+        const iframeContent = await stripeFrame.evaluate(() => {
+          const body = document.body.innerHTML.substring(0, 500);
+          const inputs = Array.from(document.querySelectorAll('input')).map(input => ({
+            id: input.id || 'no-id',
+            name: input.name || 'no-name',
+            placeholder: input.placeholder || 'no-placeholder',
+            type: input.type || 'unknown'
+          }));
+          return { bodySummary: body, inputs };
+        }).catch(err => ({
+          bodySummary: `Error accessing iframe content: ${err.message}`,
+          inputs: []
         }));
-        return { bodySummary: body, inputs };
-      }).catch(err => ({
-        bodySummary: `Error accessing iframe content: ${err.message}`,
-        inputs: []
-      }));
-      console.log("Fallback Stripe iframe content summary:", JSON.stringify(iframeContent, null, 2));
-    }
-  }
-      
+        // console.log("Stripe iframe content summary:", JSON.stringify(iframeContent, null, 2));
+
+        // Validate card number input presence
+        console.log("Checking for card number input in selected iframe...");
+        const cardInputExists = await stripeFrame.evaluate(() => {
+          return !!document.querySelector('#Field-numberInput, [placeholder="1234 1234 1234 1234"], input[name="cardnumber"], input[autocomplete="cc-number"]');
+        }).catch(() => false);
+        console.log(`Card number input exists in iframe: ${cardInputExists}`);
+        if (!cardInputExists) {
+          console.warn("Card number input not found in selected iframe. This may cause subsequent failures.");
+        }
+      } else {
+        console.error("No iframe found with selectors. Falling back to frame iteration...");
+        // Fallback: search all frames by URL
+        console.log("Attempting fallback: searching frames by URL...");
+        stripeFrame = await Promise.race([
+          Promise.resolve(frames.find(async f => {
+            try {
+              const url = f.url();
+              const isStripe = url && url.includes('stripe.com');
+              if (isStripe) {
+                console.log(`Found potential Stripe frame: URL=${url}, Name=${f.name() || 'unnamed'}`);
+                const hasCardInput = await f.evaluate(() => {
+                  return !!document.querySelector('#Field-numberInput, [placeholder="1234 1234 1234 1234"], input[name="cardnumber"], input[autocomplete="cc-number"]');
+                }).catch(() => false);
+                console.log(`Frame (URL=${url}) has card number input: ${hasCardInput}`);
+                return isStripe && hasCardInput;
+              }
+              return false;
+            } catch (err) {
+              console.log(`Error checking frame URL: ${err.message}`);
+              return false;
+            }
+          })),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("Fallback frame search timed out")), 30000))
+        ]);
+
+        if (stripeFrame) {
+          console.log("Found Stripe frame using URL fallback method");
+          selectedFrameDetails = {
+            selector: 'URL-based fallback',
+            source: 'frame-iteration',
+            url: stripeFrame.url() || 'unknown',
+            name: stripeFrame.name() || 'unnamed',
+            parentId: 'unknown',
+            parentClasses: []
+          };
+          const iframeContent = await stripeFrame.evaluate(() => {
+            const body = document.body.innerHTML.substring(0, 500);
+            const inputs = Array.from(document.querySelectorAll('input')).map(input => ({
+              id: input.id || 'no-id',
+              name: input.name || 'no-name',
+              placeholder: input.placeholder || 'no-placeholder',
+              type: input.type || 'unknown'
+            }));
+            return { bodySummary: body, inputs };
+          }).catch(err => ({
+            bodySummary: `Error accessing iframe content: ${err.message}`,
+            inputs: []
+          }));
+          console.log("Fallback Stripe iframe content summary:", JSON.stringify(iframeContent, null, 2));
+        }
+      }
+
       if (!stripeFrame) {
         throw new Error("Could not find Stripe payment iframe");
       }
-      
-      // Wait for a moment to ensure the iframe is fully loaded
-      // await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), 2000);
+
       // Add randomized delay before card details
       const randomDelayBeforeCardDetailsSection1 = Math.floor(Math.random() * 3000) + 2000;
       await new Promise(resolve => setTimeout(resolve, randomDelayBeforeCardDetailsSection1));
-      
+
       // Check for OTP dialog and close if present
       try {
         console.log("Checking for OTP dialog...");
@@ -1521,10 +1252,10 @@ async function FortSumterTickets(bookingData, tries, payload) {
           const otpElement = document.querySelector('#otpTitle');
           return otpElement && otpElement.offsetParent !== null; // Check if visible
         }).catch(() => false);
-        
+
         if (otpTitleExists) {
           console.log("OTP title is visible. Looking for close button...");
-          
+
           // Try to find and click the close button
           const closeButtonExists = await stripeFrame.evaluate(() => {
             const closeBtn = document.querySelector('[aria-label="Close"]');
@@ -1534,7 +1265,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
             }
             return false;
           }).catch(() => false);
-          
+
           if (closeButtonExists) {
             console.log("Close button found and clicked");
             // Wait for dialog to close
@@ -1549,7 +1280,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
       } catch (e) {
         console.log("Error checking for OTP dialog:", e.message);
       }
-      
+
       // Process card fields
       console.log("Starting to fill payment form...");
       // Add randomized delay before card details
@@ -1560,160 +1291,160 @@ async function FortSumterTickets(bookingData, tries, payload) {
         // Card Number
         console.log("Locating card number input...");
 
-          // Add randomized delay before card number input
-      const randomDelayBeforeCardDetailsSection = Math.floor(Math.random() * 3000) + 5000;
-      await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), randomDelayBeforeCardDetailsSection);
+        // Add randomized delay before card number input
+        const randomDelayBeforeCardDetailsSection = Math.floor(Math.random() * 3000) + 5000;
+        await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), randomDelayBeforeCardDetailsSection);
 
 
-        await stripeFrame.waitForSelector('#Field-numberInput', {visible: true, timeout: 30000})
+        await stripeFrame.waitForSelector('#Field-numberInput', { visible: true, timeout: 30000 })
           .catch(async () => {
             console.log("Trying alternative selector for card number field");
-            await stripeFrame.waitForSelector('input[placeholder="1234 1234 1234 1234"]', {visible: true, timeout: 5000});
+            await stripeFrame.waitForSelector('input[placeholder="1234 1234 1234 1234"]', { visible: true, timeout: 5000 });
           });
-        
+
         const cardNumberSelector = '[placeholder="1234 1234 1234 1234"]';
         console.log("Card number field found. Starting to type card number...");
-        
+
         // Remove spaces from card number if present
         const cleanCardNumber = cardInfo.cardNumber.replace(/\s+/g, '');
-        
+
         // Type card number with human-like delays
         for (let i = 0; i < cleanCardNumber.length; i++) {
           try {
-            await stripeFrame.type(cardNumberSelector, cleanCardNumber[i], {delay: Math.floor(Math.random() * 150) + 50});
-            
+            await stripeFrame.type(cardNumberSelector, cleanCardNumber[i], { delay: Math.floor(Math.random() * 150) + 50 });
+
             // Add occasional longer pause between groups of 4 digits
             if ((i + 1) % 4 === 0 && i < cleanCardNumber.length - 1) {
               await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), Math.floor(Math.random() * 300) + 100);
             }
           } catch (e) {
-            console.error(`Error typing digit ${i+1} of card number: ${e.message}`);
+            console.error(`Error typing digit ${i + 1} of card number: ${e.message}`);
             throw e;
           }
         }
         console.log("Successfully typed card number");
-        
+
         // Add a small delay between card fields
         await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), 1000);
-        
+
         // Expiration Date
         console.log("Locating expiration date input...");
         const expirySelector = '#Field-expiryInput, [placeholder="MM / YY"]';
-        
-        await stripeFrame.waitForSelector(expirySelector, {visible: true, timeout: 5000})
+
+        await stripeFrame.waitForSelector(expirySelector, { visible: true, timeout: 5000 })
           .catch(async () => {
             console.log("Trying alternative selector for expiry field");
-            await stripeFrame.waitForSelector('#Field-expiryInput, [placeholder="MM / YY"]', {visible: true, timeout: 5000});
+            await stripeFrame.waitForSelector('#Field-expiryInput, [placeholder="MM / YY"]', { visible: true, timeout: 5000 });
           });
-        
+
         // Get the expiration from card info and format it correctly (remove any separators)
         const expiryDate = cardInfo.cardExpiration.replace(/[\s\/\-\.]+/g, '');
         console.log("Starting to type expiration date...");
-        
+
         // Type expiry with human-like delays
         for (let i = 0; i < expiryDate.length; i++) {
-          await stripeFrame.type(expirySelector, expiryDate[i], {delay: Math.floor(Math.random() * 150) + 50});
+          await stripeFrame.type(expirySelector, expiryDate[i], { delay: Math.floor(Math.random() * 150) + 50 });
         }
-        
+
         console.log("Successfully typed expiration date");
-        
+
         // Add a small delay between card fields
         await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), 1000);
-        
+
         // CVC/Security Code
         console.log("Locating CVC/security code input...");
         const cvcSelector = '#Field-cvcInput, [placeholder="CVC"]';
-        
-        await stripeFrame.waitForSelector(cvcSelector, {visible: true, timeout: 5000})
+
+        await stripeFrame.waitForSelector(cvcSelector, { visible: true, timeout: 5000 })
           .catch(async () => {
             console.log("Trying alternative selector for CVC field");
-            await stripeFrame.waitForSelector('#Field-cvcInput, [placeholder="CVC"]', {visible: true, timeout: 5000});
+            await stripeFrame.waitForSelector('#Field-cvcInput, [placeholder="CVC"]', { visible: true, timeout: 5000 });
           });
-        
+
         console.log("Starting to type CVC...");
         // Type CVC with human-like delays
         for (let i = 0; i < cardInfo.cardCVC.length; i++) {
-          await stripeFrame.type(cvcSelector, cardInfo.cardCVC[i], {delay: Math.floor(Math.random() * 150) + 50});
+          await stripeFrame.type(cvcSelector, cardInfo.cardCVC[i], { delay: Math.floor(Math.random() * 150) + 50 });
         }
-        
+
         console.log("Successfully typed CVC");
-        
+
         // Billing Country
         console.log("Looking for country dropdown...");
         const billingCountrySelector = '#Field-countryInput, [name="country"]';
-        
+
         try {
           // Wait for country selector to be available
-          await stripeFrame.waitForSelector(billingCountrySelector, {visible: true, timeout: 5000})
+          await stripeFrame.waitForSelector(billingCountrySelector, { visible: true, timeout: 5000 })
             .catch(async () => {
               console.log("Standard country selector not found, trying alternatives...");
-              await stripeFrame.waitForSelector('select[id*="Field-countryInput" i], select[name*="country" i]', {visible: true, timeout: 5000});
+              await stripeFrame.waitForSelector('select[id*="Field-countryInput" i], select[name*="country" i]', { visible: true, timeout: 5000 });
             });
-          
+
           // Select country
           const country = bookingData.billing.country || "US";
           console.log(`Selecting country: ${country}`);
-          
+
           await stripeFrame.select(billingCountrySelector, country)
             .catch(async () => {
               console.log("Trying alternative selector for country...");
               await stripeFrame.select('select[id*="country" i], select[name*="country" i]', country);
             });
-          
+
           console.log("Country selected successfully");
         } catch (e) {
           console.error(`Error selecting country: ${e.message}`);
           // Continue anyway as this field might not be required or present on all forms
         }
-        
+
         // Postal Code / ZIP
         console.log("Looking for postal code / ZIP input...");
         const postalCodeSelector = '#Field-postalCodeInput, [name="postalCode"]';
-        
+
         try {
           // Wait for postal code field to be available
-          await stripeFrame.waitForSelector(postalCodeSelector, {visible: true, timeout: 5000})
+          await stripeFrame.waitForSelector(postalCodeSelector, { visible: true, timeout: 5000 })
             .catch(async () => {
               console.log("Standard postal code selector not found, trying alternatives...");
-              await stripeFrame.waitForSelector('input[id*="Field-postalCodeInput" i], input[name*="postalCode" i]', {visible: true, timeout: 5000});
+              await stripeFrame.waitForSelector('input[id*="Field-postalCodeInput" i], input[name*="postalCode" i]', { visible: true, timeout: 5000 });
             });
-          
+
           // Get postal code value
           const postalCode = cardInfo.cardZip || bookingData.billing.postcode || '';
           console.log(`Using postal code: ${postalCode}`);
-          
+
           // Type postal code with human-like delays
           for (let i = 0; i < postalCode.length; i++) {
-            await stripeFrame.type(postalCodeSelector, postalCode[i], {delay: Math.floor(Math.random() * 150) + 50})
+            await stripeFrame.type(postalCodeSelector, postalCode[i], { delay: Math.floor(Math.random() * 150) + 50 })
               .catch(async () => {
                 console.log("Trying alternative selector for postal code...");
-                await stripeFrame.type('input[id*="Field-postalCodeInput" i], input[name*="postalCode" i]', postalCode[i], {delay: Math.floor(Math.random() * 150) + 50});
+                await stripeFrame.type('input[id*="Field-postalCodeInput" i], input[name*="postalCode" i]', postalCode[i], { delay: Math.floor(Math.random() * 150) + 50 });
               });
           }
-          
+
           console.log("Postal code entered successfully");
         } catch (e) {
           console.error(`Error entering postal code: ${e.message}`);
           // Continue anyway as this field might be auto-filled based on country
         }
-        
+
       } catch (e) {
         console.error(`Error completing payment form: ${e.message}`);
         throw e;
       }
-      
+
       // Handle save card info checkbox
       try {
         console.log("Handling save card info checkbox...");
         const saveCardSelector = '#checkbox-linkOptIn';
         const fallbackSelector = 'input[type="checkbox"][name="linkOptIn"], input[type="checkbox"][aria-label*="save my information" i]';
-      
+
         // Check if the checkbox exists and is checked
         const saveCardExists = await stripeFrame.evaluate((selector) => {
           const checkbox = document.querySelector(selector);
           return checkbox && checkbox.offsetParent !== null && checkbox.checked;
         }, saveCardSelector).catch(() => false);
-      
+
         if (saveCardExists) {
           console.log("Unchecking save card checkbox...");
           try {
@@ -1737,30 +1468,22 @@ async function FortSumterTickets(bookingData, tries, payload) {
         } else if (saveCardExists === false) {
           console.log("Save card checkbox not found or already unchecked. Skipping...");
         }
-      
+
         // Give the form a moment to process
         await stripeFrame.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), 2000);
-      
+
         console.log("Checkbox handling complete");
       } catch (e) {
         console.error(`Error in checkbox handling: ${e.message}`);
       }
-      
+
       console.log("Payment form filled successfully.");
-      // Finished filling out payment information
-      
-      // // Type CVV with delays
-      // await cvvFrame.waitForSelector('[name="cvc"]', {visible: true, timeout: 10000});
-      
-      // for (let i = 0; i < bookingData.card_cvv.length; i++) {
-      //   await cvvFrame.type('[name="cvc"]', bookingData.card_cvv[i], {delay: Math.floor(Math.random() * 150) + 50});
-      // }
-      
+
       // Add short pause after filling payment info
       await page.evaluate(timeout => new Promise(resolve => setTimeout(resolve, timeout)), Math.floor(Math.random() * 1000) + 500);
-      
+
       console.log("Payment information entered successfully");
-      
+
     } catch (error) {
       throw new Error(`Failed to fill form or enter payment details: ${error.message}`);
     }
@@ -1768,7 +1491,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
     // Check for complete and pay button
     console.log("Looking for Complete and Pay button...");
     
-    try {
+    // try { ****************************************************
       // Find the complete and pay button in the frame
       await frame.waitForSelector(
         '[data-test-id="complete-and-pay-submit-button"]',
@@ -1856,15 +1579,15 @@ async function FortSumterTickets(bookingData, tries, payload) {
         // Get all frames in the page
         const frames = page.frames();
         console.log(`Found ${frames.length} frames in the page`);
-        
+
         // Find the frame containing the hCaptcha
         const captchaFrame = frames.find(frame => {
           return frame.url().includes('hcaptcha.com');
         });
-        
+
         if (captchaFrame) {
           console.log("Found hCaptcha iframe at URL:", captchaFrame.url());
-          
+
           // Specify that this is an hCaptcha and provide the sitekey
           const solved = await page.solveRecaptchas({
             captchaType: "hcaptcha",
@@ -1872,9 +1595,9 @@ async function FortSumterTickets(bookingData, tries, payload) {
             isInvisible: true,
             frameUrl: captchaFrame.url() // Target the specific frame
           });
-          
+
           console.log("CAPTCHA solving result:", solved);
-          
+
           if (solved && solved.solutions && solved.solutions.length > 0) {
             console.log(
               "Successfully solved invisible hCaptcha with puppeteer-extra-plugin-recaptcha"
@@ -1886,16 +1609,16 @@ async function FortSumterTickets(bookingData, tries, payload) {
           }
         } else {
           console.log("Could not find hCaptcha iframe, attempting to solve without frame targeting");
-          
+
           // Fallback to regular approach
           const solved = await page.solveRecaptchas({
             captchaType: "hcaptcha",
             sitekey: captchaSiteKey,
             isInvisible: true
           });
-          
+
           console.log("CAPTCHA solving result:", solved);
-          
+
           if (solved && solved.solutions && solved.solutions.length > 0) {
             console.log(
               "Successfully solved invisible hCaptcha with puppeteer-extra-plugin-recaptcha"
@@ -1945,7 +1668,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
           const fields = [
             ...document.querySelectorAll(
               'textarea[name="h-captcha-response"], ' +
-                'textarea[name="g-recaptcha-response"]'
+              'textarea[name="g-recaptcha-response"]'
             ),
           ];
 
@@ -1987,6 +1710,140 @@ async function FortSumterTickets(bookingData, tries, payload) {
         console.log("CAPTCHA token injected successfully");
       }
 
+      const config = {
+        selectorTimeout: 30000,
+        maxRetries: 3,
+        captchaDomain: "hcaptcha.com",
+        pollingInterval: 5000, // Poll every 5 seconds
+        pollingTimeout: 120000, // Timeout after 2 minutes
+      };
+
+      // try {
+      //   console.log("Attempting to solve invisible hCaptcha using puppeteer-extra-plugin-recaptcha...");
+
+      //   // Wait for the invisible hCaptcha iframe with retry
+      //   let captchaFrame;
+      //   const waitForSelectorWithRetry = async (selector, retries = config.maxRetries) => {
+      //     for (let i = 0; i < retries; i++) {
+      //       try {
+      //         return await page.waitForSelector(selector, { timeout: config.selectorTimeout });
+      //       } catch (e) {
+      //         console.warn(`Retry ${i + 1}/${retries} for selector ${selector}`);
+      //         if (i === retries - 1) throw e;
+      //         await new Promise(resolve => setTimeout(resolve, 2000));
+      //       }
+      //     }
+      //   };
+
+      //   const captchaFrameElementHandle = await waitForSelectorWithRetry('iframe[name="hcaptcha-invisible"]');
+
+      //   if (captchaFrameElementHandle) {
+      //     console.log('Found hCaptcha iframe using selector: iframe[name="hcaptcha-invisible"]');
+      //     captchaFrame = await captchaFrameElementHandle.contentFrame();
+      //     if (!captchaFrame) {
+      //       throw new Error("Could not get content frame from iframe element.");
+      //     }
+      //   } else {
+      //     console.warn("Did not find hCaptcha iframe with selector, falling back to frame URL search");
+      //     const frames = page.frames();
+      //     console.log(`Found ${frames.length} frames in the page`);
+      //     const captchaFrames = frames.filter((frame) => frame.url().includes(config.captchaDomain));
+      //     if (captchaFrames.length > 1) {
+      //       console.warn(`Multiple hCaptcha frames found: ${captchaFrames.map(f => f.url()).join(", ")}`);
+      //     }
+      //     captchaFrame = captchaFrames[0];
+      //     if (!captchaFrame) {
+      //       throw new Error("Could not find hCaptcha iframe by any method.");
+      //     }
+      //     console.log("Found hCaptcha iframe by URL:", captchaFrame.url());
+      //   }
+
+      //   // Solve the captcha using the plugin
+      //   const solved = await page.solveRecaptchas({
+      //     captchaType: "hcaptcha",
+      //     sitekey: captchaSiteKey,
+      //     isInvisible: true,
+      //     frameUrl: captchaFrame.url(),
+      //   });
+
+      //   console.log("CAPTCHA solving result:", solved);
+
+      //   if (solved && solved.solutions && solved.solutions.length > 0) {
+      //     console.log("Successfully solved invisible hCaptcha with puppeteer-extra-plugin-recaptcha");
+      //   } else {
+      //     throw new Error("No hCaptcha solutions found with puppeteer-extra-plugin-recaptcha");
+      //   }
+
+      // } catch (recaptchaPluginError) {
+      //   console.error("Error using recaptcha plugin:", recaptchaPluginError.message);
+      //   console.log("Falling back to manual SolveCaptcha integration...");
+
+      //   const apiKey = process.env.SOLVE_CAPTCHA_API;
+      //   const { token, userAgent, respKey } = await solveCaptchaWithSolveCaptcha(apiKey, captchaSiteKey, page.url(), config);
+
+      //   // Set the user agent in Puppeteer
+      //   if (userAgent) {
+      //     console.log("Setting browser user agent:", userAgent);
+      //     await page.setUserAgent(userAgent);
+      //   } else {
+      //     console.warn("No user agent returned by SolveCaptcha, continuing with current user agent");
+      //   }
+
+      //   // Inject the token into the DOM
+      //   await page.evaluate((token, respKey) => {
+      //     console.log("Searching for CAPTCHA response fields in DOM...");
+      //     const fields = [...document.querySelectorAll('textarea[name="h-captcha-response"], textarea[name="g-recaptcha-response"]')];
+      //     console.log(`Found ${fields.length} response fields`);
+
+      //     fields.forEach((field) => {
+      //       field.value = token;
+      //       ["input", "change", "blur"].forEach((eventType) => {
+      //         field.dispatchEvent(new Event(eventType, { bubbles: true }));
+      //       });
+      //     });
+
+      //     if (fields.length === 0) {
+      //       console.log("No existing fields found, creating fallback field");
+      //       const newField = document.createElement("textarea");
+      //       newField.name = "h-captcha-response";
+      //       newField.style.display = "none";
+      //       newField.value = token;
+      //       document.body.appendChild(newField);
+      //     }
+
+      //     // Handle respKey if provided (optional, depending on site)
+      //     if (respKey) {
+      //       console.log("Injecting respKey into DOM...");
+      //       const respKeyField = document.createElement("textarea");
+      //       respKeyField.name = "h-captcha-respKey";
+      //       respKeyField.style.display = "none";
+      //       respKeyField.value = respKey;
+      //       document.body.appendChild(respKeyField);
+      //     }
+
+      //     // Submit via hCaptcha API if available
+      //     if (typeof hcaptcha !== "undefined" && hcaptcha.getWidgets().length > 0) {
+      //       console.log("hCaptcha API detected, submitting via API");
+      //       hcaptcha.getWidgets().forEach((widget) => hcaptcha.submit(widget.id));
+      //     } else {
+      //       console.log("hCaptcha API not available, relying on DOM injection");
+      //     }
+
+      //     return true;
+      //   }, token, respKey);
+
+      //   // Verify captcha success
+      //   const isCaptchaSolved = await page.waitForFunction(
+      //     () => !document.querySelector(".h-captcha-error"),
+      //     { timeout: 5000 }
+      //   ).catch(() => false);
+      //   if (!isCaptchaSolved) {
+      //     console.warn("Captcha may not have been accepted by the website");
+      //   }
+
+      //   console.log("CAPTCHA token injected successfully");
+      // }
+
       // Wait a moment after solving CAPTCHA before clicking the button
       await page.evaluate(
         (timeout) => new Promise((resolve) => setTimeout(resolve, timeout)),
@@ -2012,7 +1869,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
 
       // Click the button using JavaScript for more reliable interaction
       console.log("Attempting to click Complete and Pay button using JavaScript...");
-      
+
       try {
         // First try JavaScript click for more reliable interaction
         await frame.evaluate(() => {
@@ -2026,9 +1883,9 @@ async function FortSumterTickets(bookingData, tries, payload) {
             return false;
           }
         });
-        
+
         console.log("JavaScript click completed");
-        
+
         // As a fallback, also try the puppeteer click
         // await frame.click('[data-test-id="complete-and-pay-submit-button"]');
         // console.log("Complete and Pay button clicked (Puppeteer method)");
@@ -2105,11 +1962,11 @@ async function FortSumterTickets(bookingData, tries, payload) {
         (timeout) => new Promise((resolve) => setTimeout(resolve, timeout)),
         12000
       );
-// ***************************************************
+      // ***************************************************
       // Check for insufficient funds error
       console.log("Checking for insufficient funds error...");
       let insufficientFundsError = false;
-      
+
       // Verify frame is valid before evaluating
       if (frame && typeof frame.evaluate === 'function') {
         try {
@@ -2143,7 +2000,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
       // Check for booking confirmation header
       console.log("Checking for booking confirmation...");
       let bookingConfirmationExists = false;
-      
+
       // Verify frame is valid before evaluating
       if (frame && typeof frame.evaluate === 'function') {
         try {
@@ -2162,19 +2019,19 @@ async function FortSumterTickets(bookingData, tries, payload) {
         console.error("Frame is not available or invalid for checking booking confirmation");
         bookingConfirmationExists = false;
       }
+      console.log("Debug: Waiting to display confirmation headers after proceed button click!");
+      await new Promise(resolve => setTimeout(resolve, 60000));
 
       // Check for "Thanks for booking with us!" message
       // Use a longer timeout for final confirmation
-      const confirmationTimeout = 30000; // 30 seconds (30 seconds)
+      const confirmationTimeout = 60000; // 60 seconds (60 seconds)
       console.log(
-        `Waiting up to ${
-          confirmationTimeout / 1000
+        `Waiting up to ${confirmationTimeout / 1000
         } seconds for thank you message...`
       );
 
       // Using evaluate with setTimeout to implement a custom wait with text checking
       let thankYouMessageVisible = false;
-      
       // Verify frame is valid before evaluating
       if (frame && typeof frame.evaluate === 'function') {
         try {
@@ -2185,40 +2042,29 @@ async function FortSumterTickets(bookingData, tries, payload) {
               const checkForMessage = () => {
                 // More comprehensive search - check all elements and common confirmation texts
                 const elements = Array.from(document.querySelectorAll("*"));
-                
+
                 // Look for common confirmation phrases
                 const confirmationPhrases = [
                   "Thanks for booking with us",
-                  "Thank you for booking",
-                  "Thanks for your booking",
-                  "booking confirmation",
-                  "order confirmed",
-                  "successfully booked",
-                  "booking complete"
                 ];
-                
+
                 // Check if any element contains any of the phrases
                 const thankYouElement = elements.find(el => {
                   if (!el || !el.textContent) return false;
                   const text = el.textContent.toLowerCase();
                   return confirmationPhrases.some(phrase => text.includes(phrase.toLowerCase()));
                 });
-                
+
                 if (thankYouElement && thankYouElement.offsetParent !== null) {
                   console.log("Found confirmation text:", thankYouElement.textContent.trim());
                   return true;
                 }
-                
+
                 // Also check for booking confirmation elements by specific selectors
                 const confirmSelectors = [
                   '[data-test-id="booking-confirmation-header"]',
-                  '.confirmation-header',
-                  '.booking-success',
-                  '.success-message',
-                  '.thank-you-message',
-                  '.confirmation-page'
                 ];
-                
+
                 for (const selector of confirmSelectors) {
                   const element = document.querySelector(selector);
                   if (element && element.offsetParent !== null) {
@@ -2226,7 +2072,7 @@ async function FortSumterTickets(bookingData, tries, payload) {
                     return true;
                   }
                 }
-                
+
                 return false;
               };
 
@@ -2258,116 +2104,276 @@ async function FortSumterTickets(bookingData, tries, payload) {
         thankYouMessageVisible = false;
       }
 
+       // Create successful-orders-screenshots directory if it doesn't exist
+       const successDir = path.join(__dirname, "successful-orders-screenshots");
+       if (!fs.existsSync(successDir)) {
+         await fs.promises.mkdir(successDir, { recursive: true });
+       }
+ 
+       // Take screenshot of confirmation page with order ID in filename
+       const screenshotFileName = `${bookingData.id}-order-success.png`;
+       const screenshotPath = path.join(successDir, screenshotFileName);
+
+       const ticketsScreenshotFileName = `${bookingData.id}-tickets.png`;
+       const ticketsScreenshot = path.join(
+         successDir,
+         ticketsScreenshotFileName
+       );
+
       // Make sure we strictly enforce finding the thank you message
       if (thankYouMessageVisible) {
         console.log("Thank you message found! Booking confirmed successfully!");
         try {
-              await Order.findOneAndUpdate(
-                { orderId: bookingData.id, websiteName: 'Fort Sumter Ticketing' },  // Match by both orderId and websiteName
-                { status: 'Passed', failureReason: null },  // Update the status field to 'Failed'
-                { new: true }  // Return the updated document
-              );
-            } catch (err) {
-              console.error("Error updating order status:", err);
+          await Order.findOneAndUpdate(
+            { orderId: bookingData.id, websiteName: "Fort Sumter Ticketing" }, // Match by both orderId and websiteName
+            { status: "Passed", failureReason: null }, // Update the status field to 'Failed'
+            { new: true } // Return the updated document
+          );
+        } catch (err) {
+          console.error("Error updating order status:", err);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // 5-second delay
+
+        await page.screenshot({
+          path: screenshotPath,
+          fullPage: true,
+        });
+
+        console.log(`Saved confirmation screenshot locally`);
+
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // 5-second delay
+
+        console.log("Waiting for 'Go to your tickets' button by text...");
+
+        // *************************************************************
+
+        // 3. Work inside the frame
+        console.log(
+          "[DEBUG] Looking for 'Go to your tickets' button inside iframe..."
+        );
+
+        const ticketBtn = await frame.waitForFunction(
+          () => {
+            const buttons = document.querySelectorAll(
+              "a.btn.btn-secondary.nowrap"
+            );
+            console.log(
+              "[BROWSER] Found",
+              buttons.length,
+              "candidate buttons in iframe"
+            );
+
+            for (const el of buttons) {
+              const raw = el.textContent || "";
+              const normalized = raw.replace(/\s+/g, " ").trim().toLowerCase();
+              console.log("[BROWSER] Button text (raw):", raw);
+              console.log("[BROWSER] Button text (normalized):", normalized);
+
+              if (normalized.includes("go to your tickets ›")) {
+                console.log("[BROWSER] Match found for 'Go to your tickets ›'");
+                return el;
+              }
             }
+
+            return null;
+          },
+          { timeout: 60000 }
+        );
+
+        const ticketBtnEl = await ticketBtn.asElement();
+        if (ticketBtnEl) {
+          console.log(
+            "[DEBUG] 'Go to your tickets' button resolved as element handle"
+          );
+
+          console.log("[DEBUG] Clicking button inside iframe...");
+          await ticketBtnEl.click();
+
+          // Locate the 'Only one QR code needs to be scanned per booking when boarding.' <li> element inside the iframe using XPath with Puppeteer's ::-p-xpath
+          const qrCodeLi = await frame.waitForSelector(
+            '::-p-xpath(//div[contains(@class, "prose-section")]//li[contains(text(), "Only one QR code needs to be scanned per booking when boarding.")])',
+            { timeout: 30000 }
+          );
+
+          // Check if the element was found
+          if (qrCodeLi) {
+            console.log("QR code info found on the tickets page.");
+
+            // Wait for the <li> elements to be fully loaded and visible inside the iframe
+            await frame.waitForSelector("li", { timeout: 30000 }); // Ensure all <li> elements are visible
+
+            await new Promise((resolve) => setTimeout(resolve, 3000)); // 5-second delay
+
+            console.log(
+              "[DEBUG] Ticket content detected, taking screenshot..."
+            );
+
+            await page.screenshot({ path: ticketsScreenshot });
+
+            await new Promise((resolve) => setTimeout(resolve, 2000)); // 5-second delay
+
+            // Save the page as PDF
+            const pdfPath = path.join(
+              successDir,
+              `${bookingData.id}-tickets.pdf`
+            );
+            await page.pdf({
+              path: pdfPath,
+              format: "A4",
+              printBackground: false,
+              margin: {
+                top: "20mm",
+                bottom: "20mm",
+                left: "10mm",
+                right: "10mm",
+              },
+              fullPage: false,
+            });
+
+            console.log(`✅ PDF saved locally!`);
+          } else {
+            console.warn("QR code info not found on the tickets page.");
+          }
+
+          console.log(`[DEBUG] Saved tickets screenshot locally!`);
+        } else {
+          console.log(
+            "[WARN] 'Go to your tickets' button not found in iframe."
+          );
+        }
+
+        // *************************************************************
+
+        // Send confirmation email with screenshot
+        console.log("Sending confirmation email...");
+        await sendEmailWithMultipleAttachments(
+          bookingData.id, // order number
+          `Try ${
+            tries + 1
+          }. The final screen snip is attached for your reference.`, // order description
+          "farhan.qat123@gmail.com", // recipient email address
+          ["tickets@fortsumterticketing.com"], // CC email addresses
+          // [],
+          [
+            {
+              filename: screenshotFileName, // Name of the file to attach
+              path: screenshotPath, // Path to the screenshot passed as parameter
+            },
+            {
+              filename: ticketsScreenshotFileName, // Name of the file to attach
+              path: ticketsScreenshot, // Path to the screenshot passed as parameter
+            }
+          ],
+          true, // Success status
+          "FortSumterTicketing"
+        );
+
+        // Process service charges
+        console.log("Processing service charges...");
+        const serviceChargesAmount = bookingData.bookingServiceCharges.replace(
+          "$",
+          ""
+        );
+        const isServiceChargesDeducted = await ServiceCharges(
+          serviceChargesAmount,
+          bookingData.id,
+          bookingData.card.number,
+          bookingData.card.expiration,
+          bookingData.card.cvc,
+          bookingData.billing?.postcode,
+          bookingData.billing?.email,
+          "Fort Sumter Ticketing"
+        );
+
+        // Update order status
+        if (isServiceChargesDeducted) {
+          console.log("Service charges processed, updating order status...");
+          // Order status options: auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, checkout-draft
+          const updatedOrder = await updateOrderStatus(
+            "Fort Sumter Ticketing",
+            bookingData.id,
+            "completed"
+          );
+          console.log(
+            `Order #${bookingData.id} status changed to ${updatedOrder?.status} successfully!`
+          );
+        }
+
+        return { success: true, message: "Booking completed successfully!" };
       } else {
         // If message wasn't found after timeout, throw an error to trigger catch block
         throw new Error("Booking confirmation message 'Thanks for booking with us!' not found after timeout");
       }
 
-      // Create successful-orders-screenshots directory if it doesn't exist
-      const successDir = path.join(__dirname, "successful-orders-screenshots");
-      if (!fs.existsSync(successDir)) {
-        await fs.promises.mkdir(successDir, { recursive: true });
+  } catch (error) {
+      console.error("Error during checkout process:", error.message);
+      try {
+        await Order.findOneAndUpdate(
+          { orderId: bookingData.id, websiteName: 'Fort Sumter Ticketing' },  // Match by both orderId and websiteName
+          { status: 'Failed', failureReason: error?.message || error },  // Update the status field to 'Failed'
+          { new: true }  // Return the updated document
+        );
+      } catch (err) {
+        console.error("Error updating order status:", err);
       }
 
-      // Take screenshot of confirmation page with order ID in filename
-      const screenshotFileName = `${bookingData.id}-order-success.png`;
-      const screenshotPath = path.join(successDir, screenshotFileName);
-      await page.screenshot({
-        path: screenshotPath,
-        fullPage: true,
-      });
-
-      console.log(`Saved confirmation screenshot locally`);
-
-      // Send confirmation email with screenshot
-      console.log("Sending confirmation email...");
-      await sendEmail(
-        bookingData.id, // order number
-        `Try ${
-          tries + 1
-        }. The final screen snip is attached for your reference.`, // order description
-        "farhan.qat123@gmail.com", // recipient email address
-        ["tickets@fortsumterticketing.com"], // CC email addresses
-        // [],
-        screenshotPath, // path to the screenshot
-        screenshotFileName,
-        true, // Success status
-        "FortSumterTicketing"
-      );
-
-      // Process service charges
-      console.log("Processing service charges...");
-      const serviceChargesAmount = bookingData.bookingServiceCharges.replace(
-        "$",
-        ""
-      );
-      // const isServiceChargesDeducted = await ServiceCharges(
-      //   serviceChargesAmount,
-      //   bookingData.id,
-      //   bookingData.card.number,
-      //   bookingData.card.expiration,
-      //   bookingData.card.cvc,
-      //   bookingData.billing?.postcode,
-      //   bookingData.billing?.email,
-      //   "Fort Sumter Ticketing"
-      // );
-
-      // Update order status
-      // if (isServiceChargesDeducted) {
-      //   console.log("Service charges processed, updating order status...");
-      //   // Order status options: auto-draft, pending, processing, on-hold, completed, cancelled, refunded, failed, checkout-draft
-      //   const updatedOrder = await updateOrderStatus(
-      //     "Fort Sumter Ticketing",
-      //     bookingData.id,
-      //     "completed"
-      //   );
-      //   console.log(
-      //     `Order #${bookingData.id} status changed to ${updatedOrder?.status} successfully!`
-      //   );
-      // }
-
-      return { success: true, message: "Booking completed successfully!" };
-    } catch (error) {
-      console.error("Error during checkout process:", error.message);
-      
-      
-       try {
-            await Order.findOneAndUpdate(
-              { orderId: bookingData.id, websiteName: 'Fort Sumter Ticketing' },  // Match by both orderId and websiteName
-              { status: 'Failed', failureReason: error?.message || error },  // Update the status field to 'Failed'
-              { new: true }  // Return the updated document
-            );
-          } catch (err) {
-            console.error("Error updating order status:", err);
-          }
-      
 
       // Create directory for error screenshots
       const errorsDir = path.join(__dirname, "errors-screenshots");
       if (!fs.existsSync(errorsDir)) {
         await fs.promises.mkdir(errorsDir, { recursive: true });
       }
-      
       // Take screenshot of error state with order ID
       const screenshotFileName = `${bookingData.id}-error-screenshot.png`;
       const screenshotPath = path.join(errorsDir, screenshotFileName);
+
+
+    //   let failureShotPath;
+
+    // try {
+    //   // Try to capture the main FareHarbor iframe only
+    //   const iframeSelector = '#fareharbor-lightframe-iframe';
+    //   const iframeHandle = await page.waitForSelector(iframeSelector, { visible: true, timeout: 20000 });
+    //   failureShotPath = path.join(errorsDir, `${bookingData.id}-iframe-failure.png`);
+    //   await iframeHandle.screenshot({ path: screenshotPath });
+    //   console.log(`[FAIL-SHOT] Saved iframe fallback: ${screenshotPath}`);
+    // } catch (e) {
+    //   // Fallback: full-page screenshot if iframe isn't visible/available
+    //   failureShotPath = path.join(errorsDir, `${bookingData.id}-page-failure.png`);
+    //   try {
+    //     await page.screenshot({ path: screenshotPath, fullPage: true });
+    //     console.log(`[FAIL-SHOT] Iframe not available. Saved page fallback: ${screenshotPath} (reason: ${e.message})`);
+    //   } catch (e2) {
+    //     console.log(`[FAIL-SHOT] Full-page screenshot also failed: ${e2.message}`);
+    //     // Optional: set failureShotPath = undefined; // if you want to send email without attachment
+    //   }
+    // }
+
+
+
+    //         // re-acquire the live lightframe first
+    // const iframeHandle = await page.waitForSelector('#fareharbor-lightframe-iframe', { visible: true });
+    // const confirmFrame = await iframeHandle.contentFrame();
+
+    // // wait for the header inside the frame
+    // const headerSel = '[data-test-id="booking-confirmation-header"]';
+    // const headerEl = await confirmFrame.waitForSelector(headerSel, { visible: true });
+
+    // // make sure it's in view, then screenshot the element
+    // await confirmFrame.evaluate(sel => {
+    //   const el = document.querySelector(sel);
+    //   el?.scrollIntoView({ behavior: 'instant', block: 'center' });
+    // }, headerSel);
+
+    // await headerEl.screenshot({ path: screenshotPath });
+    await new Promise(resolve => setTimeout(resolve, 5000)); // 5-second delay
+
       await page.screenshot({
         path: screenshotPath,
         fullPage: true
       });
-      
+
       // // Send error email
       try {
         await sendEmail(
@@ -2384,18 +2390,20 @@ async function FortSumterTickets(bookingData, tries, payload) {
       } catch (emailError) {
         console.log("Sending mail Error", emailError);
       }
-      
+
       return {
         success: false,
         error: error.message,
-        errorScreenshot: screenshotFileName,
+        // errorScreenshot: screenshotFileName,
       };
-    }
-
   } finally {
     // Close browser if it exists
     if (browser) {
-      console.log("Closing browser...");
+    // await new Promise(resolve => setTimeout(resolve, 10000)); // 10-second delay
+      // await recorder.stop();
+    // console.log(`[FAIL-VIDEO] Saved failure video: ${videoPath}`);
+
+      // console.log("Closing browser...");
       // await browser.close();
     }
   }
@@ -2403,3 +2411,75 @@ async function FortSumterTickets(bookingData, tries, payload) {
 
 
 module.exports = { FortSumterTickets };
+
+
+async function solveCaptchaWithSolveCaptcha(apiKey, sitekey, pageUrl, config) {
+  if (!apiKey || apiKey.length !== 32) {
+    throw new Error("Invalid or missing SolveCaptcha API key");
+  }
+
+  console.log("Sending request to SolveCaptcha service...");
+  console.log("Using site key:", sitekey);
+  console.log("Page URL for captcha:", pageUrl);
+
+  // Step 1: Send captcha solving request
+  let inResponse;
+  try {
+    inResponse = await axios.post(
+      'https://api.solvecaptcha.com/in.php',
+      {
+        key: apiKey,
+        method: 'hcaptcha',
+        sitekey: sitekey,
+        pageurl: pageUrl,
+        invisible: 1,
+        json: 1,
+      },
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+    );
+  } catch (error) {
+    throw new Error(`SolveCaptcha in.php request failed: ${error.message}`);
+  }
+
+  if (inResponse.data.status !== 1) {
+    throw new Error(`SolveCaptcha in.php error: ${inResponse.data.request || 'Unknown error'}`);
+  }
+
+  const captchaId = inResponse.data.request;
+  console.log(`Received captcha ID: ${captchaId}`);
+
+  // Step 2: Poll for the solution
+  const startTime = Date.now();
+  while (Date.now() - startTime < config.pollingTimeout) {
+    try {
+      const resResponse = await axios.get('https://api.solvecaptcha.com/res.php', {
+        params: {
+          key: apiKey,
+          action: 'get',
+          id: captchaId,
+          json: 1,
+        },
+      });
+
+      if (resResponse.data.status === 1) {
+        console.log("Successfully received token and user agent from SolveCaptcha!");
+        return {
+          token: resResponse.data.request,
+          userAgent: resResponse.data.useragent,
+          respKey: resResponse.data.respKey,
+        };
+      } else if (resResponse.data.request === 'CAPCHA_NOT_READY') {
+        console.log("Captcha not ready, polling again...");
+        await new Promise(resolve => setTimeout(resolve, config.pollingInterval));
+        continue;
+      } else {
+        throw new Error(`SolveCaptcha res.php error: ${resResponse.data.request}`);
+      }
+    } catch (error) {
+      console.error(`Polling error: ${error.message}`);
+      await new Promise(resolve => setTimeout(resolve, config.pollingInterval));
+    }
+  }
+
+  throw new Error("SolveCaptcha polling timeout: No solution received");
+}

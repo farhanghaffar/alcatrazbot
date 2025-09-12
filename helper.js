@@ -534,4 +534,41 @@ function normalizeFailureReason(e) {
   return msg.length > 500 ? msg.slice(0, 500) + '…' : msg;
 }
 
-module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, sendEmailForDeclinedServiceChargesCardPayments, sendEmailForDeclinedCardPayments, addOneHour, addOrUpdateOrder, getRandomDelayWithLimit, updateServiceChargesStatus, normalizeFailureReason };
+// Function to send email
+async function sendEmailWithMultipleAttachments(orderNumber, orderDescription, recipientEmail, ccEmails, attachments, passed = false, automationSite = '') {
+  // Create a transporter object using Gmail SMTP
+  let transporter = nodemailer.createTransport({
+    service: 'gmail', // Gmail service
+    auth: {
+      user: senderEmailAddress, // Your Gmail address
+      pass: senderEmailPassword   // Your Gmail password or app-specific password
+    }
+  });
+
+  let subject = '';
+  let html = '';
+  if(passed) {
+    subject = `${automationSite} Order #${orderNumber} Processing Successful`;
+    html = `<p>A new order of <b>${automationSite}</b> with ID <strong>${orderNumber}</strong> has successfully automated. ${orderDescription}</p>`;
+  } else {
+    subject = `${automationSite} Order #${orderNumber} Processing Failed`;
+    html = `<p>A new order automation of <b>${automationSite}</b> with ID <strong>${orderNumber}</strong> was unfortunately failed. ${orderDescription}</p>`;
+  }
+  
+  // Prepare the email content
+  let mailOptions = {
+    from: 'farhan.qat321@gmail.com',  // Sender address
+    to: recipientEmail, // Main recipient email
+    cc: ccEmails, // CC recipients
+    subject: subject, // Dynamic subject
+    // text: `A new order with ID ${orderNumber} has successfully automated. ${orderDescription}`, // Plain text body
+    html: html, // HTML body
+    attachments: attachments,
+  };
+
+  // Send the email
+  return transporter.sendMail(mailOptions);  // Return the promise to handle errors outside
+}
+
+
+module.exports = { incrementTickets, expectedIncrementTickets, sendServiceChargesDeductionEmail, getCardType, formatDate, formatCardDate, typeWithDelay, sendEmail, toTitleCase, getRandomTime, removeSpaces, getRandomUserAgent, formatAndValidateCardExpirationDate, sendEmailForDeclinedServiceChargesCardPayments, sendEmailForDeclinedCardPayments, addOneHour, addOrUpdateOrder, getRandomDelayWithLimit, updateServiceChargesStatus, normalizeFailureReason, sendEmailWithMultipleAttachments };
