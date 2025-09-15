@@ -1,10 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
 const crypto = require('crypto');
 const cors = require('cors');
+
 const { ServiceCharges } = require('./automation/service-charges');
 const { alcatrazBookTour } = require('./alcatraz-booking');
 const { statueTicketingBookTour } = require('./statueticketing-booking');
@@ -14,10 +12,13 @@ const { bostonHarborCruise } = require('./automation/boston-harbor-cruise/automa
 const { NiagaraCruiseTickets } = require('./automation/niagara-cruise-tickets/automation');
 const { FortSumterTickets } = require('./automation/fort-sumter-tickets/automation');
 const { KennedySpaceCenterTickets } = require('./automation/kennedy-space-center-tickets/automation');
-const mongoose = require('mongoose');
+
 const authRoutes = require('./api/routes/authRoutes');
 const orderRoutes = require('./api/routes/orderRoutes');
 const webhookRoutes = require('./api/routes/webhookRoutes');
+
+const mongoose = require('mongoose');
+
 require('dotenv').config();
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
