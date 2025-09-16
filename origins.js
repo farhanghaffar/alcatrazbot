@@ -15,7 +15,7 @@ const allowedOrigins = [
   "https://battleshiptickets.com",
   "https://hooverdamticketing.com",
   "https://mackinacticketing.com",
-  "https://plantationtickets.com",
+//   "https://plantationtickets.com",
   "https://shipislandferry.com",
 ];
 
