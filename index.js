@@ -18,6 +18,7 @@ const orderRoutes = require('./api/routes/orderRoutes');
 const webhookRoutes = require('./api/routes/webhookRoutes');
 
 const mongoose = require('mongoose');
+const { corsOptions } = require('./origins');
 
 require('dotenv').config();
 
@@ -43,7 +44,7 @@ const PORT = process.env.PORT || 4000;
 app.use(bodyParser.json());
 
 // Cors middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // DB Connection
