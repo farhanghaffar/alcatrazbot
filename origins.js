@@ -3,6 +3,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://www.twickly.com",
   "https://alcatraz-dashboard.vercel.app",
+  "https://alcatraz-payment-bot.vercel.app",
   //WP SITES
   "https://www.statueticketing.com",
   "https://www.alcatrazticketing.com",
