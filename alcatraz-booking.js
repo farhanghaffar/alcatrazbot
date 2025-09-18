@@ -433,19 +433,31 @@ async function alcatrazBookTour(bookingData, tries, payload) {
         await continueButton2.click();
         console.log('Clicked Continue');
 
-        await page.waitForTimeout(3000);
+        const waitHere = await getRandomDelayWithLimit(5000);
+        await page.waitForTimeout(waitHere);
 
         const ticketAssuranceSectionHeading = await frameHandle.locator(
         '//h6/span[normalize-space()="Ticket Assurance (Recommended)"]'
         );
-        await expect(ticketAssuranceSectionHeading).toBeVisible({ timeout: 3000 });
 
+        const isTicketInsuranceSectionVisible = await ticketAssuranceSectionHeading.isVisible({ timeout: 20000 })
+        console.log("isTicketInsuranceSectionVisible:", isTicketInsuranceSectionVisible)
+
+        if(isTicketInsuranceSectionVisible){
+          console.log(
+            "Tickets Insurance section is visible!"
+          )
         const ticketAssuranceSectionNoOption = await frameHandle.locator(
         '[data-bdd="insurance-no-radio"]'
         );
         await expect(ticketAssuranceSectionNoOption).toBeVisible({ timeout: 5000 });
+        console.log("Clicking the no insurance option")
         await ticketAssuranceSectionNoOption.click();
-
+        } else {
+          console.log(
+            "Tickets Insurance section not visible!, proceeding to next section..."
+          )
+        }
 
         const attendeesNames = bookingData.personNames;
         const attendeesNamesInputs = await frameHandle.locator('[autocomplete="name"]')
