@@ -4,6 +4,7 @@ const machineSchema = new mongoose.Schema({
   name: { type: String, required: true },
   url: { type: String, required: true },
   lastSwitchTime: { type: Date, default: null },
+  lastSwitchTo: { type: String, default: "" },
 });
 
 module.exports = mongoose.model("Machine", machineSchema);

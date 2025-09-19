@@ -1,10 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
 const crypto = require('crypto');
 const cors = require('cors');
+
 const { ServiceCharges } = require('./automation/service-charges');
 const { alcatrazBookTour } = require('./alcatraz-booking');
 const { statueTicketingBookTour } = require('./statueticketing-booking');
@@ -14,11 +12,15 @@ const { bostonHarborCruise } = require('./automation/boston-harbor-cruise/automa
 const { NiagaraCruiseTickets } = require('./automation/niagara-cruise-tickets/automation');
 const { FortSumterTickets } = require('./automation/fort-sumter-tickets/automation');
 const { KennedySpaceCenterTickets } = require('./automation/kennedy-space-center-tickets/automation');
-const mongoose = require('mongoose');
+
 const authRoutes = require('./api/routes/authRoutes');
 const orderRoutes = require('./api/routes/orderRoutes');
 const webhookRoutes = require('./api/routes/webhookRoutes');
 const { BookMckinacIslandTickets } = require('./automation/mackinac-sheplers-ferry-tickets/automation');
+
+const mongoose = require('mongoose');
+const { corsOptions } = require('./origins');
+
 require('dotenv').config();
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -43,13 +45,14 @@ const PORT = process.env.PORT || 4000;
 app.use(bodyParser.json());
 
 // Cors middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI,{retryReads: true,
     retryWrites: true,
-    serverSelectionTimeoutMS: 5000 })
+    serverSelectionTimeoutMS: 5000,
+maxPoolSize: 10 })
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log('MongoDB Connection Error ==>', err));
 

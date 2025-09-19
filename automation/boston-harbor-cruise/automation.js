@@ -248,10 +248,11 @@ async function bostonHarborCruise(bookingData, tries, payload) {
       }
       await dateCell.click();
 
+      const selectedDaySpanElement = await frameHandle
+      .getByRole("presentation")
+      .locator(`//td[contains(@class, 'CalendarDay') and contains(@class, 'CalendarDay__selected')]//span[@class='CalendarDigit_selected' and text()=${targetDay}]`);
       await expect(
-        frameHandle
-          .getByRole("presentation")
-          .locator(`td.CalendarDay__selected:has(span:text("${targetDay}"))`)
+        selectedDaySpanElement
       ).toBeVisible();
       console.log(`Successfully selected date ${targetDay}`);
 

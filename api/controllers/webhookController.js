@@ -713,12 +713,15 @@ const disconnectVpn = async (req, res) => {
  * Endpoint to switch to a new random VPN configuration.
  */
 const switchVpn = async (req, res) => {
-  const { id } = req.body;
+  const { id, city } = req.body;
 
   if (!id)
     return res.status(200).json({
       message: "Please provide machine ID",
     });
+
+  if (!city)
+    return res.status(400).json({ error: "Please provide a city name." });
 
   const MAX_RETRIES = 5;
   const CONNECT_TIMEOUT_MS = 15000; // 15 seconds
@@ -740,18 +743,30 @@ const switchVpn = async (req, res) => {
     return res.status(400).json({ error: "VPN credentials not found." });
   }
 
+  const cityFolderName = city.toLowerCase().replace(/ /g, "-");
+  const cityDir = path.join(OVPN_CONFIGS_DIR, cityFolderName);
+
   // Get a list of all available files
-  fs.readdir(OVPN_CONFIGS_DIR, async (err, files) => {
+  fs.readdir(cityDir, async (err, files) => {
     if (err) {
-      return res
-        .status(500)
-        .json({ error: "Failed to read configuration files.", details: err });
+      // This error likely means the folder doesn't exist or is unreadable
+      console.error(`Failed to read city directory for "${city}":`, err);
+      return res.status(500).json({
+        error: `Failed to find configuration files for "${city}". Please check the folder name.`,
+        details: err,
+      });
     }
 
     const ovpnFiles = files.filter(
       (file) => path.extname(file).toLowerCase() === ".ovpn"
     );
     const originalFiles = [...ovpnFiles]; // Keep a copy of all available files
+
+    if (ovpnFiles.length === 0) {
+      return res.status(404).json({
+        error: `No .ovpn files found in the directory for "${city}".`,
+      });
+    }
 
     let success = false;
     let retries = 0;
@@ -773,7 +788,8 @@ const switchVpn = async (req, res) => {
       const newFile = availableFiles[randomIndex];
       ovpnFiles.splice(ovpnFiles.indexOf(newFile), 1);
 
-      const newConfigPath = path.join(OVPN_CONFIGS_DIR, newFile);
+      // The newConfigPath now points to the file inside the city folder
+      const newConfigPath = path.join(cityDir, newFile);
 
       const platform = os.platform();
       let command;
@@ -782,19 +798,21 @@ const switchVpn = async (req, res) => {
       if (platform === "win32") {
         command = "openvpn.exe";
       } else {
-        // 'linux' or 'darwin' (macOS)
+        // 'linux'
         command = "openvpn";
       }
 
       // Create a temporary file to pass credentials
       const tempAuthFilePath = path.join(os.tmpdir(), `auth_${Date.now()}.txt`);
-      fs.writeFileSync(tempAuthFilePath, `${username}\n${password}`);
+      fs.writeFileSync(
+        tempAuthFilePath,
+        `${username}${os.EOL}${password}${os.EOL}`
+      );
 
-      // Pass the temporary file path to OpenVPN
       args = ["--config", newConfigPath, "--auth-user-pass", tempAuthFilePath];
 
       console.log(
-        `Attempting to connect to ${newFile} (Attempt ${
+        `Attempting to connect to ${newFile} with user: ${username} (Attempt ${
           retries + 1
         } of ${MAX_RETRIES})`
       );
@@ -826,7 +844,6 @@ const switchVpn = async (req, res) => {
         });
 
         processInstance.on("close", (code) => {
-          // Clean up the temporary file regardless of exit status
           try {
             fs.unlinkSync(tempAuthFilePath);
           } catch (cleanupErr) {
@@ -839,7 +856,6 @@ const switchVpn = async (req, res) => {
           }
         });
 
-        // Set a timeout for the connection attempt
         setTimeout(() => {
           if (!connected) {
             lastError = `Connection attempt timed out after ${
@@ -867,11 +883,13 @@ const switchVpn = async (req, res) => {
         id,
         {
           lastSwitchTime: Date.now(),
+          lastSwitchTo: city,
         },
         { new: true }
       );
       res.json({
         lastSwitchTime: updatedMachine?.lastSwitchTime,
+        lastSwitchTo: updatedMachine?.lastSwitchTo,
         success: true,
         message: `Successfully connected to ${currentConnection} after ${
           retries + 1
@@ -884,6 +902,34 @@ const switchVpn = async (req, res) => {
         message: `Failed to connect to a VPN server after ${MAX_RETRIES} attempts. Last error: ${lastError}`,
       });
     }
+  });
+};
+
+/**
+ * Endpoint to get a list of all available city names from the ovpn_configs folder.
+ */
+const getVPNCities = (req, res) => {
+  fs.readdir(OVPN_CONFIGS_DIR, { withFileTypes: true }, (err, dirents) => {
+    if (err) {
+      console.error("Failed to read configs directory:", err);
+      return res
+        .status(500)
+        .json({ error: "Failed to read city directories.", details: err });
+    }
+
+    // Filter for directories and map their names to a formatted string
+    const cities = dirents
+      .filter((dirent) => dirent.isDirectory())
+      .map((dirent) => {
+        const name = dirent.name.replace(/-/g, " ");
+        // Capitalize each word
+        return name
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      });
+
+    res.json({ cities });
   });
 };
 
@@ -905,4 +951,5 @@ module.exports = {
   switchVpn,
   getVpnStatus,
   disconnectVpn,
+  getVPNCities,
 };

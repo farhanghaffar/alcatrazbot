@@ -23,6 +23,7 @@ router.post('/update-order-payload', webhookController.updateOrderPayload);
 
 //Switch VPN
 router.post("/switch-vpn",protect,webhookController.switchVpn)
+router.get("/vpn-cities",protect,webhookController.getVPNCities)
 router.get("/vpn-status",protect,webhookController.getVpnStatus)
 router.post("/disconnect-vpn",protect,webhookController.disconnectVpn)
 
