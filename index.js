@@ -18,6 +18,7 @@ const mongoose = require('mongoose');
 const authRoutes = require('./api/routes/authRoutes');
 const orderRoutes = require('./api/routes/orderRoutes');
 const webhookRoutes = require('./api/routes/webhookRoutes');
+const { BookMckinacIslandTickets } = require('./automation/mackinac-sheplers-ferry-tickets/automation');
 require('dotenv').config();
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -1199,6 +1200,138 @@ app.post('/kennedy-space-center-ticketing-webhook', async (req, res) => {
         });
     }
 });
+
+app.post("/mackinac-island-ticketing-webhook", async (req, res) => {
+  const reqBody = req.body;
+  console.log("Mackinac Island Tickets: Order data:", JSON.stringify(req.body));
+
+  try {
+    // Extract relevant data from WooCommerce order
+    const orderData = {
+      id: reqBody.id,
+      tourType: "",
+      bookingDate: "",
+      bookingTime: "",
+      bookingServiceCharges: "",
+      bookingSubTotal: "",
+      personNames: [],
+      ticketQuantity: 0,
+      adult: 0,
+      child: 0,
+      infant: 0,
+      pet: 0,
+      card: {
+        cvc: "",
+        expiration: "",
+        number: "",
+      },
+      billing: {
+        first_name: reqBody?.billing?.first_name,
+        last_name: reqBody?.billing?.last_name,
+        company: reqBody?.billing?.company,
+        address_1: reqBody?.billing?.address_1,
+        address_2: reqBody?.billing?.address_2,
+        city: reqBody?.billing?.city,
+        state: reqBody?.billing?.state,
+        postcode: reqBody?.billing?.postcode,
+        country: reqBody?.billing?.country,
+        email: reqBody?.billing?.email,
+        phone: reqBody?.billing?.phone,
+      },
+    };
+
+    reqBody?.line_items[0]?.meta_data.forEach((item) => {
+      switch (item.key) {
+        case "Tour Type":
+          orderData.tourType = item?.value;
+          break;
+        case "Booking Date":
+          orderData.bookingDate = item?.value;
+          break;
+        case "Booking Time":
+          orderData.bookingTime = item?.value || "";
+          break;
+        case "Service Charges":
+          orderData.bookingServiceCharges = item?.value;
+          break;
+        case "Subtotal":
+          orderData.bookingSubTotal = item?.value;
+          break;
+
+        default:
+          if (item.key.toLowerCase() === "children quantity") {
+            orderData.child = item.value;
+          } else if (item.key.toLowerCase() === "adult quantity") {
+            orderData.adult = item.value;
+          } else if (item.key.toLowerCase() === "pets quantity") {
+            orderData.pet = item.value;
+          } else if (item.key.toLowerCase() === "infants quantity") {
+            orderData.infant = item.value;
+          }
+          break;
+      }
+    });
+
+    reqBody.meta_data.forEach((item) => {
+      if (item.key.toLowerCase() === "credit_card_cvc") {
+        orderData.card.cvc = item?.value;
+      } else if (item.key.toLowerCase() === "credit_card_expiration") {
+        orderData.card.expiration = item?.value;
+      } else if (item.key.toLowerCase() === "credit_card_number") {
+        orderData.card.number = item.value;
+      }
+    });
+
+    console.log(
+      "Mackinac Island Tickets: After manipulation, data is: ",
+      orderData
+    );
+
+    // Send response immediately to prevent webhook timeouts
+    res.status(200).json({
+        message: 'Webhook received. Processing in background.'
+    });
+
+    setImmediate(async () => {
+      try {
+        console.log("Starting booking automation process...");
+        let tries = 0;
+        const maxRetries = 3;
+        let bookingResult = await BookMckinacIslandTickets(orderData, tries); // Adjust function name as needed
+
+        // Retry logic if applicable
+        // while (tries < maxRetries - 1 && !bookingResult.success && /* conditions */) {
+        //     tries++;
+        //     console.log(`Retry attempt #${tries}...`);
+        //     bookingResult = await BookMckinacIslandTickets(orderData, tries);
+        // }
+
+        if (bookingResult.success) {
+          console.log(
+            "Mackinac Island Tickets: Booking automation completed successfully"
+          );
+        } else {
+          console.error(
+            "Mackinac Island Tickets: Booking automation failed:",
+            bookingResult.error
+          );
+        }
+      } catch (automationError) {
+        console.error(
+          "Mackinac Island Tickets: Error in booking automation:",
+          automationError
+        );
+      }
+    });
+  } catch (error) {
+    console.error("Error processing webhook:", error);
+    res.status(200).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+});
+
 
 // Create HTTPS server with error handling
 // try {
