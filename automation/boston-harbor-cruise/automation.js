@@ -970,7 +970,7 @@ async function bostonHarborCruise(bookingData, tries, payload) {
       bookingData.card.cvc,
       bookingData.billing?.postcode,
       bookingData.billing?.email,
-      "Boston Harbor Cruise"
+      "BostonHarborCruiseTicketing"
     );
     if (isServiceChargesDeducted) {
       // ORDERS STATUS API PARAM OPTIONS
