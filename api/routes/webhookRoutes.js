@@ -17,6 +17,8 @@ router.post('/mackinac-dashboard-webhook', webhookController.handleMackinacWebho
 router.post('/ship-island-ferry-dashboard-webhook', webhookController.handleShipIslandFerryWebhook);
 router.post('/battleship-dashboard-webhook', webhookController.handleBattleShipWebhook);
 router.post('/plantation-dashboard-webhook', webhookController.handlePlantationWebhook);
+router.post('/cumberland-island-dashboard-webhook', webhookController.handleCumberlandIslandWebhook);
+
 
 // Update Order Payload
 router.post('/update-order-payload', webhookController.updateOrderPayload);
