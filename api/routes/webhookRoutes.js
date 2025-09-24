@@ -20,6 +20,7 @@ router.post('/plantation-dashboard-webhook', webhookController.handlePlantationW
 router.post('/cumberland-island-dashboard-webhook', webhookController.handleCumberlandIslandWebhook);
 router.post('/fort-mackinac-dashboard-webhook', webhookController.handleFortMackinacWebhook);
 
+router.post("/drop-order", protect, webhookController.dropOrder);
 
 // Update Order Payload
 router.post('/update-order-payload', webhookController.updateOrderPayload);

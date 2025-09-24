@@ -5,6 +5,7 @@ const { exec, spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
+const { default: axios } = require("axios");
 // Go up one directory to find the 'ovpn_configs' folder
 const OVPN_CONFIGS_DIR = path.join(__dirname, "..", "ovpn_configs");
 
@@ -1023,6 +1024,147 @@ const getVPNCities = (req, res) => {
   });
 };
 
+const websiteConfig = {
+  "Alcatraz Ticketing": {
+    wpUrl: process.env.ALCATRAZ_WP_SITE_URL,
+    authKey: `${process.env.ALCATRAZ_WC_REST_API_CONSUMER_KEY}:${process.env.ALCATRAZ_WC_REST_API_CONSUMER_SECRET}`,
+    handler: handleAlcatrazWebhook, // Reference to the existing function
+  },
+  StatueTicketing: {
+    wpUrl: process.env.STATUE_WP_SITE_URL,
+    authKey: `${process.env.STATUE_WC_REST_API_CONSUMER_KEY}:${process.env.STATUE_WC_REST_API_CONSUMER_SECRET}`,
+    handler: handleStatueWebhook,
+  },
+  // Add all your other websites here in the same format
+  PotomacTicketing: {
+    wpUrl: process.env.POTOMAC_WP_SITE_URL,
+    authKey: `${process.env.POTOMAC_WC_REST_API_CONSUMER_KEY}:${process.env.POTOMAC_WC_REST_API_CONSUMER_SECRET}`,
+    handler: handlePotomacWebhook,
+  },
+  "BayCruise Tickets": {
+    wpUrl: process.env.BAY_CRUISE_TICKETING_WP_SITE_URL,
+    authKey: `${process.env.BAY_CRUISE_TICKETING_WC_REST_API_CONSUMER_KEY}:${process.env.BAY_CRUISE_TICKETING_WC_REST_API_CONSUMER_SECRET}`,
+    handler: handleBayCruiseTicketsWebhook,
+  },
+  "Boston Harbor Cruise": {
+    wpUrl: process.env.BOSTON_HARBOR_CRUISE_TICKETING_WP_SITE_URL,
+    authKey: `${process.env.BOSTON_HARBOR_CRUISE_TICKETING_WC_REST_API_CONSUMER_KEY}:${process.env.BOSTON_HARBOR_CRUISE_TICKETING_WC_REST_API_CONSUMER_SECRET}`,
+    handler: handleBostonHarborCruiseTicketsWebhook,
+  },
+  NiagaraCruiseTicketing: {
+    wpUrl: process.env.NIAGARA_CRUISE_TICKETING_WP_SITE_URL,
+    authKey: `${process.env.NIAGARA_CRUISE_TICKETING_WC_REST_API_CONSUMER_KEY}:${process.env.NIAGARA_CRUISE_TICKETING_WC_REST_API_CONSUMER_SECRET}`,
+    handler: handleNiagaraCruiseTicketsWebhook,
+  },
+  "Fort Sumter Ticketing": {
+    wpUrl: process.env.FORT_SUMTER_TICKETING_WP_SITE_URL,
+    authKey: `${process.env.FORT_SUMTER_TICKETING_WC_REST_API_CONSUMER_KEY}:${process.env.FORT_SUMTER_TICKETING_WC_REST_API_CONSUMER_SECRET}`,
+    handler: handleFortSumterTicketingWebhook,
+  },
+  "Kennedy Space Center Ticketing": {
+    wpUrl: process.env.KENNEDY_SPACE_CENTER_TICKETING_WP_SITE_URL,
+    authKey: `${process.env.KENNEDY_SPACE_CENTER_TICKETING_WC_REST_API_CONSUMER_KEY}:${process.env.KENNEDY_SPACE_CENTER_TICKETING_WC_REST_API_CONSUMER_SECRET}`,
+    handler: handleKennedySpaceCenterTicketingWebhook,
+  },
+  "HooverDam Ticketing": {
+    wpUrl: process.env.HOOVERDAM_WP_SITE_URL,
+    authKey: `${process.env.HOVERDAM_API_CONSUMER_KEY}:${process.env.HOOVERDAM_API_COSUMER_SECRET}`,
+    handler: handleHooverDamWebhook,
+  },
+  "Mackinac Ticketing": {
+    wpUrl: process.env.MACKINAC_WP_SITE_URL,
+    authKey: `${process.env.MACKINAC_API_CONSUMER_KEY}:${process.env.MACKINAC_API_COSUMER_SECRET}`,
+    handler: handleMackinacWebhook,
+  },
+  "ShipIslandFerry Ticketing": {
+    wpUrl: process.env.SHIPISLAND_WP_SITE_URL,
+    authKey: `${process.env.SHIPISLAND_API_CONSUMER_KEY}:${process.env.SHIPISLAND_API_COSUMER_SECRET}`,
+    handler: handleShipIslandFerryWebhook,
+  },
+  "Battleship Ticketing": {
+    wpUrl: process.env.BATTLESHIP_WP_SITE_URL,
+    authKey: `${process.env.BATTLESHIP_API_CONSUMER_KEY}:${process.env.BATTLESHIP_API_COSUMER_SECRET}`,
+    handler: handleBattleShipWebhook,
+  },
+  "Plantation Ticketing": {
+    wpUrl: process.env.PLANTATION_WP_SITE_URL,
+    authKey: `${process.env.PLANTATION_API_CONSUMER_KEY}:${process.env.PLANTATION_API_COSUMER_SECRET}`,
+    handler: handlePlantationWebhook,
+  },
+};
+
+const dropOrder = async (req, res) => {
+  try {
+    const { orderId, websiteName } = req.body;
+
+    if (!orderId || !websiteName) {
+      return res
+        .status(400)
+        .json({ message: "Missing orderId or websiteName" });
+    }
+
+    const config = websiteConfig[websiteName];
+    if (!config || !config.wpUrl || !config.authKey || !config.handler) {
+      return res.status(400).json({ message: "Invalid website name provided" });
+    }
+
+    const existingOrder = await orderExists(orderId, websiteName);
+
+    if (existingOrder) {
+      return res.status(200).json({ message: "Order already exists" });
+    }
+
+    // Construct the WordPress API URL
+    const wpApiUrl = `${config.wpUrl}/wp-json/wc/v3/orders/${orderId}`;
+
+    // Set up basic authentication headers
+    const authHeader = `Basic ${Buffer.from(config.authKey).toString(
+      "base64"
+    )}`;
+    const headers = {
+      Authorization: authHeader,
+      "Content-Type": "application/json",
+    };
+
+    // Fetch order data from WordPress
+    const wpResponse = await axios.get(wpApiUrl, { headers });
+
+    const orderData = wpResponse.data;
+
+    if (!orderData || !orderData.id) {
+      return res
+        .status(404)
+        .json({ message: "Order not found on WordPress site" });
+    }
+
+    // Create a mock request object to pass to the original controller function
+    const mockReq = { body: orderData };
+
+    // Call the correct, existing controller function with the fetched data
+    await config.handler(mockReq, res);
+
+  } catch (error) {
+   
+    // Handle specific Axios errors for better debugging
+    if (error.response) {
+       if (error.response.status === 404) {
+      return res.status(error.response.status).json({
+        message: "Invalid Order ID",
+        error: error.response.data,
+      });
+    }
+      return res.status(error.response.status).json({
+        message: "Error fetching order from WordPress API",
+        error: error.response.data,
+      });
+    }
+    return res.status(500).json({
+      message: "Error processing the request",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   handleAlcatrazWebhook,
   handleStatueWebhook,
@@ -1044,4 +1186,5 @@ module.exports = {
   getVpnStatus,
   disconnectVpn,
   getVPNCities,
+  dropOrder,
 };
