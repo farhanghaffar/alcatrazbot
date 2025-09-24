@@ -639,6 +639,51 @@ const handleCumberlandIslandWebhook = async (req, res) => {
   }
 };
 
+const handleFortMackinacWebhook = async (req, res) => {
+  try {
+    const orderData = req.body; // Get the order data from the request body
+
+    if (!orderData.id) {
+      return res.status(400).json({ message: "Invalid order data" });
+    }
+
+    const existingOrder = await orderExists(
+      orderData.id,
+      "FortMackinac Ticketing"
+    );
+
+    if (existingOrder) {
+      return res.status(200).json({ message: "Order already exists" });
+    }
+
+    // Prepare the order details
+    const orderDetails = {
+      orderId: orderData.id,
+      payload: orderData,
+      webhookEndpoint: "/fort-mackinac-tickets-webhook",
+      websiteName: "FortMackinac Ticketing",
+      status: "Not Triggered",
+      failureReason: null,
+      triggerable: true,
+    };
+
+    // Save the order directly in the database
+    const newOrder = await Order.create(orderDetails);
+
+    // Return success response
+    return res.status(200).json({
+      message: "Order successfully received and stored",
+      order: newOrder,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error processing the webhook",
+      error: error.message,
+    });
+  }
+};
+
 const updateOrderPayload = async (req, res) => {
   try {
     const payload = req.body; // Get the new payload from the request body
@@ -993,6 +1038,7 @@ module.exports = {
   handleBattleShipWebhook,
   handlePlantationWebhook,
   handleCumberlandIslandWebhook,
+  handleFortMackinacWebhook,
   updateOrderPayload,
   switchVpn,
   getVpnStatus,
