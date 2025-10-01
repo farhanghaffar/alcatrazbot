@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const webhookController = require('../controllers/webhookController');
-const protect = require('../middleware/authMiddleware');
+const { protect } = require("../middleware/authMiddleware");
 
 // Route to handle incoming webhook request
 router.post('/alcatraz-dashboard-webhook', webhookController.handleAlcatrazWebhook);

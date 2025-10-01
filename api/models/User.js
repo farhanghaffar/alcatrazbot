@@ -1,15 +1,31 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 // Define the user schema
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true },
-  password: { type: String, required: true },  // The password will be hashed before saving
+  password: { type: String, required: true }, // The password will be hashed before saving
+
+  // Role is now a reference to the Role model
+  role: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Role",
+    required: true,
+  },
+  // Required for tracking processor performance
+  isActive: { type: Boolean, default: true },
+  hoursLog: [
+    {
+      loginTime: { type: Date, required: true },
+      logoutTime: { type: Date, default: null },
+      duration: { type: Number, default: 0 },
+    },
+  ],
 });
 
 // Hash the password before saving to the database
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();  // Check if password is modified
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next(); // Check if password is modified
 
   // If the password is modified, hash it
   const salt = await bcrypt.genSalt(10);
@@ -23,4 +39,4 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);

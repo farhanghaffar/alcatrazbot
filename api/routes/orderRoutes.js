@@ -14,7 +14,7 @@ const {
   startCardDataClean,
 } = require("../controllers/orderController");
 const router = express.Router();
-const protect = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/authMiddleware");
 
 // Protected Routes
 router.get("/orders", protect, getOrders); // Get all orders

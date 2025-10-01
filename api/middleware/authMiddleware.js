@@ -1,11 +1,11 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 // Middleware to protect routes
 const protect = (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
+  const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    return res.status(401).json({ msg: 'No token, authorization denied' });
+    return res.status(401).json({ msg: "No token, authorization denied" });
   }
 
   try {
@@ -13,8 +13,30 @@ const protect = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(401).json({ msg: 'Token is not valid' });
+    res.status(401).json({ msg: "Token is not valid" });
   }
 };
 
-module.exports = protect;
+const checkRole = (requiredRole) => (req, res, next) => {
+  if (req.user && req.user.role === requiredRole) {
+    next();
+  } else {
+    res.status(403).json({
+      msg: `Access denied. Requires ${requiredRole} role.`,
+    });
+  }
+};
+
+// 3. Authorization Middleware (Check Permission) - Checks if user has a specific permission
+const checkPermission = (requiredPermission) => (req, res, next) => {
+  // Permissions are stored in req.user.permissions array (from token payload)
+  if (req.user && req.user.permissions.includes(requiredPermission)) {
+    next();
+  } else {
+    res.status(403).json({
+      msg: `Access denied. Requires permission: ${requiredPermission}.`,
+    });
+  }
+};
+
+module.exports = { protect, checkPermission, checkRole };
