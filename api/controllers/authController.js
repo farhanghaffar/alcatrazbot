@@ -1,12 +1,19 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Permission = require("../models/Permission");
 
 // Login Controller
 const loginUser = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const user = await User.findOne({ username }).populate("role"); // Populate the role details
+    const user = await User.findOne({ username, isActive: true }).populate({
+      path: "role",
+      populate: {
+        path: "permissions",
+        select: "name",
+      },
+    });
 
     if (user && (await user.matchPassword(password))) {
       // Prepare permissions as a simplified array for the token
@@ -27,13 +34,14 @@ const loginUser = async (req, res) => {
         _id: user._id,
         username: user.username,
         role: user.role.name,
+        permissions,
         token: token,
       });
     } else {
       res.status(400).json({ msg: "Invalid credentials" });
     }
   } catch (error) {
-    console.error(err);
+    console.error(error);
     res.status(500).send("Server error");
   }
 };

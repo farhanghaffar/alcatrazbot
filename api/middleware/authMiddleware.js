@@ -17,15 +17,17 @@ const protect = (req, res, next) => {
   }
 };
 
-const checkRole = (requiredRole) => (req, res, next) => {
-  if (req.user && req.user.role === requiredRole) {
-    next();
-  } else {
-    res.status(403).json({
-      msg: `Access denied. Requires ${requiredRole} role.`,
-    });
-  }
-};
+const checkRole =
+  (requiredRoles = []) =>
+  (req, res, next) => {
+    if (req.user && requiredRoles.includes(req.user.role)) {
+      next();
+    } else {
+      res.status(403).json({
+        msg: `Access denied. Requires ${requiredRoles.join(" , ")} role.`,
+      });
+    }
+  };
 
 // 3. Authorization Middleware (Check Permission) - Checks if user has a specific permission
 const checkPermission = (requiredPermission) => (req, res, next) => {
